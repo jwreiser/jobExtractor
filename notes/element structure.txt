@@ -1,0 +1,21 @@
+location of list of items
+	body
+	main
+	<div class="jobs-search-results-list
+	<ul class="scaffold-layout__list-container">
+
+determining page is loaded
+	<div id="app-boot-bg-loader" class="app-boot-bg-skeleton">
+    <div class="initial-load-animation">
+      <div class="linkedin-image display-flex justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="loader__linkedin-logo" width="190" height="48" viewBox="0 0 190 48">
+        </svg>
+      </div>
+      <div class="loading-bar">
+      </div>
+    </div>
+</div>
+
+	<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="display: none" class="terminatorlet">
+    <div id="a11y-notification" class="visually-hidden" role="region" aria-live="polite"></div>
+  
