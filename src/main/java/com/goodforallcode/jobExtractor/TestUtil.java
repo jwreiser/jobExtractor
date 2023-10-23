@@ -6,8 +6,8 @@ import com.goodforallcode.jobExtractor.model.preferences.PreferencesWithDefaults
 import java.util.List;
 
 public class TestUtil {
-    public static Preferences getDefaultPreferences(){
-        Preferences preferences = new PreferencesWithDefaults();
+    public static PreferencesWithDefaults getDefaultPreferences(){
+        PreferencesWithDefaults preferences = new PreferencesWithDefaults();
         preferences.setProgrammingLanguages(List.of("Java"));
         preferences.setMinFortuneRank(760);
         preferences.setExcludeAboveSenior(true);

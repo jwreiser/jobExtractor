@@ -29,6 +29,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.interactions.MoveTargetOutOfBoundsException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
@@ -55,6 +56,7 @@ public class LinkedInExtractor extends Extractor {
     private static WebDriver getWebDriver() {
         System.setProperty("webdriver.gecko.driver", "D:/development/geckodriver.exe");
         WebDriver driver=new FirefoxDriver();
+//        WebDriver driver=new HtmlUnitDriver(true);
         driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
         return driver;
     }
@@ -79,16 +81,19 @@ public class LinkedInExtractor extends Extractor {
         return includeJob;
     }
     @Override
-    public Stream<Job> getJobs(WebDriver baseDriver, Preferences preferences, String url,JobCache cache) {
+    public Stream<Job> getJobs(Set<Cookie> cookies, Preferences preferences, String url,JobCache cache) {
         List<Job> jobs = new ArrayList<>();
         WebDriver newDriver=null;
         try {
-            Set<Cookie> cookies = baseDriver.manage().getCookies();
 
-            newDriver = baseDriver.switchTo().newWindow(WindowType.WINDOW);
+
+            newDriver = getWebDriver();
+            newDriver.get(url);
+            for(Cookie cookie:cookies) {
+                newDriver.manage().addCookie(cookie);
+            }
 
             newDriver.get(url);
-
             int currentPageNum=0;
             WebElement nextPageButton=null;
 
@@ -126,6 +131,7 @@ public class LinkedInExtractor extends Extractor {
                     jobsOnPage++;
 
                     final Job currentJob = populator.populateJob(item,newDriver);
+                    currentJob.setSourceUrl(url);
                     if(currentJob==null){
                         System.err.println(++numBadJobs+" out of "+jobsOnPage);
                         break;
@@ -194,7 +200,11 @@ public class LinkedInExtractor extends Extractor {
         }
 
         if(newDriver!=null){
-            newDriver.close();
+            try {
+                newDriver.close();
+            }catch (Exception ex){
+
+            }
         }
         return jobs.stream();
     }
@@ -312,8 +322,7 @@ public class LinkedInExtractor extends Extractor {
     public static void main(String[] args) {
         LinkedInExtractor e = new LinkedInExtractor();
 
-        WebDriver driver = null;
-        driver = e.login("jreiser.is@gmail.com", "fahtNFoool!");
+
 
 
         List<String> bigCollectionsUrls=List.of(
@@ -345,17 +354,6 @@ public class LinkedInExtractor extends Extractor {
         );
 
 
-        List<String> companyUrls=List.of(
-                //neurodivergent (jobs for humanity)
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3733471087&f_C=35925095&f_WT=2&geoId=103644278&keywords=java&location=United%20States&origin=JOB_SEARCH_PAGE_LOCATION_AUTOCOMPLETE&refresh=true&sortBy=R",
-                //clearance jobs company
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3737786812&f_C=1007957&f_E=2%2C3%2C4&f_JT=F%2CP%2CC%2CT&f_WT=2&geoId=92000000&keywords=java%20-senior%20-sr%20-principal%20-lead%20-servicenow%20-.net%20-poly%20-dod%20-sme%20-devsecops%20-defense%20-scientist%20-structural%20-network%20-amps",
-               //trimble
-                "https://www.linkedin.com/jobs/search/?currentJobId=3738949112&f_C=5160%2C96206&f_E=2%2C3%2C4&f_WT=2&geoId=92000000&keywords=java%20-field&location=Worldwide&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD"
-                //cedar
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3734045040&distance=&f_AL=&f_BE=&f_C=10988174&f_CF=&f_CM=&f_CR=&f_CT=&f_E=&f_EA=&f_EL=&f_ES=&f_ET=&f_F=&f_FCE=&f_GC=&f_I=&f_JC=&f_JIYN=&f_JT=&f_LF=&f_PP=&f_SAL=&f_SB=&f_SB2=&f_SB3=&f_T=9&f_TP=&f_WRA=&f_WT=2&geoId=92000000&latLong=&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=false&sortBy=R"
-        );
-
      List<String> advantagedUrls=List.of(
                 //public trust
 //                "https://www.linkedin.com/jobs/search/?currentJobId=3704049774&f_CR=103644278&f_E=2%2C3%2C4&f_F=it&f_JT=F%2CP%2CC%2CT&f_T=9%2C10%2C24&f_WT=2&geoId=92000000&keywords=java%20public%20trust%20-servicenow%20-salesforce%20-senior%20-principal%20-azure%20-devsecops%20-appian%20-mumps%20-sailpoint%20-.net%20-sdet%20-mulesoft%20-drupal%20-infrastructure%20-sap%20-sr.%20-fullstack%20-angular%20-xacta%20-startup%20-php%20-lead%20-bootstrap%20-bi%20-django%20-expertise%20-idam",
@@ -370,13 +368,7 @@ public class LinkedInExtractor extends Extractor {
 
         );
 
-        List<String> benefitUrls=List.of(
-                //life balance HAS
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3728451744&distance=25&f_JT=F%2CP&f_T=9&f_WT=2&geoId=103644278&keywords=java%20life%20balance%20-senior%20-staff%20-sr.%20-principal%20-fullstack%20-frontend%20-embedded%20-salesforce%20-servicenow%20-lead%20-scientist%20-pattern%20-node%20-.net%20-mcse%20-jquery%20-ember%20-mulesoft%20-alfresco%20-golang%20-php%20-django%20-drupal%20-bi%20-ansible%20-blockchain%20-sdet%20-investors%20-relocate%20-pytorch%20-css%20-warehousing",
 
-                //pension plan
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3724417602&f_BE=5&f_E=2%2C3%2C4&f_WT=2&keywords=java&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=R?"
-        );
 
         List<String> committmentUrls=List.of(
                 //work life balance
@@ -474,13 +466,6 @@ public class LinkedInExtractor extends Extractor {
         preferences.setSkipFirstPages(null);
         preferences.setSkipTooManyApplicants(false);
         preferences.setSkipJobsSourcedFromExternalJobBoard(false);
-
-        List<Job> jobs=e.getJobs(driver,preferences, companyUrls);
-
-
-
-        driver.quit();
-
     }
 
 

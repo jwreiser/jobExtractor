@@ -22,12 +22,17 @@ public class RemoteFilter implements JobFilter {
     ,"remotely within the U.S","remotely within the US","remote options","remote possible"
             ,"applications for remote work may be considered","Fully Remote"," full and/or partial remote"
     ,"full or partial remote");
+    List<String>titlePhrases=List.of("(Hybrid))");
     @Override
     public boolean include(Preferences preferences, Job job) {
         final String title=job.getTitle().toLowerCase();
         if (remotePhrases.stream().anyMatch(k->title.contains(k.toLowerCase()))){
             return true;
         }
+        if (titlePhrases.stream().anyMatch(k->title.contains(k.toLowerCase()))){
+            return false;
+        }
+
         if (notRemotePhrases.stream().anyMatch(k->title.contains(k.toLowerCase()))){
             System.err.println("Not remote->reject: "+job);
             return false;

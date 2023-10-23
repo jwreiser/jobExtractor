@@ -9,7 +9,9 @@ import java.util.List;
 public class BusinessIntelligenceFilter implements JobFilter {
     List<String>keywords=List.of("business intelligence","BI ","power bi","Domo",
             "Tableau","Looker","SAP ","PowerBI","QLik","DataStudio","ABAP"
-            ,"PO Developer","abinitio","ab initio");
+            ,"PO Developer","abinitio","ab initio","Yardi ");
+
+
 
     @Override
     public boolean include(Preferences preferences, Job job) {

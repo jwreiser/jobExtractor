@@ -6,14 +6,14 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.List;
 
-public class ConsultantCompanyFilter implements JobFilter {
+public class ConsultantFilter implements JobFilter {
     static List<String>consultantKeywords=List.of("consultant","consulting");
     static List<String>consultantCompanyNames=List.of("Curate Partners","Modis","Akkodis"
     ,"Ricardo plc");
 
     @Override
     public boolean include(Preferences preferences, Job job) {
-        if(!preferences.isExcludeConsultantCompanies()){
+        if(!preferences.isExcludeConsultant()){
             return true;
         }
         String title =job.getTitle().toLowerCase();
@@ -22,13 +22,12 @@ public class ConsultantCompanyFilter implements JobFilter {
             return false;
         }
         if(consultantKeywords.stream().anyMatch(k -> title.contains(k.toLowerCase()))){
-            System.err.println("Consultant->reject: "+job);
+            System.err.println("Consultant title->reject: "+job);
             return false;
         }
 
-        String companyName =job.getCompanyName().toLowerCase();
 
-        if(consultantKeywords.stream().anyMatch(k -> companyName.contains(k.toLowerCase()))){
+        if(consultantKeywords.stream().anyMatch(k -> job.getCompanyName().contains(k.toLowerCase()))){
             System.err.println("Consultant companyName->reject: "+job);
             return false;
         }

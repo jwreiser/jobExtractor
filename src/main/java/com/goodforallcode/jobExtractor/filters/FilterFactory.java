@@ -2,6 +2,7 @@ package com.goodforallcode.jobExtractor.filters;
 
 import com.goodforallcode.jobExtractor.filters.both.*;
 import com.goodforallcode.jobExtractor.filters.deep.*;
+import com.goodforallcode.jobExtractor.filters.deep.MarketingFilter;
 import com.goodforallcode.jobExtractor.filters.deep.always.*;
 import com.goodforallcode.jobExtractor.filters.deep.always.lang.BasicFilter;
 import com.goodforallcode.jobExtractor.filters.deep.always.lang.JavascriptFilter;
@@ -12,6 +13,7 @@ import com.goodforallcode.jobExtractor.filters.include.shallow.RelaxedEnvironmen
 import com.goodforallcode.jobExtractor.filters.shallow.*;
 import com.goodforallcode.jobExtractor.filters.shallow.company.*;
 import com.goodforallcode.jobExtractor.filters.both.OffshoreFilter;
+import com.goodforallcode.jobExtractor.filters.shallow.company.CommerceFilter;
 import com.goodforallcode.jobExtractor.filters.shallow.title.*;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
@@ -23,7 +25,6 @@ public class FilterFactory {
         List<JobFilter> filters = new ArrayList<>();
         filters.add(new CyberSecurityFilter());
         filters.add(new DefenseFilter());
-        filters.add(new EcommerceFilter());
         filters.add(new GamingFilter());
         filters.add(new FinanceFilter());
         filters.add(new FortuneRankFilter());
@@ -41,7 +42,6 @@ public class FilterFactory {
         filters.add(new PromotedFilter());
         filters.add(new RealEstateFilter());
         filters.add(new ReligiousFilter());
-        filters.add(new RemoteFilter());
         filters.add(new SalaryFilter());
         filters.add(new StartupFilter());
         filters.add(new PeopleFocusedFilter(false));
@@ -49,7 +49,6 @@ public class FilterFactory {
         if (preferences.getMaxLevel() != null) {
             filters.add(new LevelFilter());
         }
-        filters.add(new ConsultantCompanyFilter());
         filters.add(new HiddenFilter());
 
         return filters;
@@ -57,11 +56,13 @@ public class FilterFactory {
 
     public static List<JobFilter> getShallowFiltersAlwaysExclude(String url, Preferences preferences) {
         List<JobFilter> filters = new ArrayList<>();
+        filters.add(new ConsultantFilter());
         filters.add(new ContractBasedEmployerFilter());
         filters.add(new ERPFilter());
         filters.add(new PoorJobSecurityFilter());
         filters.add(new LocalFilter());
         filters.add(new PeopleFocusedFilter(false));
+        filters.add(new RemoteFilter());
         filters.add(new UpskillingRecruitmentCompanyFilter());
 
         //company name
@@ -77,6 +78,8 @@ public class FilterFactory {
         filters.add(new BusinessIntelligenceFilter());//if it is in the title exclude it
         filters.add(new ClearanceFilter());
         filters.add(new CloudTitleFilter());
+        filters.add(new CommerceFilter());
+        filters.add(new ContentManagementFilter());
         filters.add(new CoordinationAndManagementTitleFilter());
         filters.add(new DataFocusedTitleFilter());
         filters.add(new DatabaseTitleFilter());
@@ -84,7 +87,7 @@ public class FilterFactory {
         filters.add(new FrontEndTitleFilter());
         filters.add(new HardwareKnowledgeableProgrammingFilter());
         filters.add(new HumanAndCustomerManagementAndSalesTechnologyFilter());
-        filters.add(new IntegrationDeveloperTitleFilter());
+        filters.add(new IntegrationFilter());
         filters.add(new LoAndNoCodeFilter());
         filters.add(new MedicalCoderTitleFilter());
         filters.add(new MobileTitleFilter());
@@ -114,23 +117,28 @@ public class FilterFactory {
     public static List<JobFilter> getDeepFilters(String url, Preferences preferences) {
         List<JobFilter> filters = new ArrayList<>();
         filters.add(new AIFilter());
+        filters.add(new BettingFilter());
         filters.add(new BigDataFilter());
         filters.add(new BusinessProcessManagementFilter());
         filters.add(new CachingFilter());
         filters.add(new CaseManagementFilter());
         filters.add(new CloudHeavyFilter());
+        filters.add(new CommerceFilter());
         filters.add(new ComplexFilter());
         filters.add(new ContentManagementFilter());
         filters.add(new HumanAndCustomerManagementAndSalesTechnologyFilter());
         filters.add(new DefenseFilter());
         filters.add(new HardwareKnowledgeableProgrammingFilter());
         filters.add(new EnterpriseApplicationsFilter());
+        filters.add(new FinanceFilter());
         filters.add(new FullstackFilter());
         filters.add(new IdentityManagementFilter());
         filters.add(new InfrastructureSoftwareFilter());
+        filters.add(new InsuranceFilter());
         filters.add(new IntegrationFilter());
         filters.add(new JeeFilter());
         filters.add(new LoAndNoCodeFilter());
+        filters.add(new MarketingFilter());
         //don't reject just skip
         if(!preferences.isSkipTooManyApplicants()) {
             filters.add(new NumApplicantsFilter());
@@ -139,7 +147,6 @@ public class FilterFactory {
         filters.add(new OffshoreFilter());
         filters.add(new OracleTechFilter());
         filters.add(new PerformanceFilter());
-        filters.add(new ProfitFocusedFilter());
         filters.add(new RedHatFilter());
         filters.add(new SearchFilter());
         filters.add(new YearsExperienceFilter());

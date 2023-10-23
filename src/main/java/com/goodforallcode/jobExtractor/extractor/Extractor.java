@@ -4,6 +4,7 @@ import com.goodforallcode.jobExtractor.cache.DefaultJobCache;
 import com.goodforallcode.jobExtractor.cache.JobCache;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -12,6 +13,7 @@ import org.openqa.selenium.interactions.Actions;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,7 +27,7 @@ public abstract class Extractor {
         return sharedSkillPhrases;
     }
 
-    WebDriver login(String userName, String password){
+    public WebDriver login(String userName, String password){
         return null;
     }
 
@@ -50,7 +52,7 @@ public abstract class Extractor {
 
 
 
-    public   List<Job> getJobs(WebDriver driver, Preferences preferences, List<String> urls){
+    public   List<Job> getJobs(Set<Cookie> cookies , Preferences preferences, List<String> urls){
         List<Job> jobs = new ArrayList<>();
         JobCache cache=new DefaultJobCache();
         /*
@@ -97,11 +99,11 @@ public abstract class Extractor {
         executorService.shutdown();
 
          */
-        jobs=urls.stream().flatMap(url -> getJobs(driver, preferences, url, cache)).collect(Collectors.toList());
+        jobs=urls.stream().flatMap(url -> getJobs(cookies, preferences, url, cache)).collect(Collectors.toList());
         return jobs;
     }
 
-    abstract Stream<Job> getJobs(WebDriver driver, Preferences preferences, String url, JobCache cache);
+    abstract Stream<Job> getJobs( Set<Cookie> cookies , Preferences preferences, String url, JobCache cache);
     public  void includeJob(WebDriver driver, List<Job> jobs, Job currentJob) {
         //I had been clicking the save button here but it gives stale element exceptions
         jobs.add(currentJob);

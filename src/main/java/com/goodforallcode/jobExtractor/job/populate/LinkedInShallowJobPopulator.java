@@ -23,7 +23,8 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
         String jobUrl = jobLink.attr("href");
         String title = jobLink.text();
 
-        Job job = new Job(title, companyName, jobUrl);
+        Job job = new Job(title, companyName, jobUrl,"http://linkedin.com"+jobUrl);
+
         try{
             WebElement jobLinkElement=driver.findElement(By.id(jobLink.id()));
             job.setJobDetailsLink(jobLinkElement);

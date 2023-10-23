@@ -23,7 +23,8 @@ public class WorkLifeBalanceFilter implements JobFilter {
             "fast-moving","fast-paced", "fast paced","24/7",
            "24x7","rotation","After business hours","After hours","aggressive delivery schedule",
             "nights","weekends","outside of normal business","outside normal business");
-    List<String> goodCompanies =List.of("Ebay","Guidehouse","Trimble","American Specialty Health");
+    List<String> goodCompanies =List.of("Ebay","Guidehouse","Trimble"
+            ,"American Specialty Health","Nationwide");
     List<String> badCompanies =List.of("Cardinal Health","The Home Depot","Aha!","Cash App"
     ,"Square","Crunchyroll","HCLTech","Palo Alto Networks","Intelerad Medical Systems",
             "Tenable","Kasten by Veeam","Dremio","Gigster");

@@ -9,7 +9,7 @@ import java.util.List;
 public class ERPFilter implements JobFilter {
 
     List<String> phrases =List.of("Workday"," ERP ","NetSuite","FinancialForce","Certinia",
-    "Infor ","Lawson","Kinetic");
+    "Infor ","Lawson","Kinetic","Syteline");
 
     public boolean include(Preferences preferences, Job job){
         String title =job.getTitle().toLowerCase();

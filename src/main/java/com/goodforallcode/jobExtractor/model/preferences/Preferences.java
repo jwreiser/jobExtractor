@@ -1,6 +1,5 @@
 package com.goodforallcode.jobExtractor.model.preferences;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +38,7 @@ public interface Preferences {
      void setExcludeBigData(boolean exclude);
      boolean isExcludeCloudHeavy();
      void setExcludeCloudHeavy(boolean exclude);
-     boolean isExcludeConsultantCompanies();
+     boolean isExcludeConsultant();
      void setExcludeConsultantCompanies(boolean exclude);
      boolean isExcludeFrontEndJobs();
      void setExcludeFrontEndJobs(boolean exclude);
