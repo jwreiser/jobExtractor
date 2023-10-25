@@ -11,7 +11,7 @@ public class NotAboveSeniorTitleFilter implements JobFilter {
 
 
     List<String> titleOnlyPhrases =List.of( "stf ","director", "VP ","staff","lead","manager"
-            ,"architect","administrator","chief","principal");
+            ,"architect","administrator","chief","principal","Systems Development","Systems Developer");
 
     @Override
     public boolean include(Preferences preferences, Job job) {

@@ -8,7 +8,8 @@ import java.util.List;
 
 public class MicrosoftStackFilter implements JobFilter {
     List<String>keywords=List.of("C++","C#");
-    List<String>doublePointKeywords=List.of(".net","ASP.net","VB.Net");
+
+    List<String>doublePointKeywords=List.of(".net","ASP.net","VB.Net"," WPF ");
     List<String>quadPointKeywords=List.of("Microsoft Stack","Microsoft Visual Studio"
             ,"NET development ecosystem", "NET ecosystem", "NET core",
             "NET framework");

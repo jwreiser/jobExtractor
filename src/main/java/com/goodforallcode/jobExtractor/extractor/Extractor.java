@@ -4,6 +4,7 @@ import com.goodforallcode.jobExtractor.cache.DefaultJobCache;
 import com.goodforallcode.jobExtractor.cache.JobCache;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import com.google.common.collect.Lists;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -14,11 +15,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static com.goodforallcode.jobExtractor.streams.Predicates.distinctByKeys;
 
 public abstract class Extractor {
 
@@ -55,13 +57,16 @@ public abstract class Extractor {
     public   List<Job> getJobs(Set<Cookie> cookies , Preferences preferences, List<String> urls){
         List<Job> jobs = new ArrayList<>();
         JobCache cache=new DefaultJobCache();
-        /*
-        int mid=urls.size()/2;
-        Collection<List<String>> urlLists = urls.stream().collect(Collectors.partitioningBy(u -> urls.indexOf(u) > mid)).values();
-        ExecutorService executorService= Executors.newFixedThreadPool(2);
+        int numThreads=3;
+        int size=urls.size();
+        if(urls.size()>1){
+            size=urls.size()/numThreads;
+        }
+        Collection<List<String>> urlLists =  Lists.partition(urls, size);
+        ExecutorService executorService= Executors.newFixedThreadPool(numThreads);
         Collection<UrlExctractingCallable> tasks=new ArrayList<>();
         for(List<String> urlList:urlLists){
-            tasks.add(new UrlExctractingCallable(this,urlList,driver,preferences,cache));
+            tasks.add(new UrlExctractingCallable(this,urlList,cookies,preferences,cache));
         }
         List<Future<List<Job>>> futures = null;
         try {
@@ -75,21 +80,20 @@ public abstract class Extractor {
             done=true;
             for(Future future:futures){
                 if(!future.isDone()){
+                    done=false;
                     try {
                         Thread.sleep(10_000);
                     } catch (InterruptedException e) {
                         //not a big deal as long as we can eventually sleep long enough to wait
                     }
-                    continue;
+                    break;
                 }
             }
             if(done){
                 for(Future<List<Job>> future:futures){
                     try {
                         jobs.addAll(future.get());
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    } catch (ExecutionException e) {
+                    } catch (InterruptedException|ExecutionException e) {
                         throw new RuntimeException(e);
                     }
                 }
@@ -98,8 +102,6 @@ public abstract class Extractor {
         }
         executorService.shutdown();
 
-         */
-        jobs=urls.stream().flatMap(url -> getJobs(cookies, preferences, url, cache)).collect(Collectors.toList());
         return jobs;
     }
 

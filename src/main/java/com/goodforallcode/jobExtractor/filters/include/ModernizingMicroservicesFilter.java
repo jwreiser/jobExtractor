@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ModernizingMicroservicesFilter implements JobFilter {
     List<String> phrases =List.of("microservice","microservices","modernization"," API "," APIs ",
-            "RestFul","webservice");
+            "RestFul","webservice","web service");
     public boolean include(Preferences preferences, Job job){
         String description =job.getDescription().toLowerCase();
         if (phrases.stream().anyMatch(p->description.contains(p.toLowerCase()))) {

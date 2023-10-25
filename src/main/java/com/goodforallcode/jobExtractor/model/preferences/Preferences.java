@@ -4,13 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface Preferences {
-     boolean isExcludePoorWorkLifeBalance();
      boolean isExcludeContractJobs();
      boolean isExcludeApplied();
 
      Optional<Integer> getIncludedContractMinimumDuration();
 
 
+     boolean isExcludePoorWorkLifeBalance();
+     void setExcludePoorWorkLifeBalance(boolean exclude);
 
      boolean isExcludePromoted();
      void setExcludePromoted(boolean exclude);
@@ -23,8 +24,6 @@ public interface Preferences {
 
      boolean isExcludeFresher();
      void setExcludeFresher(boolean exclude);
-     boolean isExcludeProfitFocusedCompanies();
-     void setExcludeProfitFocusedCompanies(boolean exclude);
 
      boolean isExcludeFullStack();
      void setExcludeFullStack(boolean exclude);
@@ -39,7 +38,7 @@ public interface Preferences {
      boolean isExcludeCloudHeavy();
      void setExcludeCloudHeavy(boolean exclude);
      boolean isExcludeConsultant();
-     void setExcludeConsultantCompanies(boolean exclude);
+     void setExcludeConsultant(boolean exclude);
      boolean isExcludeFrontEndJobs();
      void setExcludeFrontEndJobs(boolean exclude);
      boolean isSkipTooManyApplicants();

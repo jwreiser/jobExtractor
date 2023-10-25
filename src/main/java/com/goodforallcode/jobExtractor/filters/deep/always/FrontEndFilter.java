@@ -12,26 +12,41 @@ public class FrontEndFilter implements JobFilter {
      *
      * Exclusive
      * Front-end : might show up in a work with front-end, BAs...
+     * UX: work with UX
      */
-    List<String>keywords=List.of("bootstrap ","CSS","HTML","Javascript","frontend","front end",
+    List<String>keywords=List.of("bootstrap ","CSS","HTML","Javascript","frontend","front end"," UX",
             " ui","ui ","react","angular","angularjs","typescript","vue","jquery","JSP","JSF");
     List<String>exclusiveKeywords=List.of(
             "Redux","PrimeFaces"
-            ," UX","FreeMarker", "Handlebars","multiple front-end frameworks");
+            ,"FreeMarker", "Handlebars","multiple front-end frameworks");
+
+    List<String> jobTitlePhrases=List.of(
+            "Front end developer","Frontend developer","Front-end developer", "Ui developer","Ui engineer","UX developer",
+            " React","Angular","Typescript","Javascript"," UX"
+    );
 
     @Override
     public boolean include(Preferences preferences, Job job) {
-        String text =job.getDescription().toLowerCase();
+        String title =job.getTitle().toLowerCase();
 
-        long mainCount=keywords.stream().filter(k->text.contains(k.toLowerCase())).count();
-        if(mainCount>3){
-            System.err.println("front end count "+ mainCount +" ->reject: "+job);
+        //if this is a job title we are not qualified for
+        if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
+            System.err.println("Front end job title->reject: "+job);
             return false;
         }
-        long exclusiveCount=exclusiveKeywords.stream().filter(k->text.contains(k.toLowerCase())).count();
-        if(exclusiveCount>1||(exclusiveCount>0&&mainCount>1)){
-            System.err.println("front end exclusive ->reject: "+job);
-            return false;
+        if(job.getDescription()!=null) {
+            String text = job.getDescription().toLowerCase();
+
+            long mainCount = keywords.stream().filter(k -> text.contains(k.toLowerCase())).count();
+            if (mainCount > 3) {
+                System.err.println("front end count " + mainCount + " ->reject: " + job);
+                return false;
+            }
+            long exclusiveCount = exclusiveKeywords.stream().filter(k -> text.contains(k.toLowerCase())).count();
+            if (exclusiveCount > 1 || (exclusiveCount > 0 && mainCount > 1)) {
+                System.err.println("front end exclusive ->reject: " + job);
+                return false;
+            }
         }
         return true;
     }

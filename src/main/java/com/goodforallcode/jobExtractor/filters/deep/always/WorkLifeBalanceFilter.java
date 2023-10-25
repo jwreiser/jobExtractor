@@ -19,7 +19,7 @@ public class WorkLifeBalanceFilter implements JobFilter {
         critical : thinking
         pressure: work well under pressure does not mean bad balance. Seems like trope not sure if it would mean lack of balance
          */
-    List<String> phrases =List.of("on call",
+    List<String> phrases =List.of("on call","on-call",
             "fast-moving","fast-paced", "fast paced","24/7",
            "24x7","rotation","After business hours","After hours","aggressive delivery schedule",
             "nights","weekends","outside of normal business","outside normal business");
@@ -27,10 +27,13 @@ public class WorkLifeBalanceFilter implements JobFilter {
             ,"American Specialty Health","Nationwide");
     List<String> badCompanies =List.of("Cardinal Health","The Home Depot","Aha!","Cash App"
     ,"Square","Crunchyroll","HCLTech","Palo Alto Networks","Intelerad Medical Systems",
-            "Tenable","Kasten by Veeam","Dremio","Gigster");
+            "Tenable","Kasten by Veeam","Dremio","Gigster","Samsung Electronics");
     List<String> safePhrases =List.of("internal rotation");
 
     public boolean include(Preferences preferences, Job job){
+        if(!preferences.isExcludePoorWorkLifeBalance()){
+            return true;
+        }
         if(goodCompanies.stream().anyMatch(c->job.getCompanyName().equals(c))){
             System.err.println("good work life balance company ->include: " + job);
             return true;

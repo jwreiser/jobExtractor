@@ -7,14 +7,14 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 public class InsuranceFilter implements JobFilter {
-    List<String> phrases =List.of( "Duck Creek");
+    List<String> titlePhrases =List.of( "Duck Creek");
     List<String> companyNames =List.of( "Transamerica","Travelers","State Farm","GEICO","Allstate");
     List<String> descriptionPhrases =List.of( "insurance");
 
     @Override
     public boolean include(Preferences preferences, Job job) {
         final String title=job.getTitle().toLowerCase();
-        if(phrases.stream().anyMatch(k->title.equals(k.toLowerCase()))){
+        if(titlePhrases.stream().anyMatch(k->title.contains(k.toLowerCase()))){
             System.err.println("insurance title ->reject: "+job);
             return false;
         }
@@ -25,7 +25,8 @@ public class InsuranceFilter implements JobFilter {
             return false;
         }
 
-        if(companyNames.stream().anyMatch(k->job.getCompanyName().contains("insurance"))){
+        String companyName= job.getCompanyName().toLowerCase();
+        if(companyNames.stream().anyMatch(k->companyName.contains("insurance"))){
             System.err.println("insurance contained in name ->reject: "+job);
             return false;
         }

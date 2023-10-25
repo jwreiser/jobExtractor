@@ -10,7 +10,7 @@ public class DataFocusedTitleFilter implements JobFilter {
     List<String> jobTitlePhrases=List.of(
             " ETL ","Data Developer","Analytics","Statistical",
             "Data Analyst","Data Scientist","Data Science","Data Engineer","data analytics",
-            "InterSystems Ensemble","IRIS "
+            "InterSystems Ensemble","IRIS ","Netezza"
             );
     @Override
     public boolean include(Preferences preferences, Job job) {

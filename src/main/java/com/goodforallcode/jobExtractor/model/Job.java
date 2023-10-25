@@ -3,9 +3,7 @@ package com.goodforallcode.jobExtractor.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import org.jsoup.nodes.Element;
 import org.openqa.selenium.WebElement;
-import org.springframework.data.relational.core.sql.In;
 
 @Data
 public class Job {
@@ -21,7 +19,7 @@ public class Job {
     public Job(String title, String companyName,String internalUrl,String url) {
         this(title,companyName);
 
-        this.url = url;
+        this.internalUrl = internalUrl;
         this.url = url;
     }
 

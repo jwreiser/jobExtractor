@@ -5,7 +5,6 @@ import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,7 +13,8 @@ import java.util.Map;
  */
 public class FortuneRankFilter implements JobFilter {
     static Map<String,Integer> ranks=new HashMap<>();
-    {
+
+    static {
         ranks.put("Autodesk",648);
         ranks.put("McKesson",9);
         ranks.put("Wipro",2);

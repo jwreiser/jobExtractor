@@ -7,6 +7,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 public class LevelFilter implements JobFilter {
     @Override
     public boolean include(Preferences preferences, Job job) {
+
         if ( preferences.getMaxLevel()!=null && job.getLevel()!=null && preferences.getMaxLevel()<job.getLevel()){
             System.err.println("Level too high->reject: "+job);
             return false;

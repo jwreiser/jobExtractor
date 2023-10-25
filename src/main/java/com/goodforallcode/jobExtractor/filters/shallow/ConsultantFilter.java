@@ -16,13 +16,19 @@ public class ConsultantFilter implements JobFilter {
         if(!preferences.isExcludeConsultant()){
             return true;
         }
-        String title =job.getTitle().toLowerCase();
         if(consultantCompanyNames.stream().anyMatch(c -> job.getCompanyName().equals(c))){
             System.err.println("Consultant company->reject: "+job);
             return false;
         }
+        final String title =job.getTitle().toLowerCase();
         if(consultantKeywords.stream().anyMatch(k -> title.contains(k.toLowerCase()))){
             System.err.println("Consultant title->reject: "+job);
+            return false;
+        }
+
+        final String companyName=job.getCompanyName().toLowerCase();
+        if(consultantKeywords.stream().anyMatch(k -> companyName.contains(k.toLowerCase()))){
+            System.err.println("Consultant name contains ->reject: "+job);
             return false;
         }
 

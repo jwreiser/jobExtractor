@@ -6,12 +6,10 @@ import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.QueryInput;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 

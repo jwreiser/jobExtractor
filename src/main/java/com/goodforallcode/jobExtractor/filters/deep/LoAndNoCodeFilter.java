@@ -8,7 +8,7 @@ import java.util.List;
 
 public class LoAndNoCodeFilter implements JobFilter {
 
-    List<String> phrases =List.of("Pega","Servicenow","Low Code","Low-Code",
+    List<String> phrases =List.of("Pega ","Servicenow","Low Code","Low-Code",
             "lansa ");
 
     public boolean include(Preferences preferences, Job job){

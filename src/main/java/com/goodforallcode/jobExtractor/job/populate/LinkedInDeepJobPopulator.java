@@ -12,13 +12,31 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 public class LinkedInDeepJobPopulator implements DeepJobPopulator {
     String emptyComment="<!---->";
-    public void populateJob(Job job,WebDriver driver) {
+    public void populateJob(Job job,WebDriver driver) throws TimeoutException{
         String text;
-        WebElement detailsDiv = driver.findElement(By.className("jobs-search__job-details--container"));
-        Document detailsDoc= Jsoup.parse(detailsDiv.getAttribute("innerHTML"));
+        WebElement detailsDiv=null;
+        int failures=0;
+        while(failures<4) {
+            try {
+                detailsDiv = driver.findElement(By.className("jobs-search__job-details--container"));
+                break;
+            }catch (Exception te){
+                try {
+                    Thread.sleep(3_000);
+                }catch (Exception ex){
+
+                }
+                failures++;
+                if(failures>=4){
+                    throw new TimeoutException();
+                }
+            }
+        }
+         Document detailsDoc= Jsoup.parse(detailsDiv.getAttribute("innerHTML"));
         int start;
         try {
             Element tenureLink = detailsDoc.getElementsByClass("jobs-premium-company-growth__median-tenure-years-clock-icon").first();

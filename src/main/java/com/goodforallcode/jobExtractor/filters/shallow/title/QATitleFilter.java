@@ -1,6 +1,5 @@
 package com.goodforallcode.jobExtractor.filters.shallow.title;
 
-import com.goodforallcode.jobExtractor.extractor.Extractor;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;

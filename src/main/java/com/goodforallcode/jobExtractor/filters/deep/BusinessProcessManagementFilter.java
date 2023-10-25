@@ -8,14 +8,21 @@ import java.util.List;
 
 public class BusinessProcessManagementFilter implements JobFilter {
 
-    List<String> phrases =List.of("POSSE "," BPM ","Camunda");
+    List<String> phrases =List.of("POSSE "," BPM ","Camunda","Guidewire");
 
     public boolean include(Preferences preferences, Job job){
-        String description =job.getDescription().toLowerCase();
-     if (phrases.stream().anyMatch(p->description.contains(p.toLowerCase()))) {
-         System.err.println("Business Process Management->reject: " + job);
-         return false;
-     }
+        String title = job.getTitle().toLowerCase();
+        if (phrases.stream().anyMatch(p -> title.contains(p.toLowerCase()))) {
+            System.err.println("Business Process Management title->reject: " + job);
+            return false;
+        }
+        if(job.getDescription()!=null) {
+            String description = job.getDescription().toLowerCase();
+            if (phrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
+                System.err.println("Business Process Management->reject: " + job);
+                return false;
+            }
+        }
 
      return true;
 

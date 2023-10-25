@@ -1,6 +1,5 @@
 package com.goodforallcode.jobExtractor.model;
 
-import jdk.jfr.DataAmount;
 import lombok.Data;
 
 @Data

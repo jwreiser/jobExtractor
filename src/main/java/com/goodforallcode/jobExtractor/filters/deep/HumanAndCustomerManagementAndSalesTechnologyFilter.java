@@ -10,7 +10,7 @@ public class HumanAndCustomerManagementAndSalesTechnologyFilter implements JobFi
 
     List<String> phrases =List.of("Genesys","CRM","Salesforce","Dynamics"
             ,"d365","Exstream","Power Platform","m365","HRMS","Peoplesoft",
-            "HRIS","Kitewheel");
+            "HRIS","Kitewheel"," HCM ","Vlocity");
 
     public boolean include(Preferences preferences, Job job){
         String title = job.getTitle().toLowerCase();

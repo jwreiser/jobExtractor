@@ -11,10 +11,10 @@ public class HardwareKnowledgeableProgrammingFilter implements JobFilter {
      * Exceptions
      * Embedded: can't be in description as it could be embedded in our culture
      */
-    List<String> titlePhrases =List.of("Embedded");
+    List<String> titlePhrases =List.of("Embedded","Centura");
 
     List<String> phrases =List.of( "Systems Programmer", "System Programmer"
-            ,"Firmware");
+            ,"Firmware","AR/VR headset","drivers");
 
     public boolean include(Preferences preferences, Job job){
         final String title = job.getTitle().toLowerCase();

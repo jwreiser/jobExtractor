@@ -13,7 +13,7 @@ public class PeopleFocusedFilter implements JobFilter {
         this.including = including;
     }
 
-    List<String> notPeopleFocusedCompanies =List.of("Maximus");
+    List<String> notPeopleFocusedCompanies =List.of("Maximus","IDR, Inc.");
     List<String> phrases =List.of("life balance","people first","like family");
     public boolean include(Preferences preferences, Job job){
         if(notPeopleFocusedCompanies.stream().anyMatch(c->job.getCompanyName().equals(c))){

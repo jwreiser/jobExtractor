@@ -4,8 +4,6 @@ import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
-import java.util.List;
-
 public class NumEmployeesFilter implements JobFilter {
     public boolean include(Preferences preferences, Job job){
         if (preferences.getMaxEmployees()!=null &&

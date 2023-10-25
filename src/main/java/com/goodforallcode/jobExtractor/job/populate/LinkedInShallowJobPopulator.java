@@ -10,8 +10,10 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.concurrent.TimeoutException;
+
 public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
-    public Job populateJob(Element item, WebDriver driver) {
+    public Job populateJob(Element item, WebDriver driver) throws TimeoutException {
         String text;
         String companyName = item.getElementsByClass("job-card-container__primary-description").text();
 
@@ -25,11 +27,14 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
 
         Job job = new Job(title, companyName, jobUrl,"http://linkedin.com"+jobUrl);
 
+        WebElement jobLinkElement;
         try{
-            WebElement jobLinkElement=driver.findElement(By.id(jobLink.id()));
+            jobLinkElement=driver.findElement(By.id(jobLink.id()));
             job.setJobDetailsLink(jobLinkElement);
         }catch (NoSuchElementException nse){
             System.err.println("Could not find job link if this is the only problem we should be okay to continue, though we won't be able to link to the job in the results");
+        }catch (Exception nse){
+            throw new TimeoutException();
         }
         try {
 

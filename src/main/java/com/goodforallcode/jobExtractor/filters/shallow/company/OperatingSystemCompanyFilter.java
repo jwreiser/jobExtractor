@@ -6,7 +6,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.List;
 
-public class OperatingSystemFilter implements JobFilter {
+public class OperatingSystemCompanyFilter implements JobFilter {
     List<String> phrases =List.of( "Canonical");
 
     @Override

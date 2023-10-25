@@ -14,16 +14,25 @@ public class ComplexFilter implements JobFilter {
      * Exceptions
      * Strong: strong designing
      * infrastructure: spent last 10 years building infrastructure
+     * scalable:        responsible for designing and implementing testable and scalable code.
      */
-    List<String> phrases =List.of("scaling","scalable","latency");
+    List<String> titles =List.of("HPC");
+    List<String> phrases =List.of("scaling","latency");
     public boolean include(Preferences preferences, Job job){
         if(!preferences.isExcludeComplexJobs()){
             return true;
         }
-        String description =job.getDescription().toLowerCase();
-        if (phrases.stream().anyMatch(p->description.contains(p))) {
-            System.err.println("complex ->reject: " + job);
+        String title = job.getTitle().toLowerCase();
+        if (titles.stream().anyMatch(p -> title.contains(p))) {
+            System.err.println("complex title ->reject: " + job);
             return false;
+        }
+        if(job.getDescription()!=null) {
+            String description = job.getDescription().toLowerCase();
+            if (phrases.stream().anyMatch(p -> description.contains(p))) {
+                System.err.println("complex ->reject: " + job);
+                return false;
+            }
         }
         return true;
 

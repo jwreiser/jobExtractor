@@ -10,7 +10,7 @@ public class IntegrationFilter implements JobFilter {
 
     List<String> phrases =List.of("Mulesoft","Boomi");
     List<String> titles =List.of("Implementation Engineer","Integration "
-            ,"Integrations ");
+            ,"Integrations ","System Integrator");
 
     public boolean include(Preferences preferences, Job job){
         String title = job.getTitle().toLowerCase();

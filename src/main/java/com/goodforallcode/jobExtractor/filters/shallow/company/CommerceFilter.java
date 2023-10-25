@@ -11,7 +11,7 @@ public class CommerceFilter implements JobFilter {
     List<String> titles = List.of("OMS Developer");
     List<String> industries = List.of("Retail");
 
-    List<String> phrases = List.of("Hybris", " OMS ", "Varicent", "Shopify");
+    List<String> phrases = List.of("Hybris", " OMS ", "Vericent","Varicent", "Shopify");
 
     @Override
     public boolean include(Preferences preferences, Job job) {

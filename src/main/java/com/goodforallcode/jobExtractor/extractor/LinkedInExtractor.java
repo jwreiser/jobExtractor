@@ -6,35 +6,28 @@ import com.goodforallcode.jobExtractor.filters.FilterFactory;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.job.populate.DeepJobPopulator;
 import com.goodforallcode.jobExtractor.job.populate.LinkedInDeepJobPopulator;
-import com.goodforallcode.jobExtractor.job.populate.ShallowJobPopulator;
 import com.goodforallcode.jobExtractor.job.populate.LinkedInShallowJobPopulator;
+import com.goodforallcode.jobExtractor.job.populate.ShallowJobPopulator;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.Duration;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.openqa.selenium.*;
-
-import org.openqa.selenium.firefox.FirefoxDriver;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.MoveTargetOutOfBoundsException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 
-import static com.mongodb.client.model.Indexes.text;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 @Getter
 @Setter
@@ -73,6 +66,12 @@ public class LinkedInExtractor extends Extractor {
         boolean includeJob=true;
 
         List<JobFilter> filters = FilterFactory.getDeepFilters(url, preferences);
+        List<JobFilter> filtersTrusted = FilterFactory.getDeepFiltersTrusted(url, preferences);
+        if (filtersTrusted.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
+            includeJob = false;
+            doubleClickOnElement(driver,currentJob.getHideButton());
+        }
+
         if (filters.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
             includeJob = false;
             doubleClickOnElement(driver,currentJob.getHideButton());
@@ -99,19 +98,31 @@ public class LinkedInExtractor extends Extractor {
 
             List<JobFilter> alwaysIncludeDeepFilters = FilterFactory.getAlwaysIncludeDeepFilters(url, preferences);
             List<JobFilter> alwaysIncludeShallowFilters = FilterFactory.getAlwaysIncludeShallowFilters(url, preferences);
+
             List<JobFilter> alwaysExcludeDeepFilters = FilterFactory.getDeepFiltersAlwaysExclude(url, preferences);
+            List<JobFilter> alwaysExcludeDeepFiltersTrusted = FilterFactory.getDeepFiltersAlwaysExcludeTrusted(url, preferences);
+
             List<JobFilter> alwaysExcludeShallowFilters = FilterFactory.getShallowFiltersAlwaysExclude(url, preferences);
             List<JobFilter> deepSkipFilters = FilterFactory.getDeepFiltersSkip(url, preferences);
             List<JobFilter> shallowSkipFilters = FilterFactory.getShallowFiltersSkip(url, preferences);
             List<JobFilter> shallowFilters = FilterFactory.getShallowFilters(url, preferences);
+            List<JobFilter> shallowFiltersTrusted = FilterFactory.getShallowFiltersTrusted(url, preferences);
             DeepJobPopulator deepJobPopulator= getDeepJobPopulator();
             int numBadJobs,jobsOnPage;
 
             do {
                 currentPageNum++;
 
+                //TODO return something more complex that will return at least a no more results flag
                 WebElement resultsDiv = loadMainElement(newDriver);
-
+                if(resultsDiv==null){
+                    /*
+                    we could not get the page.
+                    Most likely this is because there are no more results
+                    stop processing this job and move onto the next
+                     */
+                    break;
+                }
                 nextPageButton = getNextPageButton(newDriver);
                 if(preferences.getSkipFirstPages()!=null &&preferences.getSkipFirstPages()>currentPageNum){
                     doubleClickOnElement(newDriver,nextPageButton);
@@ -124,18 +135,14 @@ public class LinkedInExtractor extends Extractor {
 
                 boolean includeJob;
                 ShallowJobPopulator populator= getShallowJobPopulator();
-                numBadJobs=0;
-                jobsOnPage=0;
 
                 for (Element item : items) {
-                    jobsOnPage++;
 
                     final Job currentJob = populator.populateJob(item,newDriver);
-                    currentJob.setSourceUrl(url);
                     if(currentJob==null){
-                        System.err.println(++numBadJobs+" out of "+jobsOnPage);
                         break;
                     }
+                    currentJob.setSourceUrl(url);
 
                     includeJob = true;
                     if(shallowSkipFilters.stream().anyMatch(f->!f.include(preferences, currentJob))){
@@ -152,16 +159,17 @@ public class LinkedInExtractor extends Extractor {
                         cache.addJob(currentJob);
                     }
                     if(alwaysExcludeShallowFilters.stream().anyMatch(f->!f.include(preferences, currentJob))){
-                        includeJob = false;
                         excludeJob(newDriver, currentJob);
                         continue;
                     }
                     if (alwaysIncludeShallowFilters.stream().anyMatch(f -> f.include(preferences, currentJob))) {
-                        includeJob = true;
                         includeJob(newDriver,jobs,currentJob);
                         continue;
                     }
-
+                    if (shallowFiltersTrusted.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
+                        includeJob = false;
+                        excludeJob(newDriver, currentJob);
+                    }
                     if (shallowFilters.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
                         includeJob = false;
                         excludeJob(newDriver, currentJob);
@@ -170,10 +178,21 @@ public class LinkedInExtractor extends Extractor {
 
                     if(includeJob) {
                         doubleClickOnElement(newDriver,currentJob.getJobDetailsLink());
-                        deepJobPopulator.populateJob(currentJob, newDriver);
+                        try{
+                            deepJobPopulator.populateJob(currentJob, newDriver);
+                        }catch (TimeoutException te){
+                            break;//exit this page and if it keeps happening eventually exit executor
+                        }
                         if (deepSkipFilters.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
                             continue;
                         }
+
+                        if (alwaysExcludeDeepFiltersTrusted.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
+                            excludeJob(newDriver, currentJob);
+                            continue;
+                        }
+
+                        //TODO MOVE ALL FILTERS TO TRUSTED AND REMOVE THIS BLOCK
                         if (alwaysExcludeDeepFilters.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
                             excludeJob(newDriver, currentJob);
                             continue;
@@ -275,7 +294,7 @@ public class LinkedInExtractor extends Extractor {
                 if (driver.findElement(By.className("jobs-search-no-results-banner")) != null) {
                     return null;
                 } else {
-                    System.err.println("");
+                    System.err.println();
                 }
             }
         }catch (TimeoutException te) {
@@ -420,10 +439,7 @@ public class LinkedInExtractor extends Extractor {
                 //entry
                 "https://www.linkedin.com/jobs/search/?currentJobId=3715349877&f_E=2&f_JT=F%2CP%2CC&f_T=9%2C10738&f_WT=2&keywords=java&origin=JOB_SEARCH_PAGE_JOB_FILTER&sortBy=DD"
         );
-        List<String> miscUrls=List.of(
-                //easy apply
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3731599390&distance=25&f_AL=true&f_E=2%2C3&f_F=it&f_JT=F&f_T=10738%2C9&f_WT=2&geoId=103644278&keywords=java%20-ui%20-servicenow%20-staff%20-embedded%20-scala%20-fast%20-typescript%20-braintrust%20-frontend%20-sdet%20-cybercoders%20-analytics%20-bootstrap%20-salesforce%20-jobot%20-fingerprint%20-.net%20-php%20-ruby%20-principal%20-sap%20-sas%20-quantumbricks%20-pressure%20-expert&origin=JOB_SEARCH_PAGE_JOB_FILTER&sortBy=R"
-        );
+
 
         List<String> industryUrls=List.of(
                 //software
@@ -431,41 +447,6 @@ public class LinkedInExtractor extends Extractor {
                 //good industry
                 "https://www.linkedin.com/jobs/search/?currentJobId=3706133609&f_E=2%2C3%2C4&f_I=14%2C17%2C75%2C12%2C124%2C15%2C100%2C132%2C139%2C69%2C114%2C144%2C68%2C70%2C57%2C89%2C115%2C125%2C13%2C130%2C16%2C37%2C67%2C79%2C85%2C86%2C88%2C90&f_JT=F&f_T=9%2C24%2C2385&f_WT=2&geoId=103644278&keywords=java&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD"
         );
-
-        List<String> fewApplicantUrls=List.of(
-                //less than 10
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3693981987&distance=25&f_E=2%2C3%2C4&f_EA=true&f_F=it&f_T=9%2C10738%2C24&f_WT=2&geoId=103644278&keywords=java%20-salesforce%20-ruby%20-php%20-scala%20-startup%20-fast%20-typescript%20-principal%20-servicenow%20-consulting%20-embedded%20-lead%20-cybercoders%20-canonical%20-.net%20-synergisticit%20-mobile%20-mainframe%20-sr.%20-hybrid%20-senior%20-fingerprint%20-bootstrap%20-adobe%20-field%20-staff%20-sap%20-security"
-                //all jobs that might be acceptable to be filtered by age and num applicants
-                //entry 920
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3718516360&f_E=2&f_JT=F&f_T=9%2C39%2C23347%2C10738%2C25201%2C1660&f_WT=2&geoId=103644278&keywords=java%20-tutor%20-affirm%20-startup&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD"
-                //associate 500
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3707674204&f_E=3&f_JT=F%2CO&f_T=9%2C10738%2C23347%2C39%2C25201%2C1660&f_WT=2&keywords=java&origin=JOB_SEARCH_PAGE_JOB_FILTER&sortBy=DD"
-                // mid/senior 950
-                "https://www.linkedin.com/jobs/search/?currentJobId=3727208945&f_E=4&f_JT=F&f_T=9%2C39%2C23347%2C10738%2C25201%2C1660&f_WT=2&geoId=103644278&keywords=java%20-startup%20-typescript%20-affirm&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD"
-        );
-
-        Preferences preferences = TestUtil.getDefaultPreferences();
-        preferences.setMinYearlySalary(80000);
-        preferences.setMaxJobAgeInDays(60);
-//        preferences.setMinJobAgeInDays(2);
-//        preferences.setMaxApplicants(90);
-        preferences.setMaxLevel(3);
-        preferences.setExcludeFresher(true);
-        preferences.setExcludeSenior(true);
-        preferences.setExcludeBigData(true);
-        preferences.setExcludeBlockchain(true);
-        preferences.setExcludeCloudHeavy(true);
-        preferences.setExcludeComplexJobs(true);
-        preferences.setExcludeConsultantCompanies(true);
-        preferences.setExcludeProfitFocusedCompanies(true);
-        preferences.setExcludePromoted(false);
-        preferences.setExcludeIdentityManagement(true);
-        preferences.setExcludeRealEstate(true);
-        preferences.setAmountOfTotalExperience(6);
-        preferences.setMaxEmployees(9000);
-        preferences.setSkipFirstPages(null);
-        preferences.setSkipTooManyApplicants(false);
-        preferences.setSkipJobsSourcedFromExternalJobBoard(false);
     }
 
 

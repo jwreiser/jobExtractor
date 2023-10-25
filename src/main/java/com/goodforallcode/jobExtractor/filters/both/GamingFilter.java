@@ -10,9 +10,9 @@ public class GamingFilter implements JobFilter {
     /**
      * Exceptions
      * Game:    Game changing
-     * Ganes: tickets to games as benefit
+     * Games/gaming: tickets to games as benefit or in the breakroom
      */
-    List<String> phrases = List.of("gaming", "unreal","Xbox","PlayStation","gameplay");
+    List<String> phrases = List.of("unreal","Xbox","PlayStation","gameplay");
     List<String> titlePhrases = List.of("game", "games");
 
     @Override

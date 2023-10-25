@@ -5,7 +5,6 @@ import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.List;
-import java.util.Locale;
 
 public class StartupFilter implements JobFilter {
     /**
@@ -17,19 +16,19 @@ public class StartupFilter implements JobFilter {
      * founding:    can only be in title as could refer to founding principle
      * ventures:    can return to internal program like a mentorship joint ventures one
      */
-    List<String> phrases =List.of("startup","start-up"
-            ,"Series A","Series B",
-            "Storm 3","Storm 4","Storm 5","Storm 6",
+    List<String> phrases =List.of(
             "seed-stage", "y combinator","backed"," early stage",
-            "B corp"," VC","backed","investors","pre-seed");
-
+            " VC","backed","investors","pre-seed");
+    List<String> bothPhrases =List.of("startup","start-up"," start up "
+            ,"B corp","Series A","Series B");
     List<String> notPhrases =List.of("public benefit corporation","PBC");
-    List<String> companyNamePhrases =List.of("Patterned Learning AI","minware","Included Health",
+    List<String> companyNames =List.of("Patterned Learning AI","minware","Included Health",
+            "Storm 3","Storm 4","Storm 5","Storm 6","Nira Energy","Apploi",
             "Ascendion","WellSaid Labs","Alma","Maven Clinic","hims & hers");
-    List<String> titlePhrases =List.of("founding");
+    List<String> titlePhrases =List.of("founding","Founder","Entrepreneur");
 
     public boolean include(Preferences preferences, Job job){
-        if(companyNamePhrases.stream().anyMatch(c->c.equals(job.getCompanyName()))){
+        if(companyNames.stream().anyMatch(c->c.equals(job.getCompanyName()))){
             System.err.println("startup based on company ->include: " + job);
             return false;
 
@@ -37,6 +36,10 @@ public class StartupFilter implements JobFilter {
         String title =job.getTitle().toLowerCase();
         if(titlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
             System.err.println("startup based on title ->include: " + job);
+            return false;
+        }
+        if(bothPhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
+            System.err.println("startup based on title both ->include: " + job);
             return false;
 
         }
@@ -46,6 +49,11 @@ public class StartupFilter implements JobFilter {
                 System.err.println("not startup ->include: " + job);
                 return true;
             }
+            if (bothPhrases.stream().anyMatch(p -> description.contains(p))) {
+                System.err.println("startup both description ->reject: " + job);
+                return false;
+            }
+
             if (phrases.stream().anyMatch(p -> description.contains(p))) {
                 System.err.println("startup ->reject: " + job);
                 return false;

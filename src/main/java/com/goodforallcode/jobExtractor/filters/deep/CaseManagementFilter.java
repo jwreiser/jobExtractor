@@ -8,16 +8,23 @@ import java.util.List;
 
 public class CaseManagementFilter implements JobFilter {
 
-    List<String> phrases =List.of("Entellitrak","Documentum");
+    List<String> phrases = List.of("Entellitrak", "Documentum");
 
-    public boolean include(Preferences preferences, Job job){
-        String description =job.getDescription().toLowerCase();
-     if (phrases.stream().anyMatch(p->description.contains(p.toLowerCase()))) {
-         System.err.println("Case Management->reject: " + job);
-         return false;
-     }
+    public boolean include(Preferences preferences, Job job) {
+        final String title = job.getTitle().toLowerCase();
+        if (phrases.stream().anyMatch(p -> title.contains(p.toLowerCase()))) {
+            System.err.println("Case Management title ->reject: " + job);
+            return false;
+        }
+        if (job.getDescription() != null) {
+            String description = job.getDescription().toLowerCase();
+            if (phrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
+                System.err.println("Case Management->reject: " + job);
+                return false;
+            }
+        }
 
-     return true;
+        return true;
 
- }
+    }
 }

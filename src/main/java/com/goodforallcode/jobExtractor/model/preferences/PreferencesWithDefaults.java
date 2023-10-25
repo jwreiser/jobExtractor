@@ -15,9 +15,8 @@ public class PreferencesWithDefaults implements Preferences {
     boolean excludePoorWorkLifeBalance=true;
 
     public boolean excludeContractJobs=true;
-    public boolean excludeConsultantCompanies=false;
+    public boolean excludeConsultant=false;
     Optional<Integer> includedContractMinimumDuration= Optional.of(12);
-    public boolean excludeProfitFocusedCompanies=false;
     public float maxRatioOfMissingSkills=0.3F;
     public  boolean excludeComplexJobs=false;
     public  boolean remoteOnly=true;

@@ -1,6 +1,5 @@
 package com.goodforallcode.jobExtractor.filters.both;
 
-import com.goodforallcode.jobExtractor.extractor.Extractor;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
@@ -41,12 +40,9 @@ public class FullstackFilter implements JobFilter {
     }
 
     private boolean missingRequiredSkill(String skill,String jobTitle,List<String> qualifiedSkills){
-        boolean missing=false;
-        if(jobTitle.contains(skill)
+        boolean missing= jobTitle.contains(skill)
                 /* if there is a skill in the title we don't have*/
-                && !qualifiedSkills.stream().anyMatch(qs->qs.toLowerCase().equals(skill))){
-            missing=true;
-        }
+                && qualifiedSkills.stream().noneMatch(qs -> qs.toLowerCase().equals(skill));
         return missing;
     }
 }

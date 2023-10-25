@@ -6,10 +6,9 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.List;
 
-public class CoordinationAndManagementTitleFilter implements JobFilter {
+public class InventoryManagementFilter implements JobFilter {
     List<String> jobTitlePhrases=List.of(
-            "Manager","Systems engineer","System engineer","System Analyst"
-            ,"Systems Analyst","developer advocate","developer evangelist"
+            "RF Smart","RF-Smart"
             );
     @Override
     public boolean include(Preferences preferences, Job job) {
@@ -17,7 +16,7 @@ public class CoordinationAndManagementTitleFilter implements JobFilter {
 
         //if this is a job title we are not qualified for
         if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
-            System.err.println("Coordination and Management job title->reject: "+job);
+            System.err.println("Inventory Management title->reject: "+job);
             return false;
         }
         return true;

@@ -1,6 +1,5 @@
 package com.goodforallcode.jobExtractor.model;
 
-import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.goodforallcode.jobExtractor.model.preferences.PreferencesWithDefaults;
 import lombok.AllArgsConstructor;
 import lombok.Data;

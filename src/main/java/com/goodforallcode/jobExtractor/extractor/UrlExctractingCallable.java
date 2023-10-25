@@ -4,7 +4,6 @@ import com.goodforallcode.jobExtractor.cache.JobCache;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import org.openqa.selenium.Cookie;
-import org.openqa.selenium.WebDriver;
 
 import java.util.List;
 import java.util.Set;
@@ -18,7 +17,7 @@ public class UrlExctractingCallable implements Callable<List<Job>> {
     Preferences preferences;
     JobCache cache;
 
-    public UrlExctractingCallable(Extractor extractor, List<String> urls, WebDriver driver, Preferences preferences, JobCache cache) {
+    public UrlExctractingCallable(Extractor extractor, List<String> urls, Set<Cookie> cookies, Preferences preferences, JobCache cache) {
         this.urls = urls;
         this.cookies = cookies;
         this.preferences = preferences;
@@ -28,7 +27,8 @@ public class UrlExctractingCallable implements Callable<List<Job>> {
 
     @Override
     public List<Job> call() throws Exception {
-        return urls.stream().flatMap(url -> extractor.getJobs(cookies, preferences, url, cache)).collect(Collectors.toList());
+        List<Job> jobs= urls.stream().flatMap(url -> extractor.getJobs(cookies, preferences, url, cache)).collect(Collectors.toList());
+        return jobs;
     }
 
 }

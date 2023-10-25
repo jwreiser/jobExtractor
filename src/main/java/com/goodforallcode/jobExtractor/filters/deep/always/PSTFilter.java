@@ -7,8 +7,11 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 public class PSTFilter implements JobFilter {
-
-    List<String> keywords=List.of(" PST "," PDT ","Pacific Time");
+    /**
+     * Examples:
+     * Pacific /Mountain/ Central time zones
+     */
+    List<String> keywords=List.of(" PST "," PDT "," Pacific ");
     @Override
     public boolean include(Preferences preferences, Job job) {
         if (job.getDescription().contains("overlap with 9am-5pm PST")) {

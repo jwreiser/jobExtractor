@@ -15,7 +15,7 @@ public class ProgrammingLanguageTitleFilter implements JobFilter {
     List<String> languages=List.of(
             "Ruby","Rust","Go","Golang","Net","DotNet",".Net","iOS","React","Angular","Typescript"
             ,"Javascript","CNO","C#","C++","Visual C","Scala","Swift","Dart"," C"," R","PHP",
-            "VB.NET","perl","MATLAB","SAS","COBOL","ABAP","Tcl","Elixir","Erlang","F#",
+            "VB.NET","perl","MATLAB","SAS","COBOL","ABAP","Tcl","Elixir","Erlang","F#","GO Lang",
             "ColdFusion","Genie","Natural","Spark","verilog","MUMPS","GraphQL");
     List<String> sharedLanguages=List.of("Python");
     boolean include;
@@ -41,6 +41,11 @@ public class ProgrammingLanguageTitleFilter implements JobFilter {
                 return false;
             }
 
+            if (languages.stream().anyMatch(l -> title.contains(l.toLowerCase() + " backend developer"))) {
+                System.err.println("language developer ->reject: " + job);
+                return false;
+            }
+
             if (languages.stream().anyMatch(l -> title.contains(l.toLowerCase() + " programmer"))) {
                 System.err.println("language programmer ->reject: " + job);
                 return false;
@@ -48,6 +53,11 @@ public class ProgrammingLanguageTitleFilter implements JobFilter {
 
             if (languages.stream().anyMatch(l -> title.contains(l.toLowerCase() + " application developer"))) {
                 System.err.println("language application developer ->reject: " + job);
+                return false;
+            }
+
+            if (languages.stream().anyMatch(l -> title.contains("("+l.toLowerCase() + ")"))) {
+                System.err.println("language solo skill ->reject: " + job);
                 return false;
             }
 

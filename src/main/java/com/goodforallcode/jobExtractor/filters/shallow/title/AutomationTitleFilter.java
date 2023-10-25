@@ -6,18 +6,17 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.List;
 
-public class FrontEndTitleFilter implements JobFilter {
+public class AutomationTitleFilter implements JobFilter {
     List<String> jobTitlePhrases=List.of(
-            "Front end developer","Frontend developer","Front-end developer", "Ui developer","Ui engineer","UX developer",
-            " React","Angular","Typescript","Javascript"
-            );
+"Automation","Rockwell Portfolio","BAW ");
+
+
     @Override
     public boolean include(Preferences preferences, Job job) {
         String title =job.getTitle().toLowerCase();
 
-        //if this is a job title we are not qualified for
-        if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
-            System.err.println("Front end job title->reject: "+job);
+         if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
+            System.err.println("Automation job title->reject: "+job);
             return false;
         }
         return true;
