@@ -9,9 +9,9 @@ import java.util.List;
 public class BigDataFilter implements JobFilter {
     List<String> descriptionPhrases =List.of(   "pipelines","pipeline",
             "Extract, Transform, and Load");
-    List<String> bothPhrases =List.of(   "big data","ETL",
+    List<String> bothPhrases =List.of(   "big data","ETL ",
             "Extract, Transform, and Load",
-            "spark","hive","pig","warehousing","lake","hadoop","Warehouse");
+            "spark","hive ","pig ","warehousing","lake","hadoop","Warehouse");
 
     @Override
     public boolean include(Preferences preferences, Job job) {
@@ -19,8 +19,8 @@ public class BigDataFilter implements JobFilter {
             return true;
         }
         String title = job.getTitle().toLowerCase();
-        if (bothPhrases.stream().filter(k -> title.contains(k.toLowerCase())).count() > 2) {
-            System.err.println("BigData ->reject: " + job);
+        if (bothPhrases.stream().anyMatch(k -> title.contains(k.toLowerCase()))) {
+            System.err.println("BigData title both ->reject: " + job);
             return false;
         }
         if(job.getDescription()!=null) {

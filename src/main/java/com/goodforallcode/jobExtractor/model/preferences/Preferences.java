@@ -50,9 +50,10 @@ public interface Preferences {
      boolean isExcludeMilitary();
      boolean isExcludeStartups();
      boolean isRemoteOnly();
-     boolean isExcludeRecruitersThatDontIncludeClientDetails();
-     float getMaxRatioOfMissingSkills();
      int getMaxYearsOfExperience();
+     void setMaxYearsOfExperience(int value);
+     int getMaxYearsOfExperienceForUnlistedSkill();
+     void setMaxYearsOfExperienceForUnlistedSkill(int value);
      int getMinContractRate();
      int getMaxContractRate();
      Integer getMinYearlySalary();
@@ -60,6 +61,8 @@ public interface Preferences {
      void setMaxLevel(Integer level);
      Integer getMaxEmployees();
      void setMaxEmployees(Integer employees);
+     Integer getMaxTravelPercentage();
+     void setMaxTravelPercentage(Integer employees);
      Integer getMinFortuneRank();
      void setMinFortuneRank(Integer fortuneRank);
      Integer getMaxApplicants();
@@ -82,8 +85,6 @@ public interface Preferences {
      void setProgrammingLanguages(List<String> languages);
      List<String> getDesiredClearancePhrases();
 
-     List<String> getTitlePhrases();
-     void setTitlePhrases(List<String> phrases);
      List<String> getLocationPhrases();
      void setLocationPhrases(List<String> phrases);
 

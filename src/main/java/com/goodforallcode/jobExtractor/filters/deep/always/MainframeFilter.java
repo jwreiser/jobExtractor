@@ -11,11 +11,13 @@ public class MainframeFilter implements JobFilter {
 
     @Override
     public boolean include(Preferences preferences, Job job) {
-        String text =job.getDescription().toLowerCase();
+        if(job.getDescription()!=null) {
+            String description = job.getDescription().toLowerCase();
 
-        if(phrases.stream().anyMatch(k->text.contains(k.toLowerCase()))){
-            System.err.println("Mainframe ->reject: "+job);
-            return false;
+            if (phrases.stream().anyMatch(k -> description.contains(k.toLowerCase()))) {
+                System.err.println("Mainframe ->reject: " + job);
+                return false;
+            }
         }
         return true;
     }

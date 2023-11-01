@@ -6,16 +6,15 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.List;
 
-public class MedicalCoderTitleFilter implements JobFilter {
+public class SoftwareDevelopmentProjectManagementTitleFilter implements JobFilter {
     List<String> jobTitlePhrases=List.of(
-            "Coder","Coding"
+            "Jira"
             );
     @Override
     public boolean include(Preferences preferences, Job job) {
         String title =job.getTitle().toLowerCase();
-
         if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
-            System.err.println("Coder job title->reject: "+job);
+            System.err.println("Software Development Product Management job title->reject: "+job);
             return false;
         }
         return true;

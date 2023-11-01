@@ -17,25 +17,20 @@ public class RemoteFilter implements JobFilter {
             "Remote 20 hours per week","Mostly Remote","DAYS/WK ON SITE","days onsite",
             "Must be able to relocate","one day of remote work","Partial WFH",
     "Remote till pandemic","Remote til pandemic","able to travel","Future onsite work is required",
-"week onsite","one day of remote work");
+"week onsite","a hybrid position","remote within","(Hybrid)","in office days per ");
     List<String>remotePhrases=List.of("100% remote","Open for remote","remote or hybrid","WFH","Work From Home"
     ,"remotely within the U.S","remotely within the US","remote options","remote possible"
             ,"applications for remote work may be considered","Fully Remote","full and/or partial remote"
     ,"full or partial remote");
-    List<String>titlePhrases=List.of("(Hybrid))");
     @Override
     public boolean include(Preferences preferences, Job job) {
         final String title=job.getTitle().toLowerCase();
         if (remotePhrases.stream().anyMatch(k->title.contains(k.toLowerCase()))){
             return true;
         }
-        if (titlePhrases.stream().anyMatch(k->title.contains(k.toLowerCase()))){
-            System.err.println("Not remote title ->reject: "+job);
-            return false;
-        }
 
         if (notRemotePhrases.stream().anyMatch(k->title.contains(k.toLowerCase()))){
-            System.err.println("Not remote->reject: "+job);
+            System.err.println("Not remote title->reject: "+job);
             return false;
         }
 

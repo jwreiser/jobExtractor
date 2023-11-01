@@ -11,11 +11,13 @@ public class BasicFilter implements JobFilter {
 
     @Override
     public boolean include(Preferences preferences, Job job) {
-        String text =job.getDescription();//case sensitive
+        if (job.getDescription()!=null) {
+            String description = job.getDescription();//case sensitive
 
-        if(keywords.stream().anyMatch(k->text.contains(k))){
-            System.err.println("Basic ->reject: "+job);
-            return false;
+            if (keywords.stream().anyMatch(k -> description.contains(k))) {
+                System.err.println("Basic ->reject: " + job);
+                return false;
+            }
         }
         return true;
     }

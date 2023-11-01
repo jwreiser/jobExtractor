@@ -11,11 +11,15 @@ public class EnterpriseApplicationsFilter implements JobFilter {
 
     @Override
     public boolean include(Preferences preferences, Job job) {
-        String text =job.getDescription().toLowerCase();
+        if (job.getDescription()!=null) {
+            if (job.getDescription() != null) {
+                String description = job.getDescription().toLowerCase();
 
-        if(phrases.stream().filter(k->text.contains(k.toLowerCase())).count()>2){
-            System.err.println("Enterprise Application ->reject: "+job);
-            return false;
+                if (phrases.stream().filter(k -> description.contains(k.toLowerCase())).count() > 2) {
+                    System.err.println("Enterprise Application ->reject: " + job);
+                    return false;
+                }
+            }
         }
         return true;
     }

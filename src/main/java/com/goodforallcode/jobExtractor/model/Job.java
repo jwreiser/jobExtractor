@@ -80,7 +80,6 @@ public class Job {
     Integer maxExperienceRequired=null;
     @JsonIgnore
     int numEmployees;
-    @JsonIgnore
     int numApplicants;
     @JsonIgnore
     Float tenure=null;
@@ -88,7 +87,7 @@ public class Job {
     String title;
     String companyName;
     String industry;
-
+    Integer travelPercent;
     @JsonIgnore
     Company company;
 

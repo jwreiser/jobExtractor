@@ -6,13 +6,13 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.List;
 
-public class DataExchange implements JobFilter {
-    List<String> phrases =List.of(" EDI");
+public class DataExchangeFilter implements JobFilter {
+    List<String> titlePhrases =List.of("EDI ");
     List<String> descriptionPhrases =List.of(" EDI ");
     @Override
     public boolean include(Preferences preferences, Job job) {
         //case sensitive
-        if (phrases.stream().anyMatch(k -> job.getTitle().contains(k))) {
+        if (titlePhrases.stream().anyMatch(k -> job.getTitle().contains(k))) {
             System.err.println("data exchange title ->reject: " + job);
             return false;
         }

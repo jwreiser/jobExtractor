@@ -8,7 +8,8 @@ import java.util.List;
 
 public class ContractBasedEmployerFilter implements JobFilter {
     List<String> companyNames =List.of( "Accenture Federal Services","Guidehouse"
-            ,"Wise Skulls","Brooksource","Harnham","Cypress HCM");
+            ,"Wise Skulls","Brooksource","Harnham","Cypress HCM","Belcan","Mindex",
+            "Kforce Inc","Kforce Com","Oktobor Animation");
 
     @Override
     public boolean include(Preferences preferences, Job job) {

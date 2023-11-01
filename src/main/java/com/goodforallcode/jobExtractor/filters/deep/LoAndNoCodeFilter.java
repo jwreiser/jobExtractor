@@ -9,7 +9,7 @@ import java.util.List;
 public class LoAndNoCodeFilter implements JobFilter {
 
     List<String> phrases =List.of("Pega ","Servicenow","Low Code","Low-Code",
-            "lansa ");
+            "lansa ","Quickbase","Entellitrek","Entellitrak");
 
     public boolean include(Preferences preferences, Job job){
         String title = job.getTitle().toLowerCase();

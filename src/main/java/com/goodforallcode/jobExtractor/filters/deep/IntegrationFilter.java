@@ -8,7 +8,7 @@ import java.util.List;
 
 public class IntegrationFilter implements JobFilter {
 
-    List<String> phrases =List.of("Mulesoft","Boomi");
+    List<String> bothPhrases =List.of("Mulesoft","Boomi ");
     List<String> titles =List.of("Implementation Engineer","Integration "
             ,"Integrations ","System Integrator");
 
@@ -18,9 +18,13 @@ public class IntegrationFilter implements JobFilter {
             System.err.println("Integration title ->reject: " + job);
             return false;
         }
+        if (bothPhrases.stream().anyMatch(p -> title.contains(p.toLowerCase()))) {
+            System.err.println("Integration title both ->reject: " + job);
+            return false;
+        }
         if(job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
-            if (phrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
+            if (bothPhrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
                 System.err.println("Integration->reject: " + job);
                 return false;
             }

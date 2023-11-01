@@ -11,11 +11,13 @@ public class RedHatFilter implements JobFilter {
 
     @Override
     public boolean include(Preferences preferences, Job job) {
-        String text =job.getDescription().toLowerCase();
+        if (job.getDescription()!=null) {
+            String description = job.getDescription().toLowerCase();
 
-        if(keywords.stream().filter(k->text.contains(k.toLowerCase())).count()>1){
-            System.err.println("Red hat ->reject: "+job);
-            return false;
+            if (keywords.stream().filter(k -> description.contains(k.toLowerCase())).count() > 1) {
+                System.err.println("Red hat ->reject: " + job);
+                return false;
+            }
         }
         return true;
     }

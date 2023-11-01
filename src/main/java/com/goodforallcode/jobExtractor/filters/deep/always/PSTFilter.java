@@ -14,14 +14,16 @@ public class PSTFilter implements JobFilter {
     List<String> keywords=List.of(" PST "," PDT "," Pacific ");
     @Override
     public boolean include(Preferences preferences, Job job) {
-        if (job.getDescription().contains("overlap with 9am-5pm PST")) {
-            System.err.println("PST ->include: " + job);
-            return true;
-        }
+        if (job.getDescription()!=null) {
+            if (job.getDescription().contains("overlap with 9am-5pm PST")) {
+                System.err.println("PST ->include: " + job);
+                return true;
+            }
 
-        if (keywords.stream().anyMatch(k->job.getDescription().contains(k))) {
-            System.err.println("PST ->reject: " + job);
-            return false;
+            if (keywords.stream().anyMatch(k -> job.getDescription().contains(k))) {
+                System.err.println("PST ->reject: " + job);
+                return false;
+            }
         }
         return true;
     }

@@ -3,6 +3,7 @@ package com.goodforallcode.jobExtractor.filters.both;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
@@ -23,6 +24,10 @@ public class OffshoreFilter implements JobFilter {
             String description = job.getDescription().toLowerCase();
             if (offShorePhrases.stream().anyMatch(p -> description.contains(p))) {
                 System.err.println("Job offshore->reject: " + job);
+                return false;
+            }
+            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job.getDescription()))){
+                System.err.println("offshore based on company description ->reject: " + job);
                 return false;
             }
         }

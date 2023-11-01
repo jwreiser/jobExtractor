@@ -11,12 +11,13 @@ public class PerformanceFilter implements JobFilter {
     List<String> phrases =List.of("profiling","optimizing","Tuning","Onestream"," cpm ");
 
     public boolean include(Preferences preferences, Job job){
-        String description =job.getDescription().toLowerCase();
-     if (phrases.stream().anyMatch(p->description.contains(p.toLowerCase()))) {
-         System.err.println("performance->reject: " + job);
-         return false;
-     }
-
+        if (job.getDescription()!=null) {
+            String description = job.getDescription().toLowerCase();
+            if (phrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
+                System.err.println("performance->reject: " + job);
+                return false;
+            }
+        }
      return true;
 
  }

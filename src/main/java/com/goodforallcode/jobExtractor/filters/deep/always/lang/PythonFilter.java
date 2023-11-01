@@ -11,12 +11,14 @@ public class PythonFilter implements JobFilter {
 
     @Override
     public boolean include(Preferences preferences, Job job) {
-        String text = job.getDescription().toLowerCase();
+        if (job.getDescription()!=null) {
+            String description = job.getDescription().toLowerCase();
 
-        long mainCount = keywords.stream().filter(k -> text.contains(k.toLowerCase())).count();
-        if (mainCount > 2) {
-            System.err.println("python "+mainCount+"->reject: " + job);
-            return false;
+            long mainCount = keywords.stream().filter(k -> description.contains(k.toLowerCase())).count();
+            if (mainCount > 2) {
+                System.err.println("python " + mainCount + "->reject: " + job);
+                return false;
+            }
         }
         return true;
     }

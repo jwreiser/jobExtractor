@@ -14,10 +14,12 @@ public class BlockChainFilter implements JobFilter {
         if(!preferences.isExcludeBlockchain()){
             return true;
         }
-        String text =job.getDescription().toLowerCase();
-        if(keywords.stream().anyMatch(k->text.contains(k.toLowerCase()))){
-            System.err.println("blockchain ->reject: "+job);
-            return false;
+        if(job.getDescription()!=null) {
+            String description = job.getDescription().toLowerCase();
+            if (keywords.stream().anyMatch(k -> description.contains(k.toLowerCase()))) {
+                System.err.println("blockchain ->reject: " + job);
+                return false;
+            }
         }
         return true;
     }

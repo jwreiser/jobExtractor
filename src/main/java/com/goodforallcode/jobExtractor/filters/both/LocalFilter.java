@@ -7,8 +7,8 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 public class LocalFilter implements JobFilter {
-    List<String> phrases =List.of("local to","Local candidates"
-    ,"will only be considering candidates within","Preferred location is","will be located in",
+    List<String> phrases =List.of("local to","Local candidates", "located in a commutable distance",
+    "will only be considering candidates within","Preferred location is","will be located in",
 "position will be based in","Residents only","Must reside"," DC Area",
             "Primary Location","within commute distance","must be living");
 

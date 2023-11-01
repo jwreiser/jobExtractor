@@ -3,6 +3,7 @@ package com.goodforallcode.jobExtractor.filters.deep.always;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
@@ -19,9 +20,13 @@ public class FreelanceFilter implements JobFilter {
         }
 
         if(job.getDescription()!=null) {
-            String text = job.getDescription().toLowerCase();
-            if (keywords.stream().anyMatch(k -> text.contains(k.toLowerCase()))) {
+            String description = job.getDescription().toLowerCase();
+            if (keywords.stream().anyMatch(k -> description.contains(k.toLowerCase()))) {
                 System.err.println("freelance description ->reject: " + job);
+                return false;
+            }
+            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job.getDescription()))){
+                System.err.println("freelance based on company description ->reject: " + job);
                 return false;
             }
         }

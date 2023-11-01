@@ -58,8 +58,8 @@ public abstract class Extractor {
         List<Job> jobs = new ArrayList<>();
         JobCache cache=new DefaultJobCache();
         int numThreads=3;
-        int size=urls.size();
-        if(urls.size()>1){
+        int size=1;
+        if(urls.size()>numThreads){
             size=urls.size()/numThreads;
         }
         Collection<List<String>> urlLists =  Lists.partition(urls, size);

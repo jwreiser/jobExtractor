@@ -7,7 +7,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 public class DataFocusedTitleFilter implements JobFilter {
-    List<String> jobTitlePhrases=List.of(
+    List<String> jobTitlePhrases=List.of("Data Migration",
             " ETL ","Data Developer","Analytics","Statistical",
             "Data Analyst","Data Scientist","Data Science","Data Engineer","data analytics",
             "InterSystems Ensemble","IRIS ","Netezza"

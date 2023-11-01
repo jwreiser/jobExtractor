@@ -3,6 +3,7 @@ package com.goodforallcode.jobExtractor.filters.both;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
@@ -13,10 +14,15 @@ public class GamingFilter implements JobFilter {
      * Games/gaming: tickets to games as benefit or in the breakroom
      */
     List<String> phrases = List.of("unreal","Xbox","PlayStation","gameplay");
-    List<String> titlePhrases = List.of("game", "games");
+    List<String> titlePhrases = List.of("game", "games","Engine ");
+    List<String> companyNames = List.of("Second Dinner");
 
     @Override
     public boolean include(Preferences preferences, Job job) {
+        if(job.getCompanyName()!=null && companyNames.stream().anyMatch(n->job.getCompanyName().equals(n))){
+            System.err.println("game company name ->reject: " + job);
+            return false;
+        }
         final String title = job.getTitle().toLowerCase();
         if (titlePhrases.stream().anyMatch(k -> title.contains(k.toLowerCase()))) {
             System.err.println("game title only ->reject: " + job);
@@ -28,9 +34,13 @@ public class GamingFilter implements JobFilter {
         }
 
         if (job.getDescription() != null) {
-            final String text = job.getDescription().toLowerCase();
-            if (phrases.stream().anyMatch(k -> text.contains(k.toLowerCase()))) {
+            final String description = job.getDescription().toLowerCase();
+            if (phrases.stream().anyMatch(k -> description.contains(k.toLowerCase()))) {
                 System.err.println("game description ->reject: " + job);
+                return false;
+            }
+            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job.getDescription()))){
+                System.err.println("gaming based on company description ->reject: " + job);
                 return false;
             }
         }

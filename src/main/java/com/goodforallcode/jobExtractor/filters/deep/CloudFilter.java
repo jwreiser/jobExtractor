@@ -12,7 +12,7 @@ public class CloudFilter implements JobFilter {
             "cloud-native","cloud native","Matillion", " aws ");
     List<String> bothKeywords = List.of("SailPoint","Apigee",
             "Informatica","azure ","gcp","cloud","Lambda", "Snowflake",
-            "Matillion","Apigee","FlashStack");
+            "Matillion","Apigee","FlashStack","SFCC","PCF","Flashstack");
 
 
     List<String> jobTitlePhrases=List.of(

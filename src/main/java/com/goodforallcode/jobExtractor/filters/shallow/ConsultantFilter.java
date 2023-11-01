@@ -3,11 +3,12 @@ package com.goodforallcode.jobExtractor.filters.shallow;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
 public class ConsultantFilter implements JobFilter {
-    static List<String>consultantKeywords=List.of("consultant","consulting");
+    static List<String>consultantKeywords=List.of("consultant","consulting","consultancy");
     static List<String>consultantCompanyNames=List.of("Curate Partners","Modis","Akkodis"
     ,"Ricardo plc");
 
@@ -36,6 +37,18 @@ public class ConsultantFilter implements JobFilter {
         if(consultantKeywords.stream().anyMatch(k -> job.getCompanyName().contains(k.toLowerCase()))){
             System.err.println("Consultant companyName->reject: "+job);
             return false;
+        }
+
+        if(job.getDescription()!=null){
+            final String description=job.getDescription().toLowerCase();
+            if(consultantKeywords.stream().anyMatch(k -> description.contains(k.toLowerCase()))){
+                System.err.println("Consultant description ->reject: "+job);
+                return false;
+            }
+            if(consultantCompanyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job.getDescription()))){
+                System.err.println("consultant based on company description ->reject: " + job);
+                return false;
+            }
         }
         return true;
     }

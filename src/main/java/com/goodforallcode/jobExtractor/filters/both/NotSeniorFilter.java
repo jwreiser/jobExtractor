@@ -7,7 +7,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 /**
- * As opposed to @SeniorityLevelFilter this does not look to see if you have the level contained in a title
+ * this does not look to see if you have the level contained in a title
  * This instead looks for indications of the job being a senior level job
  */
 public class NotSeniorFilter implements JobFilter {
@@ -22,6 +22,9 @@ public class NotSeniorFilter implements JobFilter {
     List<String> descriptionPhrases =List.of("Completes product technical design",
             "produce software designs","subordinate",
             "Advanced knowledge of","lead project teams");
+
+    List<String> notDescriptionPhrases =List.of("Intermediate to advanced knowledge of");
+
 
     List<String> titleOnlyPhrases =List.of( "specialist","sr ","sr.", "senior");
 
@@ -40,6 +43,9 @@ public class NotSeniorFilter implements JobFilter {
         if(job.getDescription()!=null) {
             String description =job.getDescription().toLowerCase();
 
+            if(notDescriptionPhrases.stream().anyMatch(k->description.contains(k.toLowerCase()))){
+                return true;
+            }
             if(descriptionPhrases.stream().anyMatch(k->description.contains(k.toLowerCase()))){
                 System.err.println("Senior description ->reject: "+job);
                 return false;

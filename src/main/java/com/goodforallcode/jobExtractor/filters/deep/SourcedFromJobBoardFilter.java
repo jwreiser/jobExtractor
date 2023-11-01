@@ -6,7 +6,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 public class SourcedFromJobBoardFilter implements JobFilter {
     public boolean include(Preferences preferences, Job job){
-        if (job.isSourcedFromJobBoard()) {
+        if (job.isSourcedFromJobBoard() && preferences.isSkipJobsSourcedFromExternalJobBoard()) {
             System.err.println("SourcedFromJobBoard ->reject: " + job);
             return false;
         }

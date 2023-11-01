@@ -8,8 +8,10 @@ import java.util.List;
 
 public class BusinessIntelligenceFilter implements JobFilter {
     List<String>keywords=List.of("business intelligence","BI ","power bi","Domo",
-            "Tableau","Looker","SAP ","PowerBI","QLik","DataStudio","ABAP"
-            ,"PO Developer","abinitio","ab initio","Yardi ","QuickSight");
+            "Tableau","Looker","SAP ","PowerBI","QLik","DataStudio","ABAP",
+            "Cognos","Pyramid",
+
+            "PO Developer","abinitio","ab initio","Yardi ","QuickSight");
     final List<String>titles=List.of("Reporting");
 
 

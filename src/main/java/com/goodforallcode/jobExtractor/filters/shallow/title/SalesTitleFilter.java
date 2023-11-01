@@ -8,7 +8,7 @@ import java.util.List;
 
 public class SalesTitleFilter implements JobFilter {
     List<String> jobTitlePhrases=List.of("Solution engineer","Solutions engineer"
-            ,"Solutions Developer","Solution Developer");
+            ,"Solutions Developer","Solution Developer","Sales Engineer");
 
     @Override
     public boolean include(Preferences preferences, Job job) {

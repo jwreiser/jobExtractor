@@ -1,7 +1,7 @@
 package com.goodforallcode.jobExtractor.job.populate;
 
-import com.goodforallcode.jobExtractor.DateUtil;
-import com.goodforallcode.jobExtractor.NumUtil;
+import com.goodforallcode.jobExtractor.util.DateUtil;
+import com.goodforallcode.jobExtractor.util.NumUtil;
 import com.goodforallcode.jobExtractor.model.Job;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -143,6 +143,13 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
                     job.setLevel(6);
 
             } else if (title.contains(" V ")) {
+                job.setLevel(5);
+            }
+            else  if (title.endsWith(" IV")) {
+                job.setLevel(4);
+            }else if (title.endsWith(" VI")) {
+                job.setLevel(6);
+            } else if (title.endsWith(" V")) {
                 job.setLevel(5);
             }
         }

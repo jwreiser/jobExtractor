@@ -1,4 +1,4 @@
-package com.goodforallcode.jobExtractor;
+package com.goodforallcode.jobExtractor.util;
 
 import java.util.Arrays;
 import java.util.List;

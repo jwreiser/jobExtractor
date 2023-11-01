@@ -1,6 +1,6 @@
 package com.goodforallcode.jobExtractor.filter;
 
-import com.goodforallcode.jobExtractor.TestUtil;
+import com.goodforallcode.jobExtractor.util.TestUtil;
 import com.goodforallcode.jobExtractor.filters.shallow.title.BackendTitleFilter;
 import com.goodforallcode.jobExtractor.filters.shallow.title.ProgrammingLanguageTitleFilter;
 import com.goodforallcode.jobExtractor.model.Job;

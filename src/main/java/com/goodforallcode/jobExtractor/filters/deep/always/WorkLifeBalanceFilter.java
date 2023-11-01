@@ -3,6 +3,7 @@ package com.goodforallcode.jobExtractor.filters.deep.always;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
@@ -19,15 +20,18 @@ public class WorkLifeBalanceFilter implements JobFilter {
         critical : thinking
         pressure: work well under pressure does not mean bad balance. Seems like trope not sure if it would mean lack of balance
          */
-    List<String> phrases =List.of("on call","on-call",
-            "fast-moving","fast-paced", "fast paced","24/7",
+    List<String> phrases =List.of("on call","on-call","go-live support",
+            "fast-moving","fast-paced", "fast paced","24/7","aggressive timelines",
            "24x7","rotation","After business hours","After hours","aggressive delivery schedule",
             "nights","weekends","outside of normal business","outside normal business");
     List<String> goodCompanies =List.of("Ebay","Guidehouse","Trimble"
             ,"American Specialty Health","Nationwide");
     List<String> badCompanies =List.of("Cardinal Health","The Home Depot","Aha!","Cash App"
     ,"Square","Crunchyroll","HCLTech","Palo Alto Networks","Intelerad Medical Systems",
-            "Tenable","Kasten by Veeam","Dremio","Gigster","Samsung Electronics");
+            "Tenable","Kasten by Veeam","Dremio","Gigster","Samsung Electronics",
+            "Arize AI","Gevo, Inc.","Harmonia Holdings Group, LLC","Block",
+            "Penn State Health"
+    );
     List<String> safePhrases =List.of("internal rotation");
 
     public boolean include(Preferences preferences, Job job){
@@ -50,6 +54,10 @@ public class WorkLifeBalanceFilter implements JobFilter {
             }
             if (phrases.stream().anyMatch(p -> description.contains(p))) {
                 System.err.println("work life balance ->reject: " + job);
+                return false;
+            }
+            if(badCompanies.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c, job.getDescription()))){
+                System.err.println("worklife balance based on company description ->reject: " + job);
                 return false;
             }
         }

@@ -1,4 +1,4 @@
-package com.goodforallcode.jobExtractor;
+package com.goodforallcode.jobExtractor.util;
 
 import java.time.LocalDate;
 import java.time.Period;

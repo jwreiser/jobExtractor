@@ -10,7 +10,7 @@ public class AIFilter implements JobFilter {
     List<String> keywords = List.of("chatbot","chatbots","Conversational AI","ML","NLP"
             ,"natural language processing","NLU","Natural Language Understanding"
             ,"machine learning","TTS", "STT", "SSML","Tensorflow", "Pytorch"
-            , "ONNX");
+            , "ONNX","MXNet");
 
     @Override
     public boolean include(Preferences preferences, Job job) {

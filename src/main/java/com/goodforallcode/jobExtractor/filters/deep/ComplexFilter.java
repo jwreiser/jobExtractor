@@ -7,7 +7,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 /**
- * Scalability might show up in a mon senior position so this probably should not auto exclude
+ *
  */
 public class ComplexFilter implements JobFilter {
     /**
@@ -15,9 +15,11 @@ public class ComplexFilter implements JobFilter {
      * Strong: strong designing
      * infrastructure: spent last 10 years building infrastructure
      * scalable:        responsible for designing and implementing testable and scalable code.
+     * Scalability       might show up in a mon senior position so this probably should not auto exclude
+     * scaling          scaling our company
      */
     List<String> titles =List.of("HPC");
-    List<String> phrases =List.of("scaling","latency");
+    List<String> phrases =List.of("latency");
     public boolean include(Preferences preferences, Job job){
         if(!preferences.isExcludeComplexJobs()){
             return true;

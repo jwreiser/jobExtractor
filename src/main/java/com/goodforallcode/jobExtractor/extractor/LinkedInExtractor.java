@@ -1,6 +1,5 @@
 package com.goodforallcode.jobExtractor.extractor;
 
-import com.goodforallcode.jobExtractor.TestUtil;
 import com.goodforallcode.jobExtractor.cache.JobCache;
 import com.goodforallcode.jobExtractor.filters.FilterFactory;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
@@ -10,6 +9,7 @@ import com.goodforallcode.jobExtractor.job.populate.LinkedInShallowJobPopulator;
 import com.goodforallcode.jobExtractor.job.populate.ShallowJobPopulator;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.jsoup.Jsoup;
@@ -32,6 +32,20 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 public class LinkedInExtractor extends Extractor {
+    static List<JobFilter> deepSkipFilters = FilterFactory.getDeepFiltersSkip();
+
+    static List<JobFilter> alwaysIncludeDeepFilters = FilterFactory.getAlwaysIncludeDeepFilters();
+    static List<JobFilter> alwaysIncludeShallowFilters = FilterFactory.getAlwaysIncludeShallowFilters();
+    static List<JobFilter> shallowFilters = FilterFactory.getShallowFilters();
+    static List<JobFilter> alwaysExcludeDeepFilters = FilterFactory.getDeepFiltersAlwaysExclude();
+    static List<JobFilter> filters = FilterFactory.getDeepFilters();
+    static List<JobFilter> filtersTrusted = FilterFactory.getDeepFiltersTrusted();
+
+    static List<JobFilter> shallowFiltersTrusted = FilterFactory.getShallowFiltersTrusted();
+
+    static List<JobFilter> alwaysExcludeDeepFiltersTrusted = FilterFactory.getDeepFiltersAlwaysExcludeTrusted();
+    static List<JobFilter> alwaysExcludeShallowFilters = FilterFactory.getShallowFiltersAlwaysExclude();
+    static List<JobFilter> shallowSkipFilters = FilterFactory.getShallowFiltersSkip();
 
     @Override
     public WebDriver login(String userName, String password) {
@@ -57,16 +71,14 @@ public class LinkedInExtractor extends Extractor {
     public void doubleClickOnElement(WebDriver driver, WebElement element) {
        super.doubleClickOnElement(driver, element);
 
-        if(driver.getTitle().equals("Security Verification | LinkedIn")){
+        if(driver!=null && driver.getTitle().equals("Security Verification | LinkedIn")){
             System.err.println("You need to pass verification to login");
         }
     }
 
-    public boolean includeDeepPass(WebDriver driver,Job currentJob,Preferences preferences,String url){
+    public boolean includeDeepPass(WebDriver driver,Job currentJob,Preferences preferences){
         boolean includeJob=true;
 
-        List<JobFilter> filters = FilterFactory.getDeepFilters(url, preferences);
-        List<JobFilter> filtersTrusted = FilterFactory.getDeepFiltersTrusted(url, preferences);
         if (filtersTrusted.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
             includeJob = false;
             doubleClickOnElement(driver,currentJob.getHideButton());
@@ -96,19 +108,9 @@ public class LinkedInExtractor extends Extractor {
             int currentPageNum=0;
             WebElement nextPageButton=null;
 
-            List<JobFilter> alwaysIncludeDeepFilters = FilterFactory.getAlwaysIncludeDeepFilters(url, preferences);
-            List<JobFilter> alwaysIncludeShallowFilters = FilterFactory.getAlwaysIncludeShallowFilters(url, preferences);
-
-            List<JobFilter> alwaysExcludeDeepFilters = FilterFactory.getDeepFiltersAlwaysExclude(url, preferences);
-            List<JobFilter> alwaysExcludeDeepFiltersTrusted = FilterFactory.getDeepFiltersAlwaysExcludeTrusted(url, preferences);
-
-            List<JobFilter> alwaysExcludeShallowFilters = FilterFactory.getShallowFiltersAlwaysExclude(url, preferences);
-            List<JobFilter> deepSkipFilters = FilterFactory.getDeepFiltersSkip(url, preferences);
-            List<JobFilter> shallowSkipFilters = FilterFactory.getShallowFiltersSkip(url, preferences);
-            List<JobFilter> shallowFilters = FilterFactory.getShallowFilters(url, preferences);
-            List<JobFilter> shallowFiltersTrusted = FilterFactory.getShallowFiltersTrusted(url, preferences);
             DeepJobPopulator deepJobPopulator= getDeepJobPopulator();
-            int numBadJobs,jobsOnPage;
+
+
 
             do {
                 currentPageNum++;
@@ -133,7 +135,6 @@ public class LinkedInExtractor extends Extractor {
 
                 Elements items = getJobItems(newDriver,currentPageNum);
 
-                boolean includeJob;
                 ShallowJobPopulator populator= getShallowJobPopulator();
 
                 for (Element item : items) {
@@ -144,7 +145,7 @@ public class LinkedInExtractor extends Extractor {
                     }
                     currentJob.setSourceUrl(url);
 
-                    includeJob = true;
+
                     if(shallowSkipFilters.stream().anyMatch(f->!f.include(preferences, currentJob))){
                         /*we don't want to cache jobs that are too new otherwise we may
                         not see them again in other future searches
@@ -158,54 +159,21 @@ public class LinkedInExtractor extends Extractor {
                     }else{
                         cache.addJob(currentJob);
                     }
-                    if(alwaysExcludeShallowFilters.stream().anyMatch(f->!f.include(preferences, currentJob))){
+
+                    ExcludeJobResults excludeJobResults = excludeJob(currentJob, preferences,
+           newDriver,deepJobPopulator);
+
+                    if(excludeJobResults.skipRemainingJobs()){
+                        /*
+                        this should be true when there is an indication that the rest of the jobs on this page
+                         will have issues
+                         */
+                        break;
+                    }
+
+                    if(excludeJobResults.exludeJob()){
                         excludeJob(newDriver, currentJob);
-                        continue;
-                    }
-                    if (alwaysIncludeShallowFilters.stream().anyMatch(f -> f.include(preferences, currentJob))) {
-                        includeJob(newDriver,jobs,currentJob);
-                        continue;
-                    }
-                    if (shallowFiltersTrusted.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
-                        includeJob = false;
-                        excludeJob(newDriver, currentJob);
-                    }
-                    if (shallowFilters.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
-                        includeJob = false;
-                        excludeJob(newDriver, currentJob);
-                    }
-
-
-                    if(includeJob) {
-                        doubleClickOnElement(newDriver,currentJob.getJobDetailsLink());
-                        try{
-                            deepJobPopulator.populateJob(currentJob, newDriver);
-                        }catch (TimeoutException te){
-                            break;//exit this page and if it keeps happening eventually exit executor
-                        }
-                        if (deepSkipFilters.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
-                            continue;
-                        }
-
-                        if (alwaysExcludeDeepFiltersTrusted.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
-                            excludeJob(newDriver, currentJob);
-                            continue;
-                        }
-
-                        //TODO MOVE ALL FILTERS TO TRUSTED AND REMOVE THIS BLOCK
-                        if (alwaysExcludeDeepFilters.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
-                            excludeJob(newDriver, currentJob);
-                            continue;
-                        }
-
-                        if (alwaysIncludeDeepFilters.stream().anyMatch(f -> f.include(preferences, currentJob))) {
-                            includeJob(newDriver, jobs, currentJob);
-                            continue;
-                        }
-                        includeJob = includeDeepPass(newDriver, currentJob, preferences, url);
-                    }
-
-                    if (includeJob) {
+                    }else if(excludeJobResults.includeJob()){
                         includeJob(newDriver, jobs, currentJob);
                     }
                 }
@@ -228,6 +196,55 @@ public class LinkedInExtractor extends Extractor {
         return jobs.stream();
     }
 
+
+    public ExcludeJobResults excludeJob(Job currentJob,Preferences preferences,WebDriver driver
+    ,DeepJobPopulator deepJobPopulator){
+        boolean includeJob=true;
+
+        if(alwaysExcludeShallowFilters.stream().anyMatch(f->!f.include(preferences, currentJob))){
+            return new ExcludeJobResults(false,true,false);
+        }
+        if (alwaysIncludeShallowFilters.stream().anyMatch(f -> f.include(preferences, currentJob))) {
+            return new ExcludeJobResults(true,false,false);
+        }
+
+        if(shallowFiltersTrusted.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
+            includeJob=false;
+        }
+        if (includeJob && shallowFilters.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
+            includeJob=false;
+        }
+
+
+        if(includeJob) {
+            doubleClickOnElement(driver,currentJob.getJobDetailsLink());
+            try{
+                if(driver!=null) {
+                    deepJobPopulator.populateJob(currentJob, driver);
+                }
+            }catch (java.util.concurrent.TimeoutException te){
+                return new ExcludeJobResults(false,false,true);
+            }
+            if (deepSkipFilters.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
+                return new ExcludeJobResults(false,false,false);
+            }
+
+            if (alwaysExcludeDeepFiltersTrusted.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
+                return new ExcludeJobResults(false,true,false);
+            }
+
+            //TODO MOVE ALL FILTERS TO TRUSTED AND REMOVE THIS BLOCK
+            if (alwaysExcludeDeepFilters.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
+                return new ExcludeJobResults(false,true,false);
+            }
+
+            if (alwaysIncludeDeepFilters.stream().anyMatch(f -> f.include(preferences, currentJob))) {
+                return new ExcludeJobResults(true,false,false);
+            }
+            includeJob = includeDeepPass(driver, currentJob, preferences);
+        }
+        return new ExcludeJobResults(includeJob,!includeJob,false);
+    }
     private void excludeJob(WebDriver driver, Job currentJob) {
         try {
             doubleClickOnElement(driver, currentJob.getHideButton());
@@ -344,109 +361,17 @@ public class LinkedInExtractor extends Extractor {
 
 
 
-        List<String> bigCollectionsUrls=List.of(
-                //flex pto
-                "https://www.linkedin.com/jobs/collections/unlimited-vacation/?currentJobId=3694909287&discover=true&subscriptionOrigin=JOBS_HOME",
-                //small business
-                "https://www.linkedin.com/jobs/collections/small-business/?currentJobId=3735665450&discover=true&subscriptionOrigin=JOBS_HOME",
-                //nonprofit
-                "https://www.linkedin.com/jobs/collections/non-profits/?currentJobId=3729190356&discover=true&subscriptionOrigin=JOBS_HOME",
-                //mobility tech
-                "https://www.linkedin.com/jobs/collections/mobility-tech/?currentJobId=3737834163&discover=true&subscriptionOrigin=JOBS_HOME",
-                //healthcare
-                "https://www.linkedin.com/jobs/collections/hospitals-and-healthcare/?currentJobId=3715841847&discover=true&subscriptionOrigin=JOBS_HOME",
-                //govt
-                "https://www.linkedin.com/jobs/collections/government/?currentJobId=3721910416&discover=true&subscriptionOrigin=JOBS_HOME",
-
-                //family friendly
-                "https://www.linkedin.com/jobs/collections/family-friendly/?currentJobId=3710666847",
-                //401k match
-                "https://www.linkedin.com/jobs/collections/employer-401k-match/?currentJobId=3693981987&discover=true&subscriptionOrigin=JOBS_HOME",
-
-                //education
-                "https://www.linkedin.com/jobs/collections/education/?currentJobId=3724520461",
-                //climate tech
-                "https://www.linkedin.com/jobs/collections/climate-and-cleantech/?currentJobId=3737833230&discover=true&subscriptionOrigin=JOBS_HOME",
-                //pharmacueticals
-                "https://www.linkedin.com/jobs/collections/pharmaceuticals/?currentJobId=3652886006&discover=true&subscriptionOrigin=JOBS_HOME"
-
-        );
-
-
-     List<String> advantagedUrls=List.of(
-                //public trust
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3704049774&f_CR=103644278&f_E=2%2C3%2C4&f_F=it&f_JT=F%2CP%2CC%2CT&f_T=9%2C10%2C24&f_WT=2&geoId=92000000&keywords=java%20public%20trust%20-servicenow%20-salesforce%20-senior%20-principal%20-azure%20-devsecops%20-appian%20-mumps%20-sailpoint%20-.net%20-sdet%20-mulesoft%20-drupal%20-infrastructure%20-sap%20-sr.%20-fullstack%20-angular%20-xacta%20-startup%20-php%20-lead%20-bootstrap%20-bi%20-django%20-expertise%20-idam",
-                //usc only
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3638719250&distance=25&f_F=it&f_T=10738%2C9&f_WT=2&geoId=103644278&keywords=java%20%22usc%20only%22%20-servicenow%20-sailpoint%20-cybersecurity%20-rotation%20-venture%20-fast%20-startup%20-fullstack%20-azure%20-salesforce%20-devops%20-.net%20-lead%20-%20intelligence%20-install",
-                //govfirst
-                "https://www.linkedin.com/jobs/search/?f_C=80559121&f_WT=2&geoId=92000000&keywords=java%20-jest",
-                //inclusively
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3736704175&f_C=65909538&f_E=2%2C3%2C4&f_WT=2&geoId=92000000&keywords=java%20-senior",
-                //mbi
-                "https://www.linkedin.com/jobs/search/?currentJobId=3732049080&f_WT=2&geoId=92000000&keywords=java%20mbi"
-
-        );
 
 
 
-        List<String> committmentUrls=List.of(
-                //work life balance
-//        "https://www.linkedin.com/jobs/search/?currentJobId=3707131603&f_CM=3&f_E=2%2C3%2C4&f_F=it&f_T=9%2C10738&f_WT=2&geoId=103644278&keywords=java%20-affirm&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=R"
-                //social impact
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3728184698&f_CM=4&f_E=2%2C3%2C4&f_F=it&f_JT=F&f_T=9&f_WT=2&keywords=java&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=R"
-                //career growth
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3739153230&f_CM=5&f_E=2%2C3%2C4&f_F=it&f_JT=F&f_T=9&f_WT=2&keywords=java&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=R"
-                //sustainable
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3708965460&distance=25&f_CM=2&f_E=2%2C3%2C4&f_JT=F&f_T=9%2C10738&f_WT=2&geoId=103644278&keywords=java%20-consultant%20-salesforce%20-fast%20-mainframe%20-affirm%20-machine%20-embedded%20-lead%20-staff%20-electrical%20-.net%20-typescript%20-principal%20-senior%20-azure%20-bairesdev%20-onsite%20-mobile%20-actimize%20-hcm%20-consulting%20-sr.%20-scientific%20-polygraph%20-poly%20-dynamics%20-ruby"
-                //DEI
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3728885241&f_CM=1&f_E=2%2C3%2C4&f_JT=F&f_T=9%2C10738&f_WT=2&geoId=103644278&keywords=java%20-affirm%20-nvidia%20-pinterest&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true"
-
-        );
-
-        List<String> collectionUrls=List.of(
-                //green collection
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3731450453&f_E=2%2C3%2C4&f_F=it&f_JC=(0%2Clisystem%2Cgreen-jobs)&f_T=9%2C10738&f_WT=2&geoId=103644278&keywords=java&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=R"
-
-                //top applicant
-                "https://www.linkedin.com/jobs/search/?currentJobId=3702242662&distance=25&f_JC=(0%2Clisystem%2Ctop-applicant-jobs)&f_WT=2&geoId=103644278&keywords=java%20-senior%20-sr."
-
-        );
-
-        List<String> jobTypeUrls=List.of(
-                //part time/temp
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3681755972&distance=25&f_E=2%2C3&f_JT=P%2CT&f_T=9&f_WT=2&geoId=103644278&keywords=java%20-synergisticit%20-sr%20-hpc%20-edi%20-.net%20-consultant%20-servicenow%20-senior%20-wordpress%20-hustlewing%20-mobile%20-scientist%20-aem%20-maximo%20-ruby%20-lead%20-golang%20-ui%20-sap%20-guidewire%20-army%20-salesforce%20-asp.net%20-saml%20-lockheed%20-models%20-eteki%20-angular%20-critical%20-secret"
-                //contract
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3707540238&distance=25&f_E=2%2C3%2C4&f_JT=C&f_T=10738&f_WT=2&geoId=103644278&keywords=java%20-senior%20-sr.%20-staff%20-principal%20-fullstack%20-frontend%20-bootstrap%20-jquery%20-synergisticit%20-angular%20-jsp%20-jsf%20-sdet%20-guidewire%20-salesforce%20-servicenow%20-saml%20-camunda%20-ecommerce%20-financial%20-sas%20-sap%20-css"
-                //other
-                "https://www.linkedin.com/jobs/search/?currentJobId=3739999787&f_E=2%2C3&f_JT=O&f_T=9&f_WT=2&geoId=103644278&keywords=java&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true"
-        );
-
-        List<String> titleUrls=List.of(
-                //backend title
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3681178268&distance=25&f_E=2%2C3&f_F=it&f_JT=F&f_T=25194&f_WT=2&geoId=103644278&keywords=java"
-                //java developer/java specialist
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3731237562&distance=25&f_E=2%2C3%2C4&f_T=10738%2C1660&f_WT=2&geoId=103644278&keywords=java&origin=JOB_SEARCH_PAGE_JOB_FILTER&sortBy=DD"
-                //junior titles
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3738283272&f_T=2490%2C3549&f_WT=2&geoId=103644278&keywords=java%20-synergisticit&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD"
-                //programmer analyst
-                "https://www.linkedin.com/jobs/search/?currentJobId=3699274371&f_E=2%2C3%2C4&f_T=8660&f_WT=2&geoId=103644278&keywords=java%20&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=R"
-
-        );
-
-        List<String> experienceUrls=List.of(
-                //associate HAS
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3707674204&f_E=3&f_F=it&f_JT=F&f_T=9%2C10738&f_WT=2&geoId=103644278&keywords=java%20%20&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD"
-                //entry
-                "https://www.linkedin.com/jobs/search/?currentJobId=3715349877&f_E=2&f_JT=F%2CP%2CC&f_T=9%2C10738&f_WT=2&keywords=java&origin=JOB_SEARCH_PAGE_JOB_FILTER&sortBy=DD"
-        );
 
 
-        List<String> industryUrls=List.of(
-                //software
-//                "https://www.linkedin.com/jobs/search/?currentJobId=3737803531&f_E=2%2C3%2C4&f_F=it&f_I=4&f_JT=F&f_T=9%2C10738&f_WT=2&geoId=103644278&keywords=java%20-startup%20%20-ruby%20%20%20-android%20&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=R"
-                //good industry
-                "https://www.linkedin.com/jobs/search/?currentJobId=3706133609&f_E=2%2C3%2C4&f_I=14%2C17%2C75%2C12%2C124%2C15%2C100%2C132%2C139%2C69%2C114%2C144%2C68%2C70%2C57%2C89%2C115%2C125%2C13%2C130%2C16%2C37%2C67%2C79%2C85%2C86%2C88%2C90&f_JT=F&f_T=9%2C24%2C2385&f_WT=2&geoId=103644278&keywords=java&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD"
-        );
+
+
+
+
+
+
     }
 
 

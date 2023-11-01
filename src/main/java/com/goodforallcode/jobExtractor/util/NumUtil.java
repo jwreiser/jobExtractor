@@ -1,4 +1,4 @@
-package com.goodforallcode.jobExtractor;
+package com.goodforallcode.jobExtractor.util;
 
 import org.apache.commons.lang3.math.NumberUtils;
 

@@ -1,6 +1,7 @@
 package com.goodforallcode.jobExtractor.job.populate;
 
 import com.goodforallcode.jobExtractor.model.Job;
+import com.goodforallcode.jobExtractor.util.RegexUtil;
 import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jsoup.Jsoup;
@@ -52,7 +53,15 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
             for(Element summaryElement:summaryElements){
                 text=summaryElement.text();
                 if(text.contains("applicants")){
-                    job.setNumApplicants(getValueFromTwoWordText(text,1).intValue());
+                    if(text.toLowerCase().contains("over ")){
+                        job.setNumApplicants(300);//I don’t like the magic number but since the actual value is unknown I don’t want to waste time guessing
+                    }else {
+                        Float applicants = getValueFromTwoWordText(text, 1);
+
+                        if (applicants != null) {
+                            job.setNumApplicants(applicants.intValue());
+                        }
+                    }
                 }else if(job.getJobAgeInDays()==null && text.contains(" ago")){
                     Long value=Long.parseLong(CharMatcher.inRange('0', '9').retainFrom(text));
                     if(text.contains("day ago")){
@@ -95,23 +104,42 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
             if(elements.size()==2) {
                 job.setSaveButton(elements.get(1));
             }
-            Element descriptionDiv = detailsDoc.getElementById("job-details");
-            String description=detailsDoc.getElementById("job-details").text();
-            job.setDescription(description);
-            populateMaxExperienceNeeded(job,description);
-
-            Elements descriptionStatuses = descriptionDiv.getElementsByAttributeValue("role", "status");
-            for(Element status:descriptionStatuses){
-                if(status.text().contains("This job is sourced from a job board.")){
-                    job.setSourcedFromJobBoard(true);
-                    break;
-                }
-            }
+            addDescriptionBasedDetails(job, detailsDoc);
         }catch (Exception ex){
             throw ex;//catching as a way to allow for inserting a breakpoint
         }
 
 
+    }
+
+    private void addDescriptionBasedDetails(Job job, Document detailsDoc) {
+        Element descriptionDiv = detailsDoc.getElementById("job-details");
+        String description= detailsDoc.getElementById("job-details").text();
+        String descriptionLower= description.toLowerCase();
+        job.setDescription(description);
+        populateMaxExperienceNeeded(job,description);
+
+        Elements descriptionStatuses = descriptionDiv.getElementsByAttributeValue("role", "status");
+        for(Element status:descriptionStatuses){
+            if(status.text().contains("This job is sourced from a job board.")){
+                job.setSourcedFromJobBoard(true);
+                break;
+            }
+        }
+        job.setTravelPercent(getTravelPercentage(descriptionLower));
+    }
+
+    public static Integer getTravelPercentage(String descriptionLower) {
+        List<String> patterns=List.of("(\\d*)% travel","travel[:\\s]+(\\d*)%",
+                "travel[:\\s]+up to[:\\s]+(\\d*)%","travel[:\\s]+less than[:\\s]+(\\d*)%"
+                ,"travel[^\\d\\)\\.\\,\\;]*\\d*-(\\d*)%","travel[^\\d\\)\\.\\,\\;]*(\\d*)%");
+
+        Integer percent=null;
+
+        if(descriptionLower.contains("travel")){
+            percent= RegexUtil.getValue(descriptionLower,patterns);
+        }
+        return percent;
     }
 
     private void populateMaxExperienceNeeded(Job job, String description) {
@@ -146,7 +174,9 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
 
         if(values.length>numValue){
          String valueText=values[numValue-1];
-         value=Float.parseFloat(valueText);
+         if(NumberUtils.isCreatable(valueText)) {
+             value = Float.parseFloat(valueText);
+         }
         } else if (values.length>0) {
             String valueText=values[0];
             value=Float.parseFloat(valueText);

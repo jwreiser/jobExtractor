@@ -11,13 +11,11 @@ import java.util.Optional;
 @Setter
 public class PreferencesWithDefaults implements Preferences {
     Integer minFortuneRank=null;
-    boolean  excludeRecruitersThatDontIncludeClientDetails=true;
     boolean excludePoorWorkLifeBalance=true;
 
     public boolean excludeContractJobs=true;
     public boolean excludeConsultant=false;
     Optional<Integer> includedContractMinimumDuration= Optional.of(12);
-    public float maxRatioOfMissingSkills=0.3F;
     public  boolean excludeComplexJobs=false;
     public  boolean remoteOnly=true;
     public boolean excludePacific=true;
@@ -25,12 +23,15 @@ public class PreferencesWithDefaults implements Preferences {
     public boolean excludeFrontEndJobs=false;
 
     List<String> desiredClearancePhrases=List.of("mbi","public trust","citizen");
-     int maxYearsOfExperience=6;
+    public int maxYearsOfExperience=6;
+    public int maxYearsOfExperienceForUnlistedSkill=2;
+
      boolean excludeMilitary=true;
     int minContractRate=50;
     int maxContractRate=80;
     Integer minYearlySalary=80_000;
     Integer maxYearlySalary=170_000;
+    Integer maxTravelPercentage=10;
     Integer maxEmployees=null;
     Integer maxApplicants=300;
     Float desiredTenure=2.2F;
@@ -54,9 +55,6 @@ public class PreferencesWithDefaults implements Preferences {
     boolean excludePromoted=false;
     boolean excludeRealEstate=false;
     boolean excludeApplied=true;
-
-     List<String> qualifiedSkillPhrases=new ArrayList<>();
-    List<String> titlePhrases=new ArrayList<>();
     List<String> locationPhrases=new ArrayList<>();
     List<String> programmingLanguages=new ArrayList<>();
 
