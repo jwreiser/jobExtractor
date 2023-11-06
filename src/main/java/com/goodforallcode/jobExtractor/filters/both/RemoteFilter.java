@@ -17,7 +17,13 @@ public class RemoteFilter implements JobFilter {
             "Remote 20 hours per week","Mostly Remote","DAYS/WK ON SITE","days onsite",
             "Must be able to relocate","one day of remote work","Partial WFH",
     "Remote till pandemic","Remote til pandemic","able to travel","Future onsite work is required",
-"week onsite","a hybrid position","remote within","(Hybrid)","in office days per ");
+"week onsite","a hybrid position","(Hybrid)","(Hybrid role)","in office days per ",
+    "(Onsite / Hybrid)");
+    List<String> notRemoteEndsWith =List.of("- Hybrid","-Hybrid","- Onsite","-Onsite",
+            ": Hybrid",":Hybrid",": Onsite",":Onsite","- Onsite/Hybrid","-Onsite/Hybrid",":Onsite/Hybrid",
+            ": Onsite/Hybrid","- ONSITE HYBRID");
+    List<String> notRemoteStartsWith =List.of("Hybrid:","Hybrid-","Onsite:","Onsite-");
+
     List<String>remotePhrases=List.of("100% remote","Open for remote","remote or hybrid","WFH","Work From Home"
     ,"remotely within the U.S","remotely within the US","remote options","remote possible"
             ,"applications for remote work may be considered","Fully Remote","full and/or partial remote"
@@ -31,6 +37,16 @@ public class RemoteFilter implements JobFilter {
 
         if (notRemotePhrases.stream().anyMatch(k->title.contains(k.toLowerCase()))){
             System.err.println("Not remote title->reject: "+job);
+            return false;
+        }
+
+        if (notRemoteEndsWith.stream().anyMatch(k->title.endsWith(k.toLowerCase()))){
+            System.err.println("Not remote title ends with->reject: "+job);
+            return false;
+        }
+
+        if (notRemoteStartsWith.stream().anyMatch(k->title.startsWith(k.toLowerCase()))){
+            System.err.println("Not remote title starts with->reject: "+job);
             return false;
         }
 

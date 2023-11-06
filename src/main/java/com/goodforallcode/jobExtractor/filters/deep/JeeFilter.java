@@ -7,7 +7,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 public class JeeFilter implements JobFilter {
-    List<String>keywords=List.of("JSP","JSF","Struts","Tomcat","Websphere","JBoss");
+    List<String>keywords=List.of("JSP","JSF","Struts","Tomcat","Websphere","JBoss","J2EE"," JEE ");
 
     @Override
     public boolean include(Preferences preferences, Job job) {

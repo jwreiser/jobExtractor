@@ -7,7 +7,8 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 public class MicromanagementFilter implements JobFilter {
-    List<String> companyNames =List.of( "Research Innovations Incorporated");
+    List<String> companyNames =List.of( "Research Innovations Incorporated",
+    "IT Labs");
 
     @Override
     public boolean include(Preferences preferences, Job job) {

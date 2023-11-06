@@ -8,7 +8,7 @@ import java.util.List;
 
 public class BusinessProcessManagementFilter implements JobFilter {
 
-    List<String> phrases =List.of("POSSE "," BPM ","Camunda","Guidewire","Onbase");
+    List<String> phrases =List.of("POSSE "," BPM ","Camunda","Guidewire","Onbase","Appian");
 
     public boolean include(Preferences preferences, Job job){
         String title = job.getTitle().toLowerCase();

@@ -1,8 +1,5 @@
 package com.goodforallcode.jobExtractor.util;
 
-import com.goodforallcode.jobExtractor.filters.shallow.title.BackendTitleFilter;
-import com.goodforallcode.jobExtractor.filters.shallow.title.ProgrammingLanguageTitleFilter;
-import com.goodforallcode.jobExtractor.model.Job;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

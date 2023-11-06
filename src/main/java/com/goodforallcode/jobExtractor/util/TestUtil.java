@@ -9,31 +9,33 @@ public class TestUtil {
         PreferencesWithDefaults preferences = new PreferencesWithDefaults();
         preferences.setProgrammingLanguages(List.of("Java"));
         preferences.setMinFortuneRank(760);
-        preferences.setExcludeAboveSenior(true);
-        preferences.setExcludeFullStack(true);
-        preferences.setExcludeFrontEndJobs(true);
         preferences.setExcludeIdentityManagement(true);
         preferences.setMinYearlySalary(80000);
         preferences.setMaxLevel(2);
-        preferences.setExcludeConsultant(true);
-        preferences.setExcludePromoted(false);
         preferences.setAmountOfTotalExperience(6);
         preferences.setMaxEmployees(9000);
         preferences.setExcludeConsultant(true);
         preferences.setAmountOfTotalExperience(6);
+        preferences.setMaxJobAgeInDays(5);
 
-        preferences.setMaxJobAgeInDays(60);
-        preferences.setExcludeFresher(true);
-        preferences.setExcludeSenior(true);
+        preferences.setExcludeAboveSenior(true);
         preferences.setExcludeBigData(true);
         preferences.setExcludeBlockchain(true);
         preferences.setExcludeCloudHeavy(true);
         preferences.setExcludeComplexJobs(true);
+        preferences.setExcludeConsultant(true);
+        preferences.setExcludeFresher(true);
+        preferences.setExcludeFrontEndJobs(true);
+        preferences.setExcludeFullStack(true);
+        preferences.setExcludePromoted(false);
         preferences.setExcludeRealEstate(true);
+        preferences.setExcludeSenior(true);
+
         preferences.setSkipTooManyApplicants(false);
+        preferences.setSkipUnknownNumberOfApplicants(false);
         preferences.setSkipJobsSourcedFromExternalJobBoard(false);
 
-        preferences.setLocationPhrases(List.of("NY"," New York"));
+        preferences.setLocationPhrases(List.of("NY","New York"));
         return preferences;
     }
 }

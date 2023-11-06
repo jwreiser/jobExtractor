@@ -9,20 +9,29 @@ import java.util.List;
 public class CloudFilter implements JobFilter {
     List<String> descriptionKeywords = List.of("server-less","serverless"," SNS"
             ," SQS"," API Gateway"," EventBridge"," DynamoDB"," Redshift"," S3",
-            "cloud-native","cloud native","Matillion", " aws ");
+            "cloud-native","cloud native","Matillion", " aws "," Epic Client "," Epic ancillary "," Epic system "
+            ," Epic environment","Hyperspace","Interconnect");
+
     List<String> bothKeywords = List.of("SailPoint","Apigee",
             "Informatica","azure ","gcp","cloud","Lambda", "Snowflake",
-            "Matillion","Apigee","FlashStack","SFCC","PCF","Flashstack");
+            "Matillion","Apigee","FlashStack","SFCC","PCF","Flashstack","ECSA ");
+
+
+    List<String>  companyNames = List.of("Cloudflare");
 
 
     List<String> jobTitlePhrases=List.of(
-            "AWS ","Epic "
+            "AWS ","Epic ","OpenShift"
     );
 
     @Override
     public boolean include(Preferences preferences, Job job) {
         if(!preferences.isExcludeCloudHeavy()){
             return true;
+        }
+        if(companyNames.stream().anyMatch(c->c.equals(job.getCompanyName()))){
+            System.err.println("cloud company name ->reject: " + job);
+            return false;
         }
         String title = job.getTitle().toLowerCase();
         if(jobTitlePhrases.stream().anyMatch(p->title.contains(p.toLowerCase()))){

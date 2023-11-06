@@ -89,4 +89,98 @@ public class LinkedInExtractorTests {
         assertFalse(results.skipRemainingJobs());
         assertTrue(results.exludeJob());
     }
+
+    @Test
+    void testIncludeNonRemoteTitle() {
+        Job job=new Job("SOLID BACK END JAVA DEVELOPER - DIRECT HIRE - REMOTE - MUST RESIDE W/IN 3 HRS OF RALEIGH NC - - GC USC ONLY");
+        job.setDescription(null);
+        job.setIndustry("Staffing and Recruiting");
+        job.setCompanyName("W3Global");
+        job.setLocation("New York");
+        PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
+        preferences.setMaxJobAgeInDays(23);
+        preferences.setMaxApplicants(400);
+        preferences.setExcludeFresher(true);
+        preferences.setExcludeSenior(true);
+        preferences.setExcludeBigData(true);
+        preferences.setExcludeBlockchain(true);
+        preferences.setExcludeCloudHeavy(true);
+        preferences.setExcludeComplexJobs(true);
+        preferences.setExcludeRealEstate(true);
+        preferences.setMaxEmployees(9000);
+        ExcludeJobResults results=extractor.excludeJob(job,preferences,null,null);
+        assertFalse(results.includeJob());
+        assertFalse(results.skipRemainingJobs());
+        assertTrue(results.exludeJob());
+    }
+
+    @Test
+    void testIncludeNonRemoteTitleCase2() {
+        Job job=new Job("Software Engineer (Remote in Wisconsin)");
+        job.setDescription(null);
+        job.setIndustry("Software Development");
+        job.setCompanyName("Talentify.io");
+        job.setLocation("United States");
+        PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
+        preferences.setMaxJobAgeInDays(23);
+        preferences.setMaxApplicants(400);
+        preferences.setExcludeFresher(true);
+        preferences.setExcludeSenior(true);
+        preferences.setExcludeBigData(true);
+        preferences.setExcludeBlockchain(true);
+        preferences.setExcludeCloudHeavy(true);
+        preferences.setExcludeComplexJobs(true);
+        preferences.setExcludeRealEstate(true);
+        preferences.setMaxEmployees(9000);
+        ExcludeJobResults results=extractor.excludeJob(job,preferences,null,null);
+        assertFalse(results.includeJob());
+        assertFalse(results.skipRemainingJobs());
+        assertTrue(results.exludeJob());
+    }
+
+    @Test
+    void testIncludeNonRemoteDescription() {
+        Job job=new Job("Developer II (Java Stack)");
+        job.setDescription("About the job This position is remote from within Colorado ONLY. Application Deadline November 15, 2023 Are you a developer, who is not only collaborative and autonomous, but also skilled in coding across the full Software Development Life Cycle? As our new Developer II, you will be an integral part of coding, testing, minor fixes, major enhancements and planning for application sunset. You will consult with others to design applications, collaborate to create estimates and timelines and utilize Agile and/or Waterfall methodologies as needed. Some of your important responsibilities will include: Perform coding (in-house applications), unit testing, configuration management (COTS applications), source code control, deployment and release management. Coordinate update releases and other system changes, contribute to the implementation of break/fix solutions. Organize, build, and validate all segments of the code for final User Acceptance Testing. Identify and recommend changes to development policies, processes, templates and standard operating procedures. Find unique ways to resolve issues in the development process, leading to more efficient implementation. Minimum Qualifications: 2 years of hands-on programming experience in applications development. Preferred Qualifications: 3 years experience in Java development 3 years experience in Oracle database development");
+        job.setIndustry("Information Technology & Services");
+        job.setCompanyName("Colorado Governor's Office of Information Technology");
+        PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
+        preferences.setMaxJobAgeInDays(23);
+        preferences.setMaxApplicants(400);
+        preferences.setExcludeFresher(true);
+        preferences.setExcludeSenior(true);
+        preferences.setExcludeBigData(true);
+        preferences.setExcludeBlockchain(true);
+        preferences.setExcludeCloudHeavy(true);
+        preferences.setExcludeComplexJobs(true);
+        preferences.setExcludeRealEstate(true);
+        preferences.setMaxEmployees(9000);
+        ExcludeJobResults results=extractor.excludeJob(job,preferences,null,null);
+        assertFalse(results.includeJob());
+        assertFalse(results.skipRemainingJobs());
+        assertTrue(results.exludeJob());
+    }
+
+    @Test
+    void testIncludeDefenseIndustry() {
+        Job job=new Job("Programming Analyst");
+        job.setDescription("About the job Oracle ERP Programmer Analyst This position is fully remote BAE Systems Enterprise Shared Services IT is searching for an Oracle eBusiness Suite Technical Developer to join our team providing support to manufacturing operations across our enterprise. You will act as a face of IT to the customer and the face of the customer to the Development teams and IT management. Required Experience US CITIZEN OR GREEN CARD HOLDER Oracle Application Express (APEX) development/programming experience e-Business Suite R12 experience Experience in Oracle ERP financials and/or manufacturing Knowledge of Oracle e-Business Suite technical tools including SQL, PL/SQL and Personalization Experience providing operational support, troubleshoot defects, and resolve issues using various tools including internal documentation and interaction with Oracle Support Experience create ad-hoc scripts to analyze data and support operational requests Experience providing coordination of small projects to implement custom solutions, application changes, and Oracle patches/upgrades Experience in presenting alternative requirements for solution design and suggest improvements in business processes. Experience in collaborating with development team to ensure deliverables meet expectations, assist in solution development, and bug troubleshooting. Experience translating requirements into test scenarios and test scripts, conduct first-level unit testing, and support end-user testing.");
+        job.setIndustry("Defense and Space Manufacturing");
+        job.setCompanyName("Test");
+        PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
+        preferences.setMaxJobAgeInDays(23);
+        preferences.setMaxApplicants(400);
+        preferences.setExcludeFresher(true);
+        preferences.setExcludeSenior(true);
+        preferences.setExcludeBigData(true);
+        preferences.setExcludeBlockchain(true);
+        preferences.setExcludeCloudHeavy(true);
+        preferences.setExcludeComplexJobs(true);
+        preferences.setExcludeRealEstate(true);
+        preferences.setMaxEmployees(9000);
+        ExcludeJobResults results=extractor.excludeJob(job,preferences,null,null);
+        assertFalse(results.includeJob());
+        assertFalse(results.skipRemainingJobs());
+        assertTrue(results.exludeJob());
+    }
 }

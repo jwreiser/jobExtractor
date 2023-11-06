@@ -29,12 +29,21 @@ public class StartupFilter implements JobFilter {
     List<String> companyNames =List.of("Patterned Learning AI","minware","Included Health",
             "Storm 3","Storm 4","Storm 5","Storm 6","Nira Energy","Apploi",
             "Ascendion","WellSaid Labs","Alma","Maven Clinic","hims & hers","Amberflo.io",
-            "AllVoices","Certificial","Rutter","Hazel Health","AIQ (Alpine IQ)");
+            "AllVoices","Certificial","Rutter","Hazel Health","AIQ (Alpine IQ)","Jerry",
+            "Underdog.io","ONE");
+
+    List<String> investorBackedCompanyNames =List.of("Avid Technology Professionals");
+
     List<String> titlePhrases =List.of("founding","Founder","Entrepreneur");
 
     public boolean include(Preferences preferences, Job job){
         if(companyNames.stream().anyMatch(c->c.equals(job.getCompanyName()))){
-            System.err.println("startup based on company title ->reject: " + job);
+            System.err.println("startup based on company name ->reject: " + job);
+            return false;
+        }
+
+        if(investorBackedCompanyNames.stream().anyMatch(c->c.equals(job.getCompanyName()))){
+            System.err.println("startup based on company name  investor ->reject: " + job);
             return false;
         }
         String title =job.getTitle().toLowerCase();

@@ -9,8 +9,8 @@ import java.util.List;
 
 public class CyberSecurityFilter implements JobFilter {
     List<String> companyNames =List.of( "Zscaler","Fortra");
-    List<String> titles=List.of("Vulnerability engineer","Detection",
-            "Security","Sentinel", "SIEM ","Risk ");
+    List<String> titles=List.of("Vulnerability engineer","Detection","Sentinel", "SIEM ","Risk ","Cyber Security","CyberSecurity","Cyber-Security");
+
 
     List<String> descriptionPhrases=List.of("cybersecurity");
 
@@ -23,6 +23,10 @@ public class CyberSecurityFilter implements JobFilter {
             return false;
         }
 
+        if(title.contains("security")&& !title.contains("clearance")){
+            System.err.println("Cybersecurity title security ->reject: "+job);
+            return false;
+        }
         if(companyNames.stream().anyMatch(k->job.getCompanyName().equals(k))){
             System.err.println("Cybersecurity ->reject: "+job);
             return false;

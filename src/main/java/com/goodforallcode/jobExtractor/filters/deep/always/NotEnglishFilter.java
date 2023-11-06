@@ -7,10 +7,12 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 public class NotEnglishFilter implements JobFilter {
-    List<String> keywords = List.of("Entwickler", "korean", "Versicherung", "Softwarový"
+    List<String> keywords = List.of("Entwick", "korean", "Versicherung", "Softwarový"
             , "inženýr", "Japanese", "Pessoa", "Desenvolvedor", "Pleno", "Sênior", "Especialista",
             "Trabalho", "Remoto", "automatizadora", " de ", "testes", "Pleno", "Sênior",
-            "Geliştirici", "NİTELİKLER","merkezli","şirketi","deneyimi","Güçlü","analizi");
+            "Geliştirici", "NİTELİKLER","merkezli","şirketi","deneyimi","Güçlü","analizi",
+            "equipo","Desarrollo"," Wir ","Ingeniero","Especializado","Japanese"
+    );
 
     @Override
     public boolean include(Preferences preferences, Job job) {

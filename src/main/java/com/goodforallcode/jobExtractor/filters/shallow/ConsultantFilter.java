@@ -10,8 +10,9 @@ import java.util.List;
 public class ConsultantFilter implements JobFilter {
     static List<String>consultantKeywords=List.of("consultant","consulting","consultancy");
     static List<String>consultantCompanyNames=List.of("Curate Partners","Modis","Akkodis"
-    ,"Ricardo plc");
+    ,"Ricardo plc","FullStack Labs","Sierra7","Sierra7, Inc.","Vaco");
 
+    static final List<String> industries=List.of("Business Consulting and Services");
     @Override
     public boolean include(Preferences preferences, Job job) {
         if(!preferences.isExcludeConsultant()){
@@ -21,6 +22,12 @@ public class ConsultantFilter implements JobFilter {
             System.err.println("Consultant company->reject: "+job);
             return false;
         }
+
+        if(job.getIndustry()!=null &&  industries.stream().anyMatch(in->in.equals(job.getIndustry()))){
+            System.err.println("Consultant industry ->reject: "+job);
+            return false;
+        }
+
         final String title =job.getTitle().toLowerCase();
         if(consultantKeywords.stream().anyMatch(k -> title.contains(k.toLowerCase()))){
             System.err.println("Consultant title->reject: "+job);

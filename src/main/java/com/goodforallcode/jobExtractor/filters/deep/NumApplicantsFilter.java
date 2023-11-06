@@ -12,15 +12,22 @@ public class NumApplicantsFilter implements JobFilter {
     }
 
     public boolean include(Preferences preferences, Job job){
-        if(skipping && !preferences.isSkipTooManyApplicants()){
+        if(skipping && weAreNotSkipping(preferences)){
             return true;
         }
-
-        if (job.getNumApplicants()>preferences.getMaxApplicants()) {
+        if(preferences.isSkipUnknownNumberOfApplicants()&&skipping&&job.getNumApplicants()==null){
+            System.err.println("skipping uknown number of applicants  ->reject: " + job);
+            return false;
+        }
+        if (job.getNumApplicants()!=null && job.getNumApplicants()>preferences.getMaxApplicants()) {
             System.err.println("num applicants ("+job.getNumApplicants()+") > "+preferences.getMaxApplicants()+" ->reject: " + job);
             return false;
         }
         return true;
 
+    }
+
+    private  boolean weAreNotSkipping(Preferences preferences){
+        return !(preferences.isSkipTooManyApplicants()||preferences.isSkipUnknownNumberOfApplicants());
     }
 }

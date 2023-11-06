@@ -43,6 +43,8 @@ public interface Preferences {
      void setExcludeFrontEndJobs(boolean exclude);
      boolean isSkipTooManyApplicants();
      void setSkipTooManyApplicants(boolean skip);
+     boolean isSkipUnknownNumberOfApplicants();
+     void setSkipUnknownNumberOfApplicants(boolean skip);
      boolean isSkipJobsSourcedFromExternalJobBoard();
      void setSkipJobsSourcedFromExternalJobBoard(boolean skip);
      boolean isExcludePacific();

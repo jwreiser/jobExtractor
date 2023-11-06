@@ -13,7 +13,7 @@ public class FinanceFilter implements JobFilter {
      * financial:   financial stability
      */
     List<String> companyNames =List.of( "Affirm","Citibank","Kraken Digital Asset Exchange"
-            ,"Jack Henry","Equitable","American Express","U.S. Bank");
+            ,"Jack Henry","Equitable","American Express","U.S. Bank","Modulus");
 
     List<String> descriptionPhrases =List.of("FinTech",
             "hedge fund", "banking","trading","Brokers","Brokerage"," investment management");

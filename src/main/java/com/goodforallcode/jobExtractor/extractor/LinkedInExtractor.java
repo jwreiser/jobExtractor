@@ -92,8 +92,9 @@ public class LinkedInExtractor extends Extractor {
         return includeJob;
     }
     @Override
-    public Stream<Job> getJobs(Set<Cookie> cookies, Preferences preferences, String url,JobCache cache) {
-        List<Job> jobs = new ArrayList<>();
+    public JobResult getJobs(Set<Cookie> cookies, Preferences preferences, String url,JobCache cache) {
+        List<Job> acceptedJobs = new ArrayList<>();
+        List<Job> rejectedJobs = new ArrayList<>();
         WebDriver newDriver=null;
         try {
 
@@ -147,7 +148,7 @@ public class LinkedInExtractor extends Extractor {
 
 
                     if(shallowSkipFilters.stream().anyMatch(f->!f.include(preferences, currentJob))){
-                        /*we don't want to cache jobs that are too new otherwise we may
+                        /*we don't want to cache acceptedJobs that are too new otherwise we may
                         not see them again in other future searches
                          */
                         continue;
@@ -162,20 +163,22 @@ public class LinkedInExtractor extends Extractor {
 
                     ExcludeJobResults excludeJobResults = excludeJob(currentJob, preferences,
            newDriver,deepJobPopulator);
+                    if(excludeJobResults.exludeJob()){
+                        excludeJob(newDriver, currentJob);
+                        rejectedJobs.add(currentJob);
+                    }else if(excludeJobResults.includeJob()){
+                        includeJob(newDriver, acceptedJobs, currentJob);
+                    }
 
                     if(excludeJobResults.skipRemainingJobs()){
                         /*
-                        this should be true when there is an indication that the rest of the jobs on this page
+                        this should be true when there is an indication that the rest of the acceptedJobs on this page
                          will have issues
                          */
                         break;
                     }
 
-                    if(excludeJobResults.exludeJob()){
-                        excludeJob(newDriver, currentJob);
-                    }else if(excludeJobResults.includeJob()){
-                        includeJob(newDriver, jobs, currentJob);
-                    }
+
                 }
                 if(nextPageButton!=null){
                     doubleClickOnElement(newDriver,nextPageButton);
@@ -193,7 +196,7 @@ public class LinkedInExtractor extends Extractor {
 
             }
         }
-        return jobs.stream();
+        return new JobResult(acceptedJobs,rejectedJobs);
     }
 
 

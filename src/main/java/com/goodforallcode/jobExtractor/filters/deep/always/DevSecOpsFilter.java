@@ -7,9 +7,9 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 public class DevSecOpsFilter implements JobFilter {
-    List<String> keywords = List.of("network", "security", "installation",
+    List<String> keywords = List.of("network", "security", "install",
             "VMware", "Servers", "Sccm", "administration", "administer",
-            "configuration management");
+            "configuration management"," configure"," deploy","maintain");
     List<String> titles = List.of("Datacenter Engineer","Devop","Devsecop",
             "Release Engineer","Build","Dev ops","Devops",
             " IT Engineer","Information Technology Engineer",
@@ -17,7 +17,9 @@ public class DevSecOpsFilter implements JobFilter {
             "Infrastructure","Site Reliability","SRE","Reliability Engineer","Observability",
             "Operations"," Ops Engineer","CSfC Engineer",
             "Information assurance","Integration Engineer","Release Management",
-            "Platform Engineer","C3ISR"
+            "Platform Engineer","C3ISR","SysOps"
+    );
+    List<String> titleContains = List.of("Kubernetes","Delivery","Configuration","Deployment"
     );
 
     @Override
@@ -25,6 +27,10 @@ public class DevSecOpsFilter implements JobFilter {
         String title = job.getTitle().toLowerCase();
         if(titles.stream().anyMatch(t->title.contains(t.toLowerCase()))){
             System.err.println("DevSecOps title ->reject: " + job);
+            return false;
+        }
+        if(titleContains.stream().anyMatch(t->title.contains(t.toLowerCase()))){
+            System.err.println("DevSecOps title contains ->reject: " + job);
             return false;
         }
         if (job.getDescription() != null) {

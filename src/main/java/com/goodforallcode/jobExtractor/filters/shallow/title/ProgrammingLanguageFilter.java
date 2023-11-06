@@ -4,29 +4,31 @@ import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.goodforallcode.jobExtractor.util.RegexUtil;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This is designed for languages that usually do not play together
  * So unlike C#, Java and Python which are often shared (especially Python) this focuses on
  * languages like rust and ruby
  */
-public class ProgrammingLanguageTitleFilter implements JobFilter {
+public class ProgrammingLanguageFilter implements JobFilter {
+    /**
+     * Must not be " C" as that can match other things needs to be " C "
+     */
     private static List<String> languages=List.of(
-            "Ruby","Rust","Go","Golang","Net","DotNet",".Net","iOS","React","Angular","Typescript"
-            ,"Javascript","CNO","C#","C++","Visual C","Scala","Swift","Dart"," C"," R","PHP",
-            "VB.NET","perl","MATLAB","SAS","COBOL","ABAP","Tcl","Elixir","Erlang","F#","GO Lang",
-            "ColdFusion","Genie","Natural","Spark","verilog","MUMPS","GraphQL","R Shiny","Node","NodeJS",
-            "Django","RoR","Haskell");
+            "Ruby","Rust","Go","Golang","Net","DotNet",".Net","iOS","React",
+            "Angular","Typescript","Javascript","CNO","C#","C++","Visual C","Scala","Swift",
+            "Dart"," C "," R ","PHP",
+            "VB.NET","perl","MATLAB","SAS","COBOL","ABAP","Tcl","Elixir","Erlang","F#",
+            "GO Lang","ColdFusion","Genie","Natural","Spark","verilog","MUMPS",
+            "GraphQL","R Shiny","Node","NodeJS","Django","RoR","Haskell","PL/SQL",
+            "Node Js","Node.js","Ruby on Rails");
 
     static List<String> sharedLanguages=List.of("Python");
     boolean include;
 
-    public ProgrammingLanguageTitleFilter(boolean include) {
+    public ProgrammingLanguageFilter(boolean include) {
         this.include = include;
     }
 
@@ -114,7 +116,7 @@ public class ProgrammingLanguageTitleFilter implements JobFilter {
                 }
 
                 if (notEnoughExperience(description,preferences)) {
-                    System.err.println("language notEnoughExperience ->reject: " + job);
+                    System.err.println("language not Enough Experience ->reject: " + job);
                     return false;
                 }
 
@@ -125,7 +127,7 @@ public class ProgrammingLanguageTitleFilter implements JobFilter {
     }
 
     public static boolean containsUnknownLanguage(String descriptionLower,Preferences preferences) {
-        List<String> patterns=List.of("proficiency[^\\d\\)\\.\\;]*");
+        List<String> patterns=List.of("proficiency[^\\d\\)\\.\\;]*","expert[^\\d\\)\\.\\;]*");
         boolean contains=false;
         for(String patternText: patterns) {
             if(preferences.getProgrammingLanguages().stream().anyMatch(l->
@@ -151,7 +153,8 @@ public class ProgrammingLanguageTitleFilter implements JobFilter {
             if (preferences.getProgrammingLanguages().stream().anyMatch(l ->RegexUtil.getValue(descriptionLower, patternText+l.toLowerCase())!=null)){
                 continue;
             }
-            if (languages.stream().anyMatch(l ->RegexUtil.getValue(descriptionLower, patternText+l.toLowerCase(),0) > preferences.getMaxYearsOfExperienceForUnlistedSkill())){
+            if (languages.stream().anyMatch(l ->RegexUtil.getValue(descriptionLower, patternText+l.toLowerCase().
+                    replaceAll("\\+","\\\\+"),0) > preferences.getMaxYearsOfExperienceForUnlistedSkill())){
                 notEnoughExperience = true;
                 break;
             }

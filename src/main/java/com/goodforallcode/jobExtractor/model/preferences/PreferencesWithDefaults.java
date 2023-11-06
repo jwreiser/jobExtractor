@@ -47,6 +47,7 @@ public class PreferencesWithDefaults implements Preferences {
     boolean excludeIdentityManagement=false;
     boolean excludeBlockchain=false;
     boolean skipTooManyApplicants=false;
+    boolean skipUnknownNumberOfApplicants=false;
     boolean skipJobsSourcedFromExternalJobBoard=false;
     Integer amountOfTotalExperience =6;
     Integer maxLevel=3;

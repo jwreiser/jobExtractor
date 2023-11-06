@@ -8,11 +8,15 @@ import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 import java.util.List;
 
 public class DefenseFilter implements JobFilter {
+
+    /**
+     * Defense can be used to describe defense of a paper
+     */
     List<String> phrases =List.of("military"," DLA "," DOD ","defense","intelligence"
             ,"national security","missions"," DHS "
             ,"army","navy","air force","Lockheed Martin","Marine Corps","missile");
     List<String> companyNames =List.of("General Dynamics Information Technology"
-            ,"Parsons Corporation","SAIC","Leidos","RVCM (RevaComm)");
+            ,"Parsons Corporation","SAIC","Leidos","RVCM (RevaComm)","BAE Systems","ECS");
     @Override
     public boolean include(Preferences preferences, Job job) {
         if(job.getIndustry()!=null){

@@ -15,7 +15,7 @@ public class GamingFilter implements JobFilter {
      */
     List<String> phrases = List.of("unreal","Xbox","PlayStation","gameplay");
     List<String> titlePhrases = List.of("game", "games","Engine ");
-    List<String> companyNames = List.of("Second Dinner");
+    List<String> companyNames = List.of("Second Dinner","Sleeper");
 
     @Override
     public boolean include(Preferences preferences, Job job) {
@@ -30,6 +30,10 @@ public class GamingFilter implements JobFilter {
         }
         if (phrases.stream().anyMatch(k -> title.contains(k.toLowerCase()))) {
             System.err.println("game title  ->reject: " + job);
+            return false;
+        }
+        if (job.getIndustry()!=null && job.getIndustry().equals("Computer Games")) {
+            System.err.println("game industry ->reject: " + job);
             return false;
         }
 

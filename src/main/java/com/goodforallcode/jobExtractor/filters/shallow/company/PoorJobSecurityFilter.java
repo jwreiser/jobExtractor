@@ -8,7 +8,8 @@ import java.util.List;
 
 public class PoorJobSecurityFilter implements JobFilter {
     List<String> companyNames =List.of( "Allstate","New Relic","Breezeline","Slack",
-    "Crossover","Invitae","Omnicell","Komodo Health");
+    "Crossover","Invitae","Omnicell","Komodo Health","Rocket Software","Zinnia",
+    "NTT DATA Services");
 
     @Override
     public boolean include(Preferences preferences, Job job) {

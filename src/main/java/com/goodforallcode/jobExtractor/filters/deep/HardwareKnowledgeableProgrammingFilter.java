@@ -11,15 +11,24 @@ public class HardwareKnowledgeableProgrammingFilter implements JobFilter {
      * Exceptions
      * Embedded: can't be in description as it could be embedded in our culture
      */
-    List<String> titlePhrases =List.of("Embedded","Centura");
+    List<String> titlePhrases =List.of("Embedded","Centura"," IoT","circuit");
 
-    List<String> phrases =List.of( "Systems Programmer", "System Programmer"
-            ,"Firmware","AR/VR headset","drivers");
+    List<String> bothPhrases =List.of( "Systems Programmer", "System Programmer"
+            ,"Firmware","AR/VR headset","drivers","sensor"," IoT ","semiconductor",
+            "VoIP"
+    );
+
+    List<String> companyNames =List.of( "Trinnex");
+
 
     public boolean include(Preferences preferences, Job job){
+        if(companyNames.stream().anyMatch(cn->job.getCompanyName().equals(cn))){
+            System.err.println("hardware knowledgeable company name ->reject: " + job);
+            return false;
+        }
         final String title = job.getTitle().toLowerCase();
-        if (phrases.stream().anyMatch(p -> title.contains(p.toLowerCase()))) {
-            System.err.println("embedded title ->reject: " + job);
+        if (bothPhrases.stream().anyMatch(p -> title.contains(p.toLowerCase()))) {
+            System.err.println("hardware knowledgeable title ->reject: " + job);
             return false;
         }
         if (titlePhrases.stream().anyMatch(p -> title.contains(p.toLowerCase()))) {
@@ -28,7 +37,7 @@ public class HardwareKnowledgeableProgrammingFilter implements JobFilter {
         }
         if(job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
-            if (phrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
+            if (bothPhrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
                 System.err.println("embedded description ->reject: " + job);
                 return false;
             }

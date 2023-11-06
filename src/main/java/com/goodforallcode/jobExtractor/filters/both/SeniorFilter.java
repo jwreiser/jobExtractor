@@ -10,18 +10,19 @@ import java.util.List;
  * this does not look to see if you have the level contained in a title
  * This instead looks for indications of the job being a senior level job
  */
-public class NotSeniorFilter implements JobFilter {
+public class SeniorFilter implements JobFilter {
     /**
      * Exceptions
      * Coaches: Health Coaches(Benefit)
      * expert: recruiter may have expertise and seems hyperbolic at times
      * principal can only be in title because it could be reports to
      * specialist also may refer to recruiter
-     * subject matter expert: seems to happen in non senior roles too
+     *
+     * subject matter expert:   seems to happen in non senior roles too
+     * Advanced knowledge of:   seems to happen in quite jr roles too
      */
     List<String> descriptionPhrases =List.of("Completes product technical design",
-            "produce software designs","subordinate",
-            "Advanced knowledge of","lead project teams");
+            "produce software designs","subordinate","lead project teams");
 
     List<String> notDescriptionPhrases =List.of("Intermediate to advanced knowledge of");
 

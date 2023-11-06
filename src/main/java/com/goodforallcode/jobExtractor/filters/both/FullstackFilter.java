@@ -7,7 +7,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 public class FullstackFilter implements JobFilter {
-    List<String> jobTitlePhrases=List.of("Full stack","Fullstack","Full-Stack");
+    List<String> jobTitlePhrases=List.of("Full stack","Fullstack","Full-Stack","Facets");
 
     List<String> descriptionKeywords=List.of("fullstack","full stack","full-stack");
     @Override

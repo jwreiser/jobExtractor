@@ -5,12 +5,13 @@ import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import org.openqa.selenium.Cookie;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-public class UrlExctractingCallable implements Callable<List<Job>> {
+public class UrlExctractingCallable implements Callable<JobResult> {
     Extractor extractor;
     List<String> urls;
     Set<Cookie> cookies;
@@ -26,9 +27,15 @@ public class UrlExctractingCallable implements Callable<List<Job>> {
     }
 
     @Override
-    public List<Job> call() throws Exception {
-        List<Job> jobs= urls.stream().flatMap(url -> extractor.getJobs(cookies, preferences, url, cache)).collect(Collectors.toList());
-        return jobs;
+    public JobResult call() throws Exception {
+        List<JobResult> jobResults= urls.stream().map(url -> extractor.getJobs(cookies, preferences, url, cache)).collect(Collectors.toList());
+        List<Job> acceptedJobs=new ArrayList<>();
+        List<Job> rejectedJobs=new ArrayList<>();
+        for(JobResult result:jobResults){
+            acceptedJobs.addAll(result.acceptedJobs());
+            rejectedJobs.addAll(result.rejectedJobs());
+        }
+        return new JobResult(acceptedJobs,rejectedJobs);
     }
 
 }

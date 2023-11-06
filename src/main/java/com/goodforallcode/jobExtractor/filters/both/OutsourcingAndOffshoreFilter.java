@@ -7,9 +7,9 @@ import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
-public class OffshoreFilter implements JobFilter {
+public class OutsourcingAndOffshoreFilter implements JobFilter {
     List<String> companyNames =List.of( "Rockwell Automation","Equinix","Banner Health",
-            "Blue Cross NC","Ascension","Transamerica");
+            "Blue Cross NC","Ascension","Transamerica","Conduent","Zinnia","LiveRamp");
     List<String> offShorePhrases =List.of("IT services and outsourcing company","with offshore");
     @Override
     public boolean include(Preferences preferences, Job job) {

@@ -54,10 +54,11 @@ public abstract class Extractor {
 
 
 
-    public   List<Job> getJobs(Set<Cookie> cookies , Preferences preferences, List<String> urls){
-        List<Job> jobs = new ArrayList<>();
+    public   JobResult getJobs(Set<Cookie> cookies , Preferences preferences, List<String> urls){
+        List<Job> acceptedJobs = new ArrayList<>();
+        List<Job> rejectedJobs = new ArrayList<>();
         JobCache cache=new DefaultJobCache();
-        int numThreads=3;
+        int numThreads=8;
         int size=1;
         if(urls.size()>numThreads){
             size=urls.size()/numThreads;
@@ -68,7 +69,7 @@ public abstract class Extractor {
         for(List<String> urlList:urlLists){
             tasks.add(new UrlExctractingCallable(this,urlList,cookies,preferences,cache));
         }
-        List<Future<List<Job>>> futures = null;
+        List<Future<JobResult>> futures = null;
         try {
             futures = executorService.invokeAll(tasks);
         } catch (InterruptedException e) {
@@ -90,9 +91,10 @@ public abstract class Extractor {
                 }
             }
             if(done){
-                for(Future<List<Job>> future:futures){
+                for(Future<JobResult> future:futures){
                     try {
-                        jobs.addAll(future.get());
+                        acceptedJobs.addAll(future.get().acceptedJobs());
+                        rejectedJobs.addAll(future.get().rejectedJobs());
                     } catch (InterruptedException|ExecutionException e) {
                         throw new RuntimeException(e);
                     }
@@ -102,10 +104,10 @@ public abstract class Extractor {
         }
         executorService.shutdown();
 
-        return jobs;
+        return new JobResult(acceptedJobs,rejectedJobs);
     }
 
-    abstract Stream<Job> getJobs( Set<Cookie> cookies , Preferences preferences, String url, JobCache cache);
+    abstract JobResult getJobs( Set<Cookie> cookies , Preferences preferences, String url, JobCache cache);
     public  void includeJob(WebDriver driver, List<Job> jobs, Job currentJob) {
         //I had been clicking the save button here but it gives stale element exceptions
         jobs.add(currentJob);

@@ -33,7 +33,6 @@ public class Job {
     WebElement jobDetailsLink;
 
     String url;
-    @JsonIgnore
     String location;
     /*
     this is used to click to a job while crawling.
@@ -62,9 +61,7 @@ public class Job {
     boolean promoted=false;
     @JsonIgnore
     boolean hidden=false;
-    @JsonIgnore
     boolean easyApply=false;
-    @JsonIgnore
     boolean contract=false;
     @JsonIgnore
     boolean remote=false;
@@ -75,12 +72,12 @@ public class Job {
     @JsonIgnore
     boolean topApplicant=false;
     @JsonIgnore
-    int contractMonths;
+    Integer contractMonths=null;
     @JsonIgnore
     Integer maxExperienceRequired=null;
     @JsonIgnore
     int numEmployees;
-    int numApplicants;
+    Integer numApplicants=null;
     @JsonIgnore
     Float tenure=null;
     String description;

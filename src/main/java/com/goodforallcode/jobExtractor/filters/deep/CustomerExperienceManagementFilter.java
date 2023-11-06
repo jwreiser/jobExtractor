@@ -6,21 +6,20 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.List;
 
-public class LoAndNoCodeFilter implements JobFilter {
+public class CustomerExperienceManagementFilter implements JobFilter {
 
-    List<String> phrases =List.of("Pega ","Servicenow","Low Code","Low-Code",
-            "lansa ","Quickbase","Entellitrek","Entellitrak","Powerapps");
+    List<String> bothPhrases =List.of("Quadient");
 
     public boolean include(Preferences preferences, Job job){
         String title = job.getTitle().toLowerCase();
-        if (phrases.stream().anyMatch(p -> title.contains(p.toLowerCase()))) {
-            System.err.println("Lo Code Title ->reject: " + job);
+        if (bothPhrases.stream().anyMatch(p -> title.contains(p.toLowerCase()))) {
+            System.err.println("Customer management title ->reject: " + job);
             return false;
         }
         if(job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
-            if (phrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
-                System.err.println("Lo Code ->reject: " + job);
+            if (bothPhrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
+                System.err.println("Customer management->reject: " + job);
                 return false;
             }
         }

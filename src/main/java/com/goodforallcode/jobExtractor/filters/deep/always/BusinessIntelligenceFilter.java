@@ -11,7 +11,7 @@ public class BusinessIntelligenceFilter implements JobFilter {
             "Tableau","Looker","SAP ","PowerBI","QLik","DataStudio","ABAP",
             "Cognos","Pyramid",
 
-            "PO Developer","abinitio","ab initio","Yardi ","QuickSight");
+            "PO Developer","abinitio","ab initio","Yardi ","QuickSight","Crystal Report");
     final List<String>titles=List.of("Reporting");
 
 

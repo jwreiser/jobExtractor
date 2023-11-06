@@ -13,6 +13,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 
 public class LinkedInDeepJobPopulator implements DeepJobPopulator {
@@ -117,7 +118,17 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
         String description= detailsDoc.getElementById("job-details").text();
         String descriptionLower= description.toLowerCase();
         job.setDescription(description);
-        populateMaxExperienceNeeded(job,description);
+        Optional<Integer> maxExperienceRequired = getMaxExperienceNeeded(description);
+        if(maxExperienceRequired.isPresent()){
+            job.setMaxExperienceRequired(maxExperienceRequired.get());
+
+        }
+        Optional<Integer> contractDuration = getContractDuration(description);
+        if(contractDuration.isPresent()){
+            job.setContractMonths(contractDuration.get());
+            job.setContract(true);
+
+        }
 
         Elements descriptionStatuses = descriptionDiv.getElementsByAttributeValue("role", "status");
         for(Element status:descriptionStatuses){
@@ -142,24 +153,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
         return percent;
     }
 
-    private void populateMaxExperienceNeeded(Job job, String description) {
-        int start;
 
-        int end= description.indexOf("years' experience");
-        if(end<0){
-            end= description.indexOf("years experience");
-        }
-        if(end<0){
-            end= description.indexOf("years of professional experience");
-        }
-        if(end>0){
-            start= description.indexOf(" ",end-5);
-            String experience= description.substring(start,end-1).replaceAll("\\+","").replaceAll("<!---->","").trim();
-            if( NumberUtils.isCreatable(experience) ) {
-                job.setMaxExperienceRequired(Integer.parseInt(experience));
-            }
-        }
-    }
 
     private static Float getValueFromTwoWordText(String text,int numValue) {
         Float value=null;

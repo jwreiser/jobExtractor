@@ -2,6 +2,7 @@ package com.goodforallcode.jobExtractor.controller;
 
 import com.goodforallcode.jobExtractor.extractor.Extractor;
 import com.goodforallcode.jobExtractor.extractor.ExtractorFactory;
+import com.goodforallcode.jobExtractor.extractor.JobResult;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.QueryInput;
 import org.openqa.selenium.Cookie;
@@ -16,17 +17,17 @@ import java.util.Set;
 @RestController()
 public class ExtractionController {
     @PostMapping("/extract")
-    public List<Job> extractMatchingJobs(@RequestBody QueryInput queryInput){
+    public JobResult extractMatchingJobs(@RequestBody QueryInput queryInput){
         Extractor extractor= ExtractorFactory.getExtractor(queryInput.getUrls().get(0));
         WebDriver driver = extractor.login(queryInput.getUserName(), queryInput.getPassword());
         Set<Cookie> cookies = driver.manage().getCookies();
-        List<Job> jobs=extractor.getJobs(cookies,queryInput.getPreferences(), queryInput.getUrls());
+        JobResult result=extractor.getJobs(cookies,queryInput.getPreferences(), queryInput.getUrls());
         try{
             driver.close();
         }catch(Exception ex){
 
         }
 
-        return jobs;
+        return result;
     }
 }
