@@ -17,8 +17,8 @@ public class DataExchangeFilter implements JobFilter {
             return false;
         }
         if(job.getDescription()!=null) {
-            String text = job.getDescription().toLowerCase();
-            if (descriptionPhrases.stream().anyMatch(k -> text.contains(k.toLowerCase()))) {
+            String description = job.getDescription().toLowerCase();
+            if (descriptionPhrases.stream().anyMatch(k -> description.contains(k.toLowerCase()))) {
                 System.err.println("data exchange ->reject: " + job);
                 return false;
             }

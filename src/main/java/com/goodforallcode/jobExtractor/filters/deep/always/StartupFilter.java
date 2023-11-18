@@ -22,30 +22,34 @@ public class StartupFilter implements JobFilter {
      */
     List<String> descriptionPhrases =List.of(
             "seed-stage", "y combinator","backed"," early stage",
-            " VC","investors","pre-seed");
+            " VC","investors","pre-seed","valuation");
     List<String> bothPhrases =List.of("startup","start-up"," start up "
             ,"B corp","Series A","Series B","foundational");
     List<String> notPhrases =List.of("public benefit corporation","PBC");
     List<String> companyNames =List.of("Patterned Learning AI","minware","Included Health",
-            "Storm 3","Storm 4","Storm 5","Storm 6","Nira Energy","Apploi",
+            "Storm 3","Storm 4","Storm 5","Storm 6",
+            "Nira Energy","Apploi",
             "Ascendion","WellSaid Labs","Alma","Maven Clinic","hims & hers","Amberflo.io",
             "AllVoices","Certificial","Rutter","Hazel Health","AIQ (Alpine IQ)","Jerry",
-            "Underdog.io","ONE");
+            "Underdog.io","ONE","Apexon","Docugami","Clerkie","Human Interest",
+            "CornerUp","Cloudbeds","SandboxAQ","Fitness Matrix Inc","Sight Machine",
+            "Offered.ai","SpectrumAi");
 
     List<String> investorBackedCompanyNames =List.of("Avid Technology Professionals");
 
     List<String> titlePhrases =List.of("founding","Founder","Entrepreneur");
 
     public boolean include(Preferences preferences, Job job){
-        if(companyNames.stream().anyMatch(c->c.equals(job.getCompanyName()))){
+        if(companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("startup based on company name ->reject: " + job);
             return false;
         }
 
-        if(investorBackedCompanyNames.stream().anyMatch(c->c.equals(job.getCompanyName()))){
+        if(investorBackedCompanyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("startup based on company name  investor ->reject: " + job);
             return false;
         }
+
         String title =job.getTitle().toLowerCase();
         if(titlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
             System.err.println("startup based on title ->reject: " + job);
@@ -69,11 +73,6 @@ public class StartupFilter implements JobFilter {
 
             if (descriptionPhrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
                 System.err.println("startup description ->reject: " + job);
-                return false;
-            }
-
-            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job.getDescription()))){
-                System.err.println("startup based on company description ->reject: " + job);
                 return false;
             }
         }

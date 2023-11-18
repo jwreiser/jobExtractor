@@ -3,10 +3,11 @@ package com.goodforallcode.jobExtractor.filters.deep;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
-public class HardwareKnowledgeableProgrammingFilter implements JobFilter {
+public class HardwareFilter implements JobFilter {
     /**
      * Exceptions
      * Embedded: can't be in description as it could be embedded in our culture
@@ -15,14 +16,14 @@ public class HardwareKnowledgeableProgrammingFilter implements JobFilter {
 
     List<String> bothPhrases =List.of( "Systems Programmer", "System Programmer"
             ,"Firmware","AR/VR headset","drivers","sensor"," IoT ","semiconductor",
-            "VoIP"
+            "VoIP","GPU "
     );
 
-    List<String> companyNames =List.of( "Trinnex");
+    List<String> companyNames =List.of( "Trinnex","NVIDIA");
 
 
     public boolean include(Preferences preferences, Job job){
-        if(companyNames.stream().anyMatch(cn->job.getCompanyName().equals(cn))){
+        if(companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("hardware knowledgeable company name ->reject: " + job);
             return false;
         }

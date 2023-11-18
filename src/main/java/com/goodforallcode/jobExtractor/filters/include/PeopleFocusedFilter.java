@@ -14,11 +14,13 @@ public class PeopleFocusedFilter implements JobFilter {
         this.including = including;
     }
 
-    List<String> notPeopleFocusedCompanies =List.of("Maximus","IDR, Inc.","Marketlab","Gainwell Technologies");
+    List<String> notPeopleFocusedCompanies =List.of("Maximus","IDR, Inc.","Marketlab",
+            "Gainwell Technologies","TherapyNotes, LLC","Revature",
+            "Solü Technology Partners");
 
     List<String> phrases =List.of("life balance","people first","like family");
     public boolean include(Preferences preferences, Job job){
-        if(notPeopleFocusedCompanies.stream().anyMatch(c->job.getCompanyName().equals(c))){
+        if(notPeopleFocusedCompanies.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("not people focused -> exclude: " + job);
             return false;
         }
@@ -27,10 +29,6 @@ public class PeopleFocusedFilter implements JobFilter {
             if (phrases.stream().anyMatch(p -> description.contains(p))) {
                 System.err.println("people focused -> include: " + job);
                 return true;
-            }
-            if(notPeopleFocusedCompanies.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job.getDescription()))){
-                System.err.println("people focused based on company description ->reject: " + job);
-                return false;
             }
         }
         return !including;

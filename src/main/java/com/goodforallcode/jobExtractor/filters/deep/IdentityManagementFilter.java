@@ -25,7 +25,7 @@ public class IdentityManagementFilter implements JobFilter {
         final String title = job.getTitle().toLowerCase();
         final String companyName = job.getCompanyName();
 
-        if (companyNames.stream().anyMatch(c -> companyName.contains(c))) {
+        if (companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("Identity Company Name ->reject: " + job);
             return false;
         }
@@ -56,7 +56,7 @@ public class IdentityManagementFilter implements JobFilter {
                 System.err.println("Identity Software description ->reject: " + job);
                 return false;
             }
-            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job.getDescription()))){
+            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.descriptionContainsCompanyName(c,job.getDescription()))){
                 System.err.println("identity management based on company description ->reject: " + job);
                 return false;
             }

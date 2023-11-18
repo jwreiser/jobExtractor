@@ -1,5 +1,6 @@
 package com.goodforallcode.jobExtractor.job.populate;
 
+import com.goodforallcode.jobExtractor.extractor.Extractor;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.util.RegexUtil;
 import com.google.common.base.CharMatcher;
@@ -18,15 +19,24 @@ import java.util.concurrent.TimeoutException;
 
 public class LinkedInDeepJobPopulator implements DeepJobPopulator {
     String emptyComment="<!---->";
-    public void populateJob(Job job,WebDriver driver) throws TimeoutException{
+    public boolean populateJob(Job job,WebDriver driver) throws TimeoutException{
         String text;
-        WebElement detailsDiv=null;
+        WebElement mainDiv=null;
+        boolean success=true;
         int failures=0;
         while(failures<4) {
             try {
-                detailsDiv = driver.findElement(By.className("jobs-search__job-details--container"));
+                mainDiv = driver.findElement(By.className("jobs-search__job-details--container"));
                 break;
-            }catch (Exception te){
+            }catch (org.openqa.selenium.NoSuchElementException nse){
+                try {
+                    mainDiv = driver.findElement(By.className("scaffold-layout__main"));
+                    break;
+                }catch (org.openqa.selenium.NoSuchElementException nse2){
+                    return false;//nothing to handle; proceed with no deep details
+                }
+            }
+            catch (Exception te){
                 try {
                     Thread.sleep(3_000);
                 }catch (Exception ex){
@@ -38,7 +48,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
                 }
             }
         }
-         Document detailsDoc= Jsoup.parse(detailsDiv.getAttribute("innerHTML"));
+         Document detailsDoc= Jsoup.parse(mainDiv.getAttribute("innerHTML"));
         int start;
         try {
             Element tenureLink = detailsDoc.getElementsByClass("jobs-premium-company-growth__median-tenure-years-clock-icon").first();
@@ -84,11 +94,19 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
                     job.setApplied(true);
                 }
             }
+            Elements messages=detailsDoc.getElementsByClass("artdeco-inline-feedback__message");
+            for(Element element:messages){
+                if(element.text().equals("No longer accepting applications")) {
+                    job.setAcceptingApplications(false);
+                }
+            }
+
             Elements insightElements = detailsDoc.getElementsByClass("job-details-jobs-unified-top-card__job-insight");
             for(Element element:insightElements){
-                Elements spans = element.getElementsByTag("span");
-                if(spans.size()>0) {
-                    text=spans.first().text();
+
+
+                for(Element span:element.getElementsByTag("span")) {
+                    text=span.text();
                     if (text.contains("employees")) {
                         job.setNumEmployees(getValueFromTwoWordText(text, 2).intValue());
                         start = text.indexOf("·");
@@ -96,7 +114,12 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
                             String industry = text.substring(start + 2);
                             job.setIndustry(industry);
                         }
-                        break;
+                    }
+                    if (text.equals("Contract")) {
+                        job.setContract(true);
+                    }
+                    if (text.equals("Remote")) {
+                        job.setRemote(true);
                     }
                 }
             }
@@ -110,7 +133,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
             throw ex;//catching as a way to allow for inserting a breakpoint
         }
 
-
+        return success;
     }
 
     private void addDescriptionBasedDetails(Job job, Document detailsDoc) {

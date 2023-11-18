@@ -7,6 +7,8 @@ import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.util.TestUtil;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LocalFilterTests {
@@ -19,9 +21,22 @@ public class LocalFilterTests {
         job.setCompanyName("W3Global");
         job.setLocation("New York");
 
-        assertEquals("Raleigh",LocalFilter.getLocation(job));
+        assertEquals("Raleigh",filter.getLocation(job));
     }
 
+    @Test
+    void testGetFirstLocationInDescription() {
+        Optional<String> location = filter.getFirstLocationInDescription("We are actively looking for a full-stack engineer with 3-8 years of experience in the washington,dc area.");
+        assertTrue(location.isPresent());
+        assertTrue(location.get().toLowerCase().contains("washington"));
+    }
+
+    @Test
+    void testIncludeLocationInDescription() {
+        Job job = new Job("SOLID BACK END JAVA DEVELOPER");
+        job.setDescription("We are actively looking for a full-stack engineer with 3-8 years of experience in the Washington,DC Area.");
+        assertFalse(filter.include(TestUtil.getDefaultPreferences(),job));
+    }
     @Test
     void testIncludeRemoteUnitedStates() {
         Job job=new Job("SOLID BACK END JAVA DEVELOPER");

@@ -7,13 +7,25 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 public class FavoringCitizenFilter implements JobFilter {
-    List<String> phrases =List.of("Must be a US Citizen","maintain a security clearance"
-            ,"obtain a security clearance"," mbi ","public trust","IRS Clearance");
+    List<String> descriptionPhrases =List.of("Must be a US Citizen","maintain a security clearance"
+            ,"obtain a security clearance"
+    );
+    List<String> bothPhrases =List.of(" mbi ","public trust","IRS Clearance",
+            "Citizenship required");
     public boolean include(Preferences preferences, Job job){
+        final String title = job.getTitle().toLowerCase();
+        if(bothPhrases.stream().anyMatch(p->title.contains(p.toLowerCase()))){
+            System.err.println("citizen both title-> include: " + job);
+            return true;
+        }
         if (job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
-            if (phrases.stream().anyMatch(p -> description.contains(p))) {
+            if (descriptionPhrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
                 System.err.println("citizen -> include: " + job);
+                return true;
+            }
+            if(bothPhrases.stream().anyMatch(p->description.contains(p.toLowerCase()))){
+                System.err.println("citizen both title-> include: " + job);
                 return true;
             }
         }

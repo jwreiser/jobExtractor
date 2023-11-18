@@ -8,8 +8,8 @@ import java.util.List;
 
 public class JavascriptFilter implements JobFilter {
     List<String>keywords=List.of("Javascript","typescript","node",
-            "express ","react"
-            ,"angular","Webpack","VUE","npm");
+            "express ","react","WebPack", "Grunt",
+            "angular","Webpack","VUE","npm");
     List<String>soloPhrases=List.of("advanced JavaScript");
 
     @Override

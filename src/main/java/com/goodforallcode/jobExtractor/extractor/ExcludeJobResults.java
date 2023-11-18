@@ -1,5 +1,8 @@
 package com.goodforallcode.jobExtractor.extractor;
 
-public record ExcludeJobResults(boolean includeJob,boolean exludeJob,boolean skipRemainingJobs) {
+import com.goodforallcode.jobExtractor.filters.JobFilter;
+
+public record ExcludeJobResults(boolean includeJob, boolean excludeJob
+        , boolean skipRemainingJobs, JobFilter includeFilter, JobFilter excludeFilter) {
 
 }

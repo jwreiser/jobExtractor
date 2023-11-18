@@ -6,7 +6,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.List;
 
-public class NotFresherAndInternLevelFilter implements JobFilter {
+public class FresherAndInternLevelFilter implements JobFilter {
     /**
      * Exception
      * internship: Minimum of X years of experience in software development or a relevant internship.

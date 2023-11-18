@@ -9,7 +9,8 @@ import java.util.List;
 public class LoAndNoCodeFilter implements JobFilter {
 
     List<String> phrases =List.of("Pega ","Servicenow","Low Code","Low-Code",
-            "lansa ","Quickbase","Entellitrek","Entellitrak","Powerapps");
+            "lansa ","Quickbase","Entellitrek","Entellitrak","Powerapps","Low- Code",
+            "No-Code","Unqork");
 
     public boolean include(Preferences preferences, Job job){
         String title = job.getTitle().toLowerCase();
@@ -20,7 +21,7 @@ public class LoAndNoCodeFilter implements JobFilter {
         if(job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
             if (phrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
-                System.err.println("Lo Code ->reject: " + job);
+                System.err.println("Lo Code description ->reject: " + job);
                 return false;
             }
         }

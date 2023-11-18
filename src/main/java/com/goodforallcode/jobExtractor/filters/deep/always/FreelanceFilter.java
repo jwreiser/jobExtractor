@@ -14,7 +14,7 @@ public class FreelanceFilter implements JobFilter {
 
     @Override
     public boolean include(Preferences preferences, Job job) {
-        if(companyNames.stream().anyMatch(c->c.equals(job.getCompanyName()))){
+        if(companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("freelance company name ->reject: " + job);
             return false;
         }
@@ -25,7 +25,7 @@ public class FreelanceFilter implements JobFilter {
                 System.err.println("freelance description ->reject: " + job);
                 return false;
             }
-            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job.getDescription()))){
+            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.descriptionContainsCompanyName(c,job.getDescription()))){
                 System.err.println("freelance based on company description ->reject: " + job);
                 return false;
             }

@@ -3,20 +3,19 @@ package com.goodforallcode.jobExtractor.filters.shallow.company;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
-public class PoorJobSecurityFilter implements JobFilter {
-    List<String> companyNames =List.of( "Allstate","New Relic","Breezeline","Slack",
-    "Crossover","Invitae","Omnicell","Komodo Health","Rocket Software","Zinnia",
-    "NTT DATA Services");
+public class RegularlyWarringCountryCompanyFilter implements JobFilter {
+    List<String> companyName =List.of( "Київстар");
 
     @Override
     public boolean include(Preferences preferences, Job job) {
 
 
-        if(companyNames.stream().anyMatch(k->job.getCompanyName().equals(k))){
-            System.err.println("Layoffs ->reject: "+job);
+        if(companyName.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
+            System.err.println("regularly warring country company ->reject: "+job);
             return false;
         }
         return true;

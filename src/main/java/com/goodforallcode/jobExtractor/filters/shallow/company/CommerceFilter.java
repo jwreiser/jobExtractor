@@ -33,7 +33,7 @@ public class CommerceFilter implements JobFilter {
             System.err.println("commerce title both ->reject: " + job);
             return false;
         }
-        if (companyNames.stream().anyMatch(k -> job.getCompanyName().equals(k))) {
+        if (companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("ecommerce ->reject: " + job);
             return false;
         }
@@ -44,7 +44,7 @@ public class CommerceFilter implements JobFilter {
                 System.err.println("Commerce->reject: " + job);
                 return false;
             }
-            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job.getDescription()))){
+            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.descriptionContainsCompanyName(c,job.getDescription()))){
                 System.err.println("commerce based on company description ->reject: " + job);
                 return false;
             }

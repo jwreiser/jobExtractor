@@ -3,6 +3,7 @@ package com.goodforallcode.jobExtractor.filters.deep;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class CloudFilter implements JobFilter {
             "Matillion","Apigee","FlashStack","SFCC","PCF","Flashstack","ECSA ");
 
 
-    List<String>  companyNames = List.of("Cloudflare");
+    List<String>  companyNames = List.of("Cloudflare","Render","Bowman Williams","Concourse Labs");
 
 
     List<String> jobTitlePhrases=List.of(
@@ -29,7 +30,7 @@ public class CloudFilter implements JobFilter {
         if(!preferences.isExcludeCloudHeavy()){
             return true;
         }
-        if(companyNames.stream().anyMatch(c->c.equals(job.getCompanyName()))){
+        if(companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("cloud company name ->reject: " + job);
             return false;
         }

@@ -1,11 +1,10 @@
 package com.goodforallcode.jobExtractor.extractor;
 
-import com.goodforallcode.jobExtractor.filters.JobFilter;
-import com.goodforallcode.jobExtractor.filters.deep.ApplicationEngineerFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.PreferencesWithDefaults;
 import com.goodforallcode.jobExtractor.util.TestUtil;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,7 +20,7 @@ public class LinkedInExtractorTests {
         ExcludeJobResults results=extractor.excludeJob(job,TestUtil.getDefaultPreferences(),null,null);
         assertFalse(results.includeJob());
         assertFalse(results.skipRemainingJobs());
-        assertTrue(results.exludeJob());
+        assertTrue(results.excludeJob());
     }
     @Test
     void testIncludeFullStack() {
@@ -43,8 +42,36 @@ public class LinkedInExtractorTests {
         ExcludeJobResults results=extractor.excludeJob(job,preferences,null,null);
         assertFalse(results.includeJob());
         assertFalse(results.skipRemainingJobs());
-        assertTrue(results.exludeJob());
+        assertTrue(results.excludeJob());
     }
+//    @Test too slow to run regularly and is likely that the url won't be valid at some point
+    void testDeepLoad() {
+        Job job=new Job("Jira Developer");
+        job.setDescription("About the job An employer is looking for a full stack engineer with extensive experience using all of the different Atlassian services, specifically Jira. This engineer will be joining a team in the warranty & issue department to help rebuild a new workflow in Jira for over 24,000 users. This candidate can sit remote but must be willing to travel onsite to Warren, MI as needed for collaboration. Must Haves: Extensive experience with Atlassian modules- specifically Jira 7+ years of experience as a Jira developer/admin 7+ years of experience setting up workflows Experience with script runner in Jira Programming experience using groovy & java Implementation experience with REST APIs Plusses: Background in software development using java Troubleshooting experience");
+        job.setIndustry("Staffing and Recruiting");
+        job.setCompanyName("Insight Global");
+        job.setUrl("https://www.linkedin.com/jobs/view/3765387527/?eBP=CwEAAAGL2VJfGmyxc6ALeknuFv7JRWDpkxCGeq4dBHJ2dmjtBq_xiNFiuYSTlo21xyK7H0KVpyfKD1_dRoRKMctd0T8vFxFUbs7Lr2k8_JJ1oTTOx4tJTHNe9uJRMQaVDQEm3YQZoJsdL-PETq1th9XwUgAO7CftGzH_NbStPPDhOj2OHqWoUx0Lr-q0Dgh89VpKMneUwXroyF4zOYFh4rsALiJNiXN0D8j4La6CItZhS-J_WVxov_FIxmqFs7_5mOLWT5MOLu80Nwf5foMM5jsZVLdYHsHSM6hOH6lL1Fgjq8aALhsS4QKm6qwtwSvEjYaPm4dbz5H9OXC62vlYn92zHeWky2fTJDD1HX3B7GqgW8yEAZlWRYKCc9camEGFnySYSKEv9KiQhA&refId=%2FGOO6QJKl3zaH85N35D4Sw%3D%3D&trackingId=vO1k%2FcjhLuqOw2cx2oBIeg%3D%3D");
+        WebDriver webDriver = LinkedInExtractor.getWebDriver();
+        boolean success = extractor.deepLoadJob(job, webDriver);
+        webDriver.close();
+        assertTrue(success);
+        assertFalse(job.isAcceptingApplications());
+    }
+
+    @Test
+    void testDeepLoad_Contract() {
+        Job job=new Job("Jira Developer");
+        job.setDescription("About the job An employer is looking for a full stack engineer with extensive experience using all of the different Atlassian services, specifically Jira. This engineer will be joining a team in the warranty & issue department to help rebuild a new workflow in Jira for over 24,000 users. This candidate can sit remote but must be willing to travel onsite to Warren, MI as needed for collaboration. Must Haves: Extensive experience with Atlassian modules- specifically Jira 7+ years of experience as a Jira developer/admin 7+ years of experience setting up workflows Experience with script runner in Jira Programming experience using groovy & java Implementation experience with REST APIs Plusses: Background in software development using java Troubleshooting experience");
+        job.setIndustry("Staffing and Recruiting");
+        job.setCompanyName("Insight Global");
+        job.setUrl("https://www.linkedin.com/jobs/view/3760879009/?eBP=CwEAAAGL2VJlLlUWRmaYHW7HknSIiaQlh7dZzbDhaIfg34RwHROWNUH5RCnOPrqMNeYZtqMLpGUJrq_XDYvnivOLb-kI5BgaromQtP12IwhOiB48pvebekTawM8v8um0g78eMBR2hd83ERyI_-a2h8GaOzaIW4qvhEJ97zBiZXJqwAv-l4u3_Zi-UnX0Luxbp5I4jXFeVgOrS1BNgLedkutB6KB3ycX7fF4XcK233AeB0quouUpuaGZeuhogTPfYxaSy5swRhC5VHFbzYUPibZTEHlvSVtO2Fx1qqh2CzownOUSL9SVHmcdaXtk-c3CZpUU2FbGOK0I7gGPPtv5v1iJisSdlyUniAXpuVIm7u_zrjHW20F9dwtNP4oXEveBCPFyzuhP_jYk2di1U&refId=plljqbh09Djw445SiUI%2Fpg%3D%3D&trackingId=rpNKTtL7gGqNtn2XvfOqmw%3D%3D");
+        WebDriver webDriver = LinkedInExtractor.getWebDriver();
+        boolean success = extractor.deepLoadJob(job, webDriver);
+        webDriver.close();
+        assertTrue(success);
+        assertTrue(job.isContract());
+    }
+
     @Test
     void testIncludeBusinessIntelligenceTitle() {
         Job job=new Job("Jira Developer");
@@ -65,7 +92,7 @@ public class LinkedInExtractorTests {
         ExcludeJobResults results=extractor.excludeJob(job,preferences,null,null);
         assertFalse(results.includeJob());
         assertFalse(results.skipRemainingJobs());
-        assertTrue(results.exludeJob());
+        assertTrue(results.excludeJob());
     }
     @Test
     void testIncludeHardwareKnowledgeable() {
@@ -87,7 +114,7 @@ public class LinkedInExtractorTests {
         ExcludeJobResults results=extractor.excludeJob(job,preferences,null,null);
         assertFalse(results.includeJob());
         assertFalse(results.skipRemainingJobs());
-        assertTrue(results.exludeJob());
+        assertTrue(results.excludeJob());
     }
 
     @Test
@@ -111,7 +138,7 @@ public class LinkedInExtractorTests {
         ExcludeJobResults results=extractor.excludeJob(job,preferences,null,null);
         assertFalse(results.includeJob());
         assertFalse(results.skipRemainingJobs());
-        assertTrue(results.exludeJob());
+        assertTrue(results.excludeJob());
     }
 
     @Test
@@ -135,7 +162,7 @@ public class LinkedInExtractorTests {
         ExcludeJobResults results=extractor.excludeJob(job,preferences,null,null);
         assertFalse(results.includeJob());
         assertFalse(results.skipRemainingJobs());
-        assertTrue(results.exludeJob());
+        assertTrue(results.excludeJob());
     }
 
     @Test
@@ -158,7 +185,7 @@ public class LinkedInExtractorTests {
         ExcludeJobResults results=extractor.excludeJob(job,preferences,null,null);
         assertFalse(results.includeJob());
         assertFalse(results.skipRemainingJobs());
-        assertTrue(results.exludeJob());
+        assertTrue(results.excludeJob());
     }
 
     @Test
@@ -181,6 +208,6 @@ public class LinkedInExtractorTests {
         ExcludeJobResults results=extractor.excludeJob(job,preferences,null,null);
         assertFalse(results.includeJob());
         assertFalse(results.skipRemainingJobs());
-        assertTrue(results.exludeJob());
+        assertTrue(results.excludeJob());
     }
 }

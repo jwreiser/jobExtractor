@@ -7,7 +7,8 @@ import java.util.List;
 public class TestUtil {
     public static PreferencesWithDefaults getDefaultPreferences(){
         PreferencesWithDefaults preferences = new PreferencesWithDefaults();
-        preferences.setProgrammingLanguages(List.of("Java"));
+        preferences.setProgrammingLanguages(List.of("Java","pl/sql"));
+        preferences.setProgrammingFrameworks(List.of("Spring"));
         preferences.setMinFortuneRank(760);
         preferences.setExcludeIdentityManagement(true);
         preferences.setMinYearlySalary(80000);
@@ -35,7 +36,7 @@ public class TestUtil {
         preferences.setSkipUnknownNumberOfApplicants(false);
         preferences.setSkipJobsSourcedFromExternalJobBoard(false);
 
-        preferences.setLocationPhrases(List.of("NY","New York"));
+        preferences.setLocationPhrases(List.of("NY","New York","Babylon","Melville","Hauppauge","Ronkonkoma","Stony Brook"));
         return preferences;
     }
 }

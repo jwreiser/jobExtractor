@@ -19,7 +19,7 @@ public class GamingFilter implements JobFilter {
 
     @Override
     public boolean include(Preferences preferences, Job job) {
-        if(job.getCompanyName()!=null && companyNames.stream().anyMatch(n->job.getCompanyName().equals(n))){
+        if(job.getCompanyName()!=null && companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("game company name ->reject: " + job);
             return false;
         }
@@ -43,7 +43,7 @@ public class GamingFilter implements JobFilter {
                 System.err.println("game description ->reject: " + job);
                 return false;
             }
-            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job.getDescription()))){
+            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.descriptionContainsCompanyName(c,job.getDescription()))){
                 System.err.println("gaming based on company description ->reject: " + job);
                 return false;
             }

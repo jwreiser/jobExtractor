@@ -25,14 +25,20 @@ public class WorkLifeBalanceFilter implements JobFilter {
            "24x7","rotation","After business hours","After hours","aggressive delivery schedule",
             "nights","weekends","outside of normal business","outside normal business");
     List<String> goodCompanies =List.of("Ebay","Guidehouse","Trimble"
-            ,"American Specialty Health","Nationwide");
+            ,"American Specialty Health","Nationwide","Webstaurant Store",
+            "Mayo Clinic");
     List<String> badCompanies =List.of("Cardinal Health","The Home Depot","Aha!","Cash App"
     ,"Square","Crunchyroll","HCLTech","Palo Alto Networks","Intelerad Medical Systems",
             "Tenable","Kasten by Veeam","Dremio","Gigster","Samsung Electronics",
             "Arize AI","Gevo, Inc.","Harmonia Holdings Group, LLC","Block",
-            "Penn State Health","Actalent","Grafana Labs"
+            "Penn State Health","Actalent","Grafana Labs","Softrams","FinTech LLC",
+            "Cruise","Paytient","DaVita","Businessolver","Integra Connect",
+            "Discover Financial Services"
     );
-    List<String> fastCompanies =List.of("Clarifai","Digital Technology Partners"
+    List<String> fastCompanies =List.of("Clarifai","Digital Technology Partners",
+            "Stryker"
+    );
+    List<String> onCallCompanies =List.of("Oracle","Ancestry","Gremlin","Homecare Homebase"
     );
     List<String> safePhrases =List.of("internal rotation");
 
@@ -40,17 +46,21 @@ public class WorkLifeBalanceFilter implements JobFilter {
         if(!preferences.isExcludePoorWorkLifeBalance()){
             return true;
         }
-        if(goodCompanies.stream().anyMatch(c->job.getCompanyName().equals(c))){
+        if(goodCompanies.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("good work life balance company ->include: " + job);
             return true;
         }
 
-        if(badCompanies.stream().anyMatch(c->job.getCompanyName().equals(c))){
+        if(badCompanies.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("bad work life balance company ->reject: " + job);
             return false;
         }
-        if(fastCompanies.stream().anyMatch(c->job.getCompanyName().equals(c))){
+        if(fastCompanies.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("bad work life balance company fast ->reject: " + job);
+            return false;
+        }
+        if(onCallCompanies.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
+            System.err.println("bad work life balance company on call ->reject: " + job);
             return false;
         }
         if(job.getDescription()!=null) {
@@ -60,14 +70,6 @@ public class WorkLifeBalanceFilter implements JobFilter {
             }
             if (phrases.stream().anyMatch(p -> description.contains(p))) {
                 System.err.println("work life balance ->reject: " + job);
-                return false;
-            }
-            if(badCompanies.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c, job.getDescription()))){
-                System.err.println("worklife balance based on company description ->reject: " + job);
-                return false;
-            }
-            if(fastCompanies.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c, job.getDescription()))){
-                System.err.println("worklife balance based on company description fast->reject: " + job);
                 return false;
             }
         }

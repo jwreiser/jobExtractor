@@ -6,17 +6,21 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 public class NumApplicantsFilter implements JobFilter {
     boolean skipping;
+    boolean readDetails;
 
-    public NumApplicantsFilter(boolean skipping) {
+    public NumApplicantsFilter(boolean skipping,boolean readDetails)
+    {
         this.skipping = skipping;
+        this.readDetails = readDetails;
     }
 
     public boolean include(Preferences preferences, Job job){
         if(skipping && weAreNotSkipping(preferences)){
             return true;
         }
-        if(preferences.isSkipUnknownNumberOfApplicants()&&skipping&&job.getNumApplicants()==null){
-            System.err.println("skipping uknown number of applicants  ->reject: " + job);
+        //don't skip at the outset as we might not have read in the number of applicants yet
+        if(readDetails && preferences.isSkipUnknownNumberOfApplicants()&&skipping&&job.getNumApplicants()==null){
+            System.err.println("skipping unknown number of applicants  ->reject: " + job);
             return false;
         }
         if (job.getNumApplicants()!=null && job.getNumApplicants()>preferences.getMaxApplicants()) {
@@ -31,3 +35,4 @@ public class NumApplicantsFilter implements JobFilter {
         return !(preferences.isSkipTooManyApplicants()||preferences.isSkipUnknownNumberOfApplicants());
     }
 }
+

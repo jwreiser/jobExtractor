@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CompanyNameUtilTests {
     @Test
-    void testContainsCompanyName(){
-        assertTrue(CompanyNameUtil.containsCompanyName("Ascendion",
+    void testDescriptionContainsCompanyName(){
+        assertTrue(CompanyNameUtil.descriptionContainsCompanyName("Ascendion",
                 "Our client, Ascendion Inc., is seeking the following"));
 
     }

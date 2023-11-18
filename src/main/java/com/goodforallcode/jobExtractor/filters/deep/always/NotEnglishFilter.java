@@ -23,9 +23,10 @@ public class NotEnglishFilter implements JobFilter {
             return false;
         }
         if (job.getDescription() != null) {
-            String text = job.getDescription().toLowerCase();
+            String description = job.getDescription().toLowerCase();
 
-            if (keywords.stream().filter(k -> text.contains(k.toLowerCase())).count() > 2) {
+            if (keywords.stream().anyMatch(k ->
+                    description.contains(k.toLowerCase()))) {
                 System.err.println("Not english ->reject: " + job);
                 return false;
             }

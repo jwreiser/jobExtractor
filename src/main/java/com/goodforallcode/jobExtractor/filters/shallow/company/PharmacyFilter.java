@@ -3,6 +3,7 @@ package com.goodforallcode.jobExtractor.filters.shallow.company;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class PharmacyFilter implements JobFilter {
     public boolean include(Preferences preferences, Job job) {
 
 
-        if(companyName.stream().anyMatch(k->job.getCompanyName().equals(k))){
+        if(companyName.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("Pharmacy ->reject: "+job);
             return false;
         }

@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 
 public interface DeepJobPopulator {
-    void populateJob(Job job,WebDriver driver) throws TimeoutException;
+    boolean populateJob(Job job,WebDriver driver) throws TimeoutException;
 
     default   public Optional<Integer> getMaxExperienceNeeded(String description) {
         int start;

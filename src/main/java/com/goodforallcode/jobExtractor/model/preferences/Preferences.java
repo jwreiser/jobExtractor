@@ -1,5 +1,6 @@
 package com.goodforallcode.jobExtractor.model.preferences;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,10 +85,13 @@ public interface Preferences {
      Integer getMinJobAgeInDays();
      void setMinJobAgeInDays(Integer minJobAgeInDays);
      List<String> getProgrammingLanguages();
+     List<String>  getProgrammingFrameworks();
      void setProgrammingLanguages(List<String> languages);
+     void setProgrammingFrameworks(List<String> languages);
      List<String> getDesiredClearancePhrases();
 
      List<String> getLocationPhrases();
      void setLocationPhrases(List<String> phrases);
+
 
 }

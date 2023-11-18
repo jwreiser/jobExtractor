@@ -18,7 +18,8 @@ public class RemoteFilter implements JobFilter {
             "Must be able to relocate","one day of remote work","Partial WFH",
     "Remote till pandemic","Remote til pandemic","able to travel","Future onsite work is required",
 "week onsite","a hybrid position","(Hybrid)","(Hybrid role)","in office days per ",
-    "(Onsite / Hybrid)");
+    "(Onsite / Hybrid)","is not remote,","is not remote ","is not remote.",
+            "is based in ");
     List<String> notRemoteEndsWith =List.of("- Hybrid","-Hybrid","- Onsite","-Onsite",
             ": Hybrid",":Hybrid",": Onsite",":Onsite","- Onsite/Hybrid","-Onsite/Hybrid",":Onsite/Hybrid",
             ": Onsite/Hybrid","- ONSITE HYBRID");
@@ -31,23 +32,9 @@ public class RemoteFilter implements JobFilter {
     @Override
     public boolean include(Preferences preferences, Job job) {
         final String title=job.getTitle().toLowerCase();
-        if (remotePhrases.stream().anyMatch(k->title.contains(k.toLowerCase()))){
-            return true;
-        }
 
-        if (notRemotePhrases.stream().anyMatch(k->title.contains(k.toLowerCase()))){
-            System.err.println("Not remote title->reject: "+job);
-            return false;
-        }
-
-        if (notRemoteEndsWith.stream().anyMatch(k->title.endsWith(k.toLowerCase()))){
-            System.err.println("Not remote title ends with->reject: "+job);
-            return false;
-        }
-
-        if (notRemoteStartsWith.stream().anyMatch(k->title.startsWith(k.toLowerCase()))){
-            System.err.println("Not remote title starts with->reject: "+job);
-            return false;
+        if(isTitleRemote(title)!=null ){
+            return isTitleRemote(title);
         }
 
         if(job.getDescription()!=null) {
@@ -63,4 +50,33 @@ public class RemoteFilter implements JobFilter {
         return true;
     }
 
+    /**
+     * This needs to return null if we have not found anything in the title that
+     * indicates remoteness so that we can have the calling function know that it can
+     * return true when the function returns true and that true is not being used as the
+     * default state
+     * @param titleLowerCase
+     * @return
+     */
+    public Boolean isTitleRemote(String titleLowerCase){
+        if (remotePhrases.stream().anyMatch(k->titleLowerCase.contains(k.toLowerCase()))){
+            return true;
+        }
+
+        if (notRemotePhrases.stream().anyMatch(k->titleLowerCase.contains(k.toLowerCase()))){
+            System.err.println("Not remote title->reject: "+titleLowerCase);
+            return false;
+        }
+
+        if (notRemoteEndsWith.stream().anyMatch(k->titleLowerCase.endsWith(k.toLowerCase()))){
+            System.err.println("Not remote title ends with->reject: "+titleLowerCase);
+            return false;
+        }
+
+        if (notRemoteStartsWith.stream().anyMatch(k->titleLowerCase.startsWith(k.toLowerCase()))){
+            System.err.println("Not remote title starts with->reject: "+titleLowerCase);
+            return false;
+        }
+        return null;
+    }
 }

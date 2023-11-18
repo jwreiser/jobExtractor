@@ -9,7 +9,8 @@ import java.util.List;
 
 public class InsuranceFilter implements JobFilter {
     List<String> titlePhrases =List.of( "Duck Creek");
-    List<String> companyNames =List.of( "Transamerica","Travelers","State Farm","GEICO","Allstate");
+    List<String> companyNames =List.of( "Transamerica","Travelers",
+            "State Farm","GEICO","Allstate","Coalition, Inc.");
     List<String> descriptionPhrases =List.of( "insurance");
 
     @Override
@@ -21,8 +22,13 @@ public class InsuranceFilter implements JobFilter {
         }
 
 
-        if(companyNames.stream().anyMatch(k->job.getCompanyName().equals(k))){
+        if(companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("insurance ->reject: "+job);
+            return false;
+        }
+
+        if(job.getIndustry()!=null && job.getIndustry().equals("Insurance")){
+            System.err.println("insurance industry ->reject: "+job);
             return false;
         }
 
@@ -37,7 +43,7 @@ public class InsuranceFilter implements JobFilter {
                 System.err.println("insurance description->reject: " + job);
                 return false;
             }
-            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job.getDescription()))){
+            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.descriptionContainsCompanyName(c,job.getDescription()))){
                 System.err.println("insurance based on company description ->reject: " + job);
                 return false;
             }

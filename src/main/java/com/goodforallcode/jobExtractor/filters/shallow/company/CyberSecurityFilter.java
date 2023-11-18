@@ -8,7 +8,8 @@ import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 import java.util.List;
 
 public class CyberSecurityFilter implements JobFilter {
-    List<String> companyNames =List.of( "Zscaler","Fortra");
+    List<String> companyNames =List.of( "Zscaler","Fortra","Concourse Labs",
+            "PropelAuth","Trinity Cyber");
     List<String> titles=List.of("Vulnerability engineer","Detection","Sentinel", "SIEM ","Risk ","Cyber Security","CyberSecurity","Cyber-Security");
 
 
@@ -27,7 +28,15 @@ public class CyberSecurityFilter implements JobFilter {
             System.err.println("Cybersecurity title security ->reject: "+job);
             return false;
         }
-        if(companyNames.stream().anyMatch(k->job.getCompanyName().equals(k))){
+        if(job.getIndustry()!=null && job.getIndustry().equals(" Computer and Network Security")){
+            System.err.println("Cybersecurity industry ->reject: "+job);
+            return false;
+        }
+        if(job.getCompanyName().toLowerCase().contains("security")){
+            System.err.println("Cybersecurity in company name->reject: "+job);
+            return false;
+        }
+        if(companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("Cybersecurity ->reject: "+job);
             return false;
         }
@@ -38,7 +47,7 @@ public class CyberSecurityFilter implements JobFilter {
                 System.err.println("Cybersecurity description ->reject: "+job);
                 return false;
             }
-            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job.getDescription()))){
+            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.descriptionContainsCompanyName(c,job.getDescription()))){
                 System.err.println("cybersecurity based on company description ->reject: " + job);
                 return false;
             }

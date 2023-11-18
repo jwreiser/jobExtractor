@@ -1,4 +1,4 @@
-package com.goodforallcode.jobExtractor.filters.shallow.industry;
+package com.goodforallcode.jobExtractor.filters.deep;
 
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;

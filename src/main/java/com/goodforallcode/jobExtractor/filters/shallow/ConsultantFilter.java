@@ -10,7 +10,12 @@ import java.util.List;
 public class ConsultantFilter implements JobFilter {
     static List<String>consultantKeywords=List.of("consultant","consulting","consultancy");
     static List<String>consultantCompanyNames=List.of("Curate Partners","Modis","Akkodis"
-    ,"Ricardo plc","FullStack Labs","Sierra7","Sierra7, Inc.","Vaco");
+    ,"Ricardo plc","FullStack Labs","Sierra7","Sierra7, Inc.","Vaco","QuantumBricks",
+            "Lorven Technologies Inc.","ZETTALOGIX INC","Sierra Solutions","CGI",
+            "Daugherty Business Solutions","World Wide Technology","Qualitest",
+            "Solü Technology Partners","Nakupuna Companies",
+            "DMI (Digital Management, LLC)","Next Level Business Services, Inc.",
+            "NLB Services");
 
     static final List<String> industries=List.of("Business Consulting and Services");
     @Override
@@ -18,7 +23,7 @@ public class ConsultantFilter implements JobFilter {
         if(!preferences.isExcludeConsultant()){
             return true;
         }
-        if(consultantCompanyNames.stream().anyMatch(c -> job.getCompanyName().equals(c))){
+        if(consultantCompanyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
             System.err.println("Consultant company->reject: "+job);
             return false;
         }
@@ -36,7 +41,7 @@ public class ConsultantFilter implements JobFilter {
 
         final String companyName=job.getCompanyName().toLowerCase();
         if(consultantKeywords.stream().anyMatch(k -> companyName.contains(k.toLowerCase()))){
-            System.err.println("Consultant name contains ->reject: "+job);
+            System.err.println("Consultant company name contains ->reject: "+job);
             return false;
         }
 
@@ -52,7 +57,7 @@ public class ConsultantFilter implements JobFilter {
                 System.err.println("Consultant description ->reject: "+job);
                 return false;
             }
-            if(consultantCompanyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job.getDescription()))){
+            if(consultantCompanyNames.stream().anyMatch(c-> CompanyNameUtil.descriptionContainsCompanyName(c,job.getDescription()))){
                 System.err.println("consultant based on company description ->reject: " + job);
                 return false;
             }

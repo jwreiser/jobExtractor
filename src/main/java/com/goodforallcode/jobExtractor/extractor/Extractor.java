@@ -58,7 +58,7 @@ public abstract class Extractor {
         List<Job> acceptedJobs = new ArrayList<>();
         List<Job> rejectedJobs = new ArrayList<>();
         JobCache cache=new DefaultJobCache();
-        int numThreads=8;
+        int numThreads=7;
         int size=1;
         if(urls.size()>numThreads){
             size=urls.size()/numThreads;
@@ -69,9 +69,9 @@ public abstract class Extractor {
         for(List<String> urlList:urlLists){
             tasks.add(new UrlExctractingCallable(this,urlList,cookies,preferences,cache));
         }
-        List<Future<JobResult>> futures = null;
+        List<Future<JobResult>> futures = new ArrayList<>();
         try {
-            futures = executorService.invokeAll(tasks);
+            futures.addAll(executorService.invokeAll(tasks));
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -112,23 +112,22 @@ public abstract class Extractor {
         //I had been clicking the save button here but it gives stale element exceptions
         jobs.add(currentJob);
     }
-
     public  void doubleClickOnElement(WebDriver driver, WebElement element) {
+        doubleClickElement(driver,element);
+    }
+    
+    public static void doubleClickElement(WebDriver driver, WebElement element) {
         if(element==null){
             System.err.println("Element was null");
             return;
         }
         Actions act=new Actions(driver);
 
-        //        in FF: we need to scroll the page until the item we need is visible
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", element);
         try{
+            //        in FF: we need to scroll the page until the item we need is visible
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", element);
             Thread.sleep(1_000);
-        }catch (Exception ex){
-
-        }
-        act.moveToElement(element).doubleClick().perform();
-        try{
+            act.moveToElement(element).doubleClick().perform();
             Thread.sleep(1_000);
         }catch (Exception ex){
 

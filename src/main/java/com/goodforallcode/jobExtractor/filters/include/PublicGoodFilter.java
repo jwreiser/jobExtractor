@@ -11,7 +11,7 @@ public class PublicGoodFilter implements JobFilter {
     List<String> phrases =List.of("nonprofit","health equity","fair opportunity","unjust"
     ,"structural inequities","racism","underserved","food access");
     List<String> industryPhrases =List.of("Hospitals and Health Care","Mental Health Care","Higher Education");
-    List<String> companyNames =List.of("Blackbaud");
+    List<String> companyNames =List.of("Blackbaud","Mayo Clinic");
     public boolean include(Preferences preferences, Job job){
         if(companyNames.stream().anyMatch(c->job.getCompanyName().equals(c))){
             System.err.println("public good company name-> include: " + job);
@@ -23,7 +23,7 @@ public class PublicGoodFilter implements JobFilter {
                 System.err.println("public good -> include: " + job);
                 return true;
             }
-            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job.getDescription()))){
+            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.descriptionContainsCompanyName(c,job.getDescription()))){
                 System.err.println("public good based on company description ->reject: " + job);
                 return false;
             }

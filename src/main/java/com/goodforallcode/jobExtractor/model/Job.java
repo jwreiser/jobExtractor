@@ -2,6 +2,7 @@ package com.goodforallcode.jobExtractor.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.goodforallcode.jobExtractor.filters.JobFilter;
 import lombok.Data;
 import org.openqa.selenium.WebElement;
 
@@ -32,6 +33,7 @@ public class Job {
     @JsonIgnore
     WebElement jobDetailsLink;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String url;
     String location;
     /*
@@ -40,8 +42,11 @@ public class Job {
      */
     @JsonIgnore
     String internalUrl;
+    @JsonIgnore
     String sourceUrl;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Integer minYearlySalary;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Integer maxYearlySalary;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Integer minHourlySalary;
@@ -63,6 +68,7 @@ public class Job {
     boolean hidden=false;
     boolean easyApply=false;
     boolean contract=false;
+    boolean acceptingApplications=true;
     @JsonIgnore
     boolean remote=false;
     @JsonIgnore
@@ -77,17 +83,25 @@ public class Job {
     Integer maxExperienceRequired=null;
     @JsonIgnore
     int numEmployees;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Integer numApplicants=null;
     @JsonIgnore
     Float tenure=null;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String description;
     String title;
     String companyName;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String industry;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Integer travelPercent;
     @JsonIgnore
     Company company;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    JobFilter includeFilter;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    JobFilter excludeFilter;
     @Override
     public String toString() {
         return "Job{" +

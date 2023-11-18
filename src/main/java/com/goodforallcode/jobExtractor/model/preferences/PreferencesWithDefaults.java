@@ -59,5 +59,7 @@ public class PreferencesWithDefaults implements Preferences {
     List<String> locationPhrases=new ArrayList<>();
     List<String> programmingLanguages=new ArrayList<>();
 
+    List<String> programmingFrameworks=new ArrayList<>();
+
 
 }

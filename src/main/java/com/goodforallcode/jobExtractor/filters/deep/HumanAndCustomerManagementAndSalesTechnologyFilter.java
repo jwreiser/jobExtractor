@@ -8,8 +8,11 @@ import java.util.List;
 
 public class HumanAndCustomerManagementAndSalesTechnologyFilter implements JobFilter {
 
+    /**
+     * M365 can be just sharepoint and not be a HCM job
+     */
     List<String> phrases =List.of("Genesys","CRM","Salesforce","Dynamics"
-            ,"d365","Exstream","Power Platform","m365","HRMS","Peoplesoft",
+            ,"d365","Exstream","Power Platform","HRMS","Peoplesoft",
             "HRIS","Kitewheel"," HCM ","Vlocity","Medallia","SFCC");
 
     public boolean include(Preferences preferences, Job job){

@@ -3,13 +3,17 @@ package com.goodforallcode.jobExtractor.filters.shallow.company;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
 public class ContractFilter implements JobFilter {
     List<String> companyNames =List.of( "Accenture Federal Services","Guidehouse"
             ,"Wise Skulls","Brooksource","Harnham","Cypress HCM","Belcan","Mindex",
-            "Kforce Inc","Kforce Com","Oktobor Animation","Groundswell","Raft","NTT DATA Services");
+            "Kforce Inc","Kforce Com","Oktobor Animation","Groundswell","Raft",
+            "NTT DATA Services","Spatial Front, Inc","Tential Solutions",
+            "IT Crowd","Koniag Government Services","SCIGON","Latitude Inc","IT Labs",
+            "AgileEngine","Bitsoft International, Inc.","Revature");
 
     List<String> bothPhrases =List.of( "contract");
 
@@ -32,7 +36,7 @@ public class ContractFilter implements JobFilter {
             return false;
         }
 
-        if(companyNames.stream().anyMatch(k->job.getCompanyName().equals(k))){
+        if(companyNames.stream().anyMatch(c->CompanyNameUtil.containsCompanyName(c,job))){
             System.err.println("Contract Based Employer ->reject: "+job);
             return false;
         }

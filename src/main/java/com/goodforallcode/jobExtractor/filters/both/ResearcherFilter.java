@@ -13,10 +13,10 @@ public class ResearcherFilter implements JobFilter {
      * conferences: other jobs go to conferences
      */
     List<String> descriptionPhrases =List.of(" patent","AAAI", "IAAI",
-            "IJCAI", " HRI ", "ICAPS", "AAMAS", "ICRA", "IROS", "ICLR", "ICML",
+            "IJCAI", " HRI ", " ICAPS", "AAMAS", "ICRA", "IROS", "ICLR", "ICML",
             "NeurIPs", "CORL", " ITSC","publications ","journals ");
-    List<String> bothPhrases =List.of("researcher","PHD ","R&D ");
-    List<String> titlePhrases =List.of("research");
+    List<String> bothPhrases =List.of("researcher");
+    List<String> titlePhrases =List.of("research","R&D ");
     @Override
     public boolean include(Preferences preferences, Job job) {
         final String title=job.getTitle().toLowerCase();

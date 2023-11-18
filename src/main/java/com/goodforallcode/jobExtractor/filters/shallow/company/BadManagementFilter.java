@@ -3,20 +3,23 @@ package com.goodforallcode.jobExtractor.filters.shallow.company;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
-public class UpskillingRecruitmentCompanyFilter implements JobFilter {
-    List<String> phrases =List.of( "SynergisticIT");
+public class BadManagementFilter implements JobFilter {
+
+    List<String> companyNames =List.of( "LaunchDarkly");
 
     @Override
     public boolean include(Preferences preferences, Job job) {
 
-
-        if(phrases.stream().anyMatch(k->job.getCompanyName().equals(k))){
-            System.err.println("Upskilling Recruitment ->reject: "+job);
+        if(companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
+            System.err.println("bad management company name ->reject: "+job);
             return false;
         }
+
+
         return true;
     }
 }

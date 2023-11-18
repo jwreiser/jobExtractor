@@ -7,9 +7,10 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 public class ContentManagementFilter implements JobFilter {
-    List<String> titlePhrases =List.of("Content Management","CMS ","Onbase","CMS(");
+    List<String> titlePhrases =List.of("Content Management","CMS ","Onbase","CMS(","CMS ");
 
-    List<String> bothPhrases =List.of("AEM ","Adobe Experience Manager","Drupal","Alfresco"," onbase","Sitecore");
+    List<String> bothPhrases =List.of("AEM ","Adobe Experience Manager","Drupal","Alfresco"," onbase",
+            "Sitecore","Tridion");
     List<String> caseSensitivePhrases =List.of("Brightspot");
 
     public boolean include(Preferences preferences, Job job){

@@ -7,7 +7,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 
-public class NotAboveSeniorTitleFilter implements JobFilter {
+public class AboveSeniorTitleFilter implements JobFilter {
 
 
     List<String> titleOnlyPhrases =List.of( "stf ","director", "VP ","staff","lead","manager"
