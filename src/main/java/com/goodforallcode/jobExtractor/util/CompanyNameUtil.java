@@ -7,6 +7,9 @@ import java.util.List;
 public class CompanyNameUtil {
     public static boolean descriptionContainsCompanyName(String companyName, String description){
         boolean contains=false;
+        if(description==null){
+            return false;
+        }
         final String descriptionLower=description.toLowerCase();
         List<String> patterns=List.of("our client[^\\.\\;]*"+companyName.toLowerCase());
         for(String pattern:patterns) {

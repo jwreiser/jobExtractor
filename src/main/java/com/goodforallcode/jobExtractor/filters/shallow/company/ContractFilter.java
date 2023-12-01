@@ -13,7 +13,8 @@ public class ContractFilter implements JobFilter {
             "Kforce Inc","Kforce Com","Oktobor Animation","Groundswell","Raft",
             "NTT DATA Services","Spatial Front, Inc","Tential Solutions",
             "IT Crowd","Koniag Government Services","SCIGON","Latitude Inc","IT Labs",
-            "AgileEngine","Bitsoft International, Inc.","Revature");
+            "AgileEngine","Bitsoft International, Inc.","Revature","Gridiron IT",
+            "Brillio");
 
     List<String> bothPhrases =List.of( "contract");
 

@@ -34,12 +34,14 @@ public class ProgrammingFrameworkFilter implements JobFilter {
 
         if (job.getDescription() != null) {
             final String description = job.getDescription().toLowerCase();
-            if (frameworks.stream().anyMatch(l -> description.contains("strong knowledge of " + l.toLowerCase()))) {
+            if (frameworks.stream().anyMatch(l -> description.contains("strong knowledge of " + l.toLowerCase())
+            &&!preferences.getProgrammingFrameworks().contains(l))) {
                 System.err.println("strong knowledge of framework ->reject: " + job);
                 return false;
             }
 
-            if (frameworks.stream().anyMatch(l -> description.contains("advanced knowledge of " + l.toLowerCase()))) {
+            if (frameworks.stream().anyMatch(l -> description.contains("advanced knowledge of " + l.toLowerCase())
+                    &&!preferences.getProgrammingFrameworks().contains(l))) {
                 System.err.println("advanced knowledge of framework ->reject: " + job);
                 return false;
             }

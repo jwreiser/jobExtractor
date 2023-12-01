@@ -17,7 +17,7 @@ public class TestUtil {
         preferences.setMaxEmployees(9000);
         preferences.setExcludeConsultant(true);
         preferences.setAmountOfTotalExperience(6);
-        preferences.setMaxJobAgeInDays(5);
+        preferences.setMaxJobAgeInDays(3);
 
         preferences.setExcludeAboveSenior(true);
         preferences.setExcludeBigData(true);
@@ -36,7 +36,8 @@ public class TestUtil {
         preferences.setSkipUnknownNumberOfApplicants(false);
         preferences.setSkipJobsSourcedFromExternalJobBoard(false);
 
-        preferences.setLocationPhrases(List.of("NY","New York","Babylon","Melville","Hauppauge","Ronkonkoma","Stony Brook"));
+        preferences.setLocationPhrases(List.of("NY","New York","Babylon","Melville","Hauppauge","Ronkonkoma","Islandia"
+                ,"Plainview","Stony Brook"));
         return preferences;
     }
 }

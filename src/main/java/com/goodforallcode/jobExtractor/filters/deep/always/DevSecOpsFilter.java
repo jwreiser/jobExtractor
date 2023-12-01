@@ -9,7 +9,7 @@ import java.util.List;
 public class DevSecOpsFilter implements JobFilter {
     List<String> keywords = List.of("network", "security", "install",
             "VMware", "Servers", "Sccm", "administration", "administer",
-            "configuration management"," configure"," deploy","maintain");
+            "configuration management"," configure"," deploy","maintain","setup");
     List<String> titles = List.of("Datacenter Engineer","Devop","Devsecop",
             "Release Engineer","Build","Dev ops","Devops",
             " IT Engineer","Information Technology Engineer",

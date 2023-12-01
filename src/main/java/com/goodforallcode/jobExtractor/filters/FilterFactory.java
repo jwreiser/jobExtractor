@@ -37,7 +37,7 @@ public class FilterFactory {
         filters.add(new MainframeFilter());
         filters.add(new ManufacturingFilter());
         filters.add(new MegaBrandFilter());
-        filters.add(new MicromanagementFilter());
+        filters.add(new PoorManagementFilter());
         filters.add(new OperatingSystemCompanyFilter());
         filters.add(new PharmacyFilter());
         filters.add(new RegularlyWarringCountryCompanyFilter());
@@ -62,7 +62,6 @@ public class FilterFactory {
         filters.add(new GamingFilter());
         filters.add(new GeospatialFilter());
         filters.add(new HardwareFilter());
-        filters.add(new HiddenFilter());
         filters.add(new IdentityManagementFilter());
         filters.add(new InsuranceFilter());
 
@@ -87,7 +86,7 @@ public class FilterFactory {
         filters.add(new SupplyChainFilter());
         filters.add(new SupportFilter());
         filters.add(new TelecomFilter());
-
+        filters.add(new UnixFilter());
 
 
 
@@ -113,7 +112,6 @@ public class FilterFactory {
         filters.add(new DevSecOpsFilter());
         filters.add(new EducatorTitleFilter());
         filters.add(new FrontEndFilter());
-        filters.add(new FullstackFilter());
         filters.add(new HardwareFilter());
         filters.add(new HumanAndCustomerManagementAndSalesTechnologyFilter());
         filters.add(new InfrastructureSoftwareFilter());
@@ -135,7 +133,6 @@ public class FilterFactory {
         filters.add(new SearchFilter());
         filters.add(new SoftwareDevelopmentProjectManagementTitleFilter());
         filters.add(new SupportTitleFilter());
-        filters.add(new UnixTitleFilter());
         filters.add(new WorkLifeBalanceFilter(false));
         return filters;
     }
@@ -152,7 +149,7 @@ public class FilterFactory {
 //        filters.add(new AIFilter());
 //        filters.add(new BettingFilter());
         filters.add(new BigDataFilter());
-        filters.add(new BusinessProcessManagementFilter());
+//        filters.add(new BusinessProcessManagementFilter());
         filters.add(new CachingFilter());
         filters.add(new CaseManagementFilter());
         filters.add(new CloudFilter());
@@ -178,7 +175,6 @@ public class FilterFactory {
 //        filters.add(new OffshoreFilter());
 //        filters.add(new OracleTechFilter());
 //        filters.add(new PerformanceFilter());
-        filters.add(new RedHatFilter());
         filters.add(new ResearcherFilter());
         filters.add(new SearchFilter());
         filters.add(new SupportFilter());
@@ -192,7 +188,7 @@ public class FilterFactory {
 //        filters.add(new ApplicationEngineerFilter());
         filters.add(new BettingFilter());
 //        filters.add(new BigDataFilter());
-//        filters.add(new BusinessProcessManagementFilter());
+        filters.add(new BusinessProcessManagementFilter());
 //        filters.add(new CachingFilter());
 //        filters.add(new CaseManagementFilter());
 //        filters.add(new CloudHeavyFilter());
@@ -203,7 +199,7 @@ public class FilterFactory {
           filters.add(new DataExchangeFilter());
 //        filters.add(new HumanAndCustomerManagementAndSalesTechnologyFilter());
 //        filters.add(new EnterpriseApplicationsFilter());
-        filters.add(new FullstackFilter());
+
 //        filters.add(new IdentityManagementFilter());
 //        filters.add(new InfrastructureSoftwareFilter());
 //        filters.add(new InsuranceFilter());
@@ -216,7 +212,7 @@ public class FilterFactory {
         filters.add(new OutsourcingAndOffshoreFilter());
         filters.add(new OracleTechFilter());
         filters.add(new PerformanceFilter());
-//        filters.add(new RedHatFilter());
+
 //        filters.add(new ResearcherFilter());
 //        filters.add(new SearchFilter());
 //        filters.add(new SupportFilter());
@@ -234,6 +230,7 @@ public class FilterFactory {
         List<JobFilter> filters = new ArrayList<>();
         filters.add(new LocalFilter());
         filters.add(new ProgrammingFrameworkFilter());
+        filters.add(new UnixFilter());
         return filters;
     }
 
@@ -265,10 +262,12 @@ public class FilterFactory {
         filters.add(new EntertainmentFilter());
         filters.add(new ERPFilter());
         filters.add(new FinanceFilter());
+        filters.add(new FortuneRankFilter());
         filters.add(new FossilFuelsFilter());
         filters.add(new FreelanceFilter());
         filters.add(new FresherAndInternLevelFilter());
         filters.add(new FrontEndFilter());
+        filters.add(new FullstackFilter());
         filters.add(new GamingFilter());
         filters.add(new GeospatialFilter());
         filters.add(new HardwareFilter());
@@ -281,7 +280,7 @@ public class FilterFactory {
         filters.add(new ManufacturingFilter());
         filters.add(new MarketingFilter());
         filters.add(new MegaBrandFilter());
-        filters.add(new MicromanagementFilter());
+        filters.add(new PoorManagementFilter());
         filters.add(new MSTFilter());
         filters.add(new NightShiftFilter());
         filters.add(new NotEnglishFilter());

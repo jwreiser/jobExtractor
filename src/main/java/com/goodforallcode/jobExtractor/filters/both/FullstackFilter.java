@@ -17,7 +17,6 @@ public class FullstackFilter implements JobFilter {
         }
         String title =job.getTitle().toLowerCase();
 
-        //if this is a job title we are not qualified for
         if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
             System.err.println("full stack job title->reject: "+job);
             return false;

@@ -8,7 +8,8 @@ import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 import java.util.List;
 
 public class DishonestCompanyFilter implements JobFilter {
-    List<String> companyNames =List.of( "IT Minds LLC","Bitsoft International, Inc.");
+    List<String> companyNames =List.of( "IT Minds LLC","Bitsoft International, Inc."
+    ,"Envision Horizons");
 
     @Override
     public boolean include(Preferences preferences, Job job) {

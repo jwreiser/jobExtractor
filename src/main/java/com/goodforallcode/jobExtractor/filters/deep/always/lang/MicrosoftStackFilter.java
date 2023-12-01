@@ -11,7 +11,8 @@ public class MicrosoftStackFilter implements JobFilter {
     List<String> singlePointKeywords =List.of("C++","C#");
 
     List<String>doublePointKeywords=List.of(".net","ASP.net","VB.Net"," WPF ","WinForms");
-    List<String>quadPointKeywords=List.of("Microsoft Stack","Microsoft Visual Studio"
+    List<String>quadPointKeywords=List.of("Microsoft Stack"
+            ,"Microsoft Technology Stack", "Microsoft Visual Studio"
             ,"NET development ecosystem", "NET ecosystem", "NET core",
             "NET framework");
 

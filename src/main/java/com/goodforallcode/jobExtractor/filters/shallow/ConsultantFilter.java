@@ -8,12 +8,13 @@ import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 import java.util.List;
 
 public class ConsultantFilter implements JobFilter {
-    static List<String>consultantKeywords=List.of("consultant","consulting","consultancy");
+    static List<String>consultantKeywords=List.of("consultant","consulting",
+            "consultancy");
     static List<String>consultantCompanyNames=List.of("Curate Partners","Modis","Akkodis"
     ,"Ricardo plc","FullStack Labs","Sierra7","Sierra7, Inc.","Vaco","QuantumBricks",
             "Lorven Technologies Inc.","ZETTALOGIX INC","Sierra Solutions","CGI",
             "Daugherty Business Solutions","World Wide Technology","Qualitest",
-            "Solü Technology Partners","Nakupuna Companies",
+            "Solü Technology Partners","Nakupuna Companies","SDI Presence",
             "DMI (Digital Management, LLC)","Next Level Business Services, Inc.",
             "NLB Services");
 

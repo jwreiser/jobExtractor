@@ -42,7 +42,6 @@ public class Job {
      */
     @JsonIgnore
     String internalUrl;
-    @JsonIgnore
     String sourceUrl;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Integer minYearlySalary;
@@ -68,6 +67,7 @@ public class Job {
     boolean hidden=false;
     boolean easyApply=false;
     boolean contract=false;
+    @JsonIgnore
     boolean acceptingApplications=true;
     @JsonIgnore
     boolean remote=false;

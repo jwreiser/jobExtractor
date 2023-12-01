@@ -2,7 +2,6 @@ package com.goodforallcode.jobExtractor.util;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,7 +25,7 @@ public class RegexUtil {
      public static Integer getValue(String descriptionLower, String patternText,
                                     Integer defaultVal) {
         Integer value = defaultVal;
-        Pattern pattern;
+        Pattern pattern;;
         Matcher matcher;
         pattern = Pattern.compile(patternText);
         matcher = pattern.matcher(descriptionLower);
@@ -51,5 +50,32 @@ public class RegexUtil {
         }
 
         return matches;
+    }
+
+    public static boolean isPresentAndImportant(String descriptionLower, String basePattern, boolean expert) {
+        if (!RegexUtil.matchesPattern(descriptionLower, basePattern)) {
+            return false;
+        } else {
+            if (!expert) {
+                if (RegexUtil.matchesPattern(descriptionLower, basePattern + ".*a bonus")) {
+                    return false;
+                }
+                if (RegexUtil.matchesPattern(descriptionLower, basePattern + ".*a plus")) {
+                    return false;
+                }
+                if (RegexUtil.matchesPattern(descriptionLower, basePattern + ".*preferred")) {
+                    return false;
+                }
+                if (RegexUtil.matchesPattern(descriptionLower, "bonus.*" + basePattern)) {
+                    return false;
+                }
+                return true;
+            }
+            return true;
+        }
+    }
+
+    public static String getUntilNextBoundary(){
+        return "[^\\d\\)\\.\\;]*";
     }
 }

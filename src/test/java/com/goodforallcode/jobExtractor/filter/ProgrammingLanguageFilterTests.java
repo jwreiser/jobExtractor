@@ -1,7 +1,7 @@
 package com.goodforallcode.jobExtractor.filter;
 
 import com.goodforallcode.jobExtractor.filters.shallow.title.BackendTitleFilter;
-import com.goodforallcode.jobExtractor.filters.shallow.title.ProgrammingLanguageFilter;
+import com.goodforallcode.jobExtractor.filters.both.ProgrammingLanguageFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.util.TestUtil;
 import org.junit.jupiter.api.Test;
@@ -46,6 +46,13 @@ public class ProgrammingLanguageFilterTests {
     void testDescriptionContainsUnknownLanguage() {
         assertTrue(programmingLanguageFilter.containsUnknownLanguage("design and implement efficient, scalable, maintainable microservices using golang",TestUtil.getDefaultPreferences()));
         assertTrue(programmingLanguageFilter.containsUnknownLanguage("Today we build with react, kotlin, python, spark, kafka, and postgreSQL",TestUtil.getDefaultPreferences()));
+
+        assertTrue(programmingLanguageFilter.containsUnknownLanguage(
+                "Development using Ionic Framework: html, javascript, css Integration, " +
+                        "Android Studio, Google Play Store management, Xcode, " +
+                        "Apple App Store management, Ruby on Rails (RoR) Application Development Should have built and maintained a RoR application that has been deployed to the public and maintained over a period of time",
+                TestUtil.getDefaultPreferences()));
+
     }
     @Test
     void testDescriptionContainsUnknownLanguage_IncludesKnown() {

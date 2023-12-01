@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CloudFilter implements JobFilter {
     List<String> descriptionKeywords = List.of("server-less","serverless"," SNS"
-            ," SQS"," API Gateway"," EventBridge"," DynamoDB"," Redshift"," S3",
+            ," SQS"," API Gateway"," EventBridge"," DynamoDB"," Redshift"," S3","EC2"," AWS ",
             "cloud-native","cloud native","Matillion", " aws "," Epic Client "," Epic ancillary "," Epic system "
             ," Epic environment","Hyperspace","Interconnect");
 

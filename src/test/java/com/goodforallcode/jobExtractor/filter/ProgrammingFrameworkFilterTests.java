@@ -3,7 +3,6 @@ package com.goodforallcode.jobExtractor.filter;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.filters.shallow.title.BackendTitleFilter;
 import com.goodforallcode.jobExtractor.filters.shallow.title.ProgrammingFrameworkFilter;
-import com.goodforallcode.jobExtractor.filters.shallow.title.ProgrammingLanguageFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.util.TestUtil;
 import org.junit.jupiter.api.Test;

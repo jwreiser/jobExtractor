@@ -16,7 +16,7 @@ public class FinanceFilter implements JobFilter {
             ,"Jack Henry","Equitable","American Express","U.S. Bank","Modulus","Clerkie",
             "Juniper Square","Peach","T. Rowe Price");
 
-    List<String> descriptionPhrases =List.of("FinTech",
+    List<String> descriptionPhrases =List.of("FinTech","asset manager",
             "hedge fund", "banking","trading","Brokers","Brokerage"," investment management");
     List<String> titlePhrases =List.of("Simcorp");
     List<String> industries =List.of("Venture Capital and Private Equity Principals",

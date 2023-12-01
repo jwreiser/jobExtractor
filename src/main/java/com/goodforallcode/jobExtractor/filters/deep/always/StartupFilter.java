@@ -33,7 +33,7 @@ public class StartupFilter implements JobFilter {
             "AllVoices","Certificial","Rutter","Hazel Health","AIQ (Alpine IQ)","Jerry",
             "Underdog.io","ONE","Apexon","Docugami","Clerkie","Human Interest",
             "CornerUp","Cloudbeds","SandboxAQ","Fitness Matrix Inc","Sight Machine",
-            "Offered.ai","SpectrumAi");
+            "Offered.ai","SpectrumAi","Numerated");
 
     List<String> investorBackedCompanyNames =List.of("Avid Technology Professionals");
 

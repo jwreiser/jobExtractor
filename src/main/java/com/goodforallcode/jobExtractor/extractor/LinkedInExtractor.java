@@ -10,6 +10,7 @@ import com.goodforallcode.jobExtractor.job.populate.LinkedInShallowJobPopulator;
 import com.goodforallcode.jobExtractor.job.populate.ShallowJobPopulator;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
+import com.mongodb.client.MongoClient;
 import lombok.Getter;
 import lombok.Setter;
 import org.jsoup.Jsoup;
@@ -77,10 +78,11 @@ public class LinkedInExtractor extends Extractor {
 
 
     @Override
-    public JobResult getJobs(Set<Cookie> cookies, Preferences preferences, String url, JobCache cache) {
+    public JobResult getJobs(Set<Cookie> cookies, Preferences preferences, String url, JobCache cache, MongoClient mongoClient) {
         List<Job> acceptedJobs = new ArrayList<>();
         List<Job> rejectedJobs = new ArrayList<>();
         WebDriver newDriver = null;
+        int totalHidden=0,totalJobs=0,totalSkipped=0,totalCached=0;
         try {
 
 
@@ -91,10 +93,11 @@ public class LinkedInExtractor extends Extractor {
             }
 
             newDriver.get(url);
-            int currentPageNum = 0;
+            int currentPageNum = 0,hiddenJobs=0,numJobs,skippedJobs=0,cachedJobs=0;
+            boolean everyJobHiddenOrSkipped=false;
             WebElement nextPageButton = null;
-
-
+            List<Integer>pageValues;
+            Integer lastPageNumber;
             do {
                 currentPageNum++;
 
@@ -103,6 +106,11 @@ public class LinkedInExtractor extends Extractor {
                 try{
                     resultsDiv = loadMainElement(newDriver);
                 }catch(ContentLoadingException cle){
+                    try {
+                        Thread.sleep(1_000);
+                    } catch (Exception ex) {
+
+                    }
                     newDriver.get(url);
                     resultsDiv = loadMainElement(newDriver);
                 }
@@ -114,23 +122,45 @@ public class LinkedInExtractor extends Extractor {
                      */
                     break;
                 }
-                nextPageButton = getNextPageButton(newDriver);
+                pageValues = getCurrentAndMaxPage(newDriver);
+
+                nextPageButton = getNextPageButton(newDriver,pageValues.get(0));
                 if (preferences.getSkipFirstPages() != null && preferences.getSkipFirstPages() > currentPageNum) {
                     doubleClickOnElement(newDriver, nextPageButton);
                     continue;
                 }
+                lastPageNumber=pageValues.get(1);
+
+                /*
+                if we are already passed the last page count wise; we are spinning and need to get
+                to the final page
+                 */
+                if(lastPageNumber<currentPageNum && everyJobHiddenOrSkipped){
+                    doubleClickOnElement(newDriver, nextPageButton);
+                }
 
                 scrollResultsIntoView(newDriver, resultsDiv);
 
-                Elements items = getJobItems(newDriver, currentPageNum);
+                Elements items = getJobItems(newDriver);
 
                 ShallowJobPopulator populator = getShallowJobPopulator();
-
+                hiddenJobs=0;
+                skippedJobs=0;
+                cachedJobs=0;
+                everyJobHiddenOrSkipped=false;
+                numJobs=items.size();
                 for (Element item : items) {
-
+                    totalJobs++;
                     final Job currentJob = populator.populateJob(item, newDriver);
                     if (currentJob == null) {
                         break;
+                    }else if(currentJob.isHidden()){
+                        hiddenJobs++;
+                        totalHidden++;
+                        if(hiddenJobs+skippedJobs==numJobs){
+                            everyJobHiddenOrSkipped=true;
+                        }
+                        continue;
                     }
                     currentJob.setSourceUrl(url);
 
@@ -139,24 +169,31 @@ public class LinkedInExtractor extends Extractor {
                         /*we don't want to cache acceptedJobs that are too new otherwise we may
                         not see them again in other future searches
                          */
+                        skippedJobs++;
+                        totalSkipped++;
+                        if(hiddenJobs+skippedJobs==numJobs){
+                            everyJobHiddenOrSkipped=true;
+                        }
                         continue;
                     }
 
-                    if (cache.containsJob(currentJob)) {
+                    if (cache.containsJob(currentJob,mongoClient)) {
+                        cachedJobs++;
+                        totalCached++;
                         excludeJob(newDriver, currentJob);
                         continue;
-                    } else {
-                        cache.addJob(currentJob);
                     }
 
                     ExcludeJobResults excludeJobResults = excludeJob(currentJob, preferences,
                             newDriver, deepJobPopulator);
                     if (excludeJobResults.excludeJob()) {
                         currentJob.setExcludeFilter(excludeJobResults.excludeFilter());
+                        cache.addJob(currentJob,false,mongoClient);
                         excludeJob(newDriver, currentJob);
                         rejectedJobs.add(currentJob);
                     } else if (excludeJobResults.includeJob()) {
                         currentJob.setIncludeFilter(excludeJobResults.includeFilter());
+                        cache.addJob(currentJob,true,mongoClient);
                         includeJob(newDriver, acceptedJobs, currentJob);
                     }
 
@@ -186,7 +223,7 @@ public class LinkedInExtractor extends Extractor {
 
             }
         }
-        return new JobResult(acceptedJobs, rejectedJobs);
+        return new JobResult(acceptedJobs, rejectedJobs,totalJobs,totalHidden,totalSkipped,totalCached);
     }
 
     public ExcludeJobResults handleShallowInclude(Job currentJob, Preferences preferences) {
@@ -300,7 +337,7 @@ public class LinkedInExtractor extends Extractor {
     }
 
 
-    private Elements getJobItems(WebDriver driver, int currentPageNum) {
+    private Elements getJobItems(WebDriver driver) {
         WebElement ul = driver.findElement(By.className("scaffold-layout__list-container"));
 
         Document doc = Jsoup.parse(ul.getAttribute("innerHTML"));
@@ -336,8 +373,8 @@ public class LinkedInExtractor extends Extractor {
     private static WebElement loadMainElement(WebDriver driver) throws ContentLoadingException {
         WebElement resultsDiv = null;
         FluentWait wait = new FluentWait(driver);
-        wait.withTimeout(Duration.ofSeconds(3));
-        wait.pollingEvery(Duration.ofMillis(250));
+        wait.withTimeout(Duration.ofSeconds(30));
+        wait.pollingEvery(Duration.ofMillis(500));
         wait.ignoring(NoSuchElementException.class);
         try {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".jobs-search-results-list__subtitle,.jobs-search-no-results-banner")));
@@ -369,7 +406,7 @@ public class LinkedInExtractor extends Extractor {
         return numberText;
     }
 
-    private WebElement getNextPageButton(WebDriver driver) {
+    private List<Integer> getCurrentAndMaxPage(WebDriver driver) {
         WebElement nextPage = null;
         try {
             WebElement pageStateDiv = driver.findElement(By.className("artdeco-pagination__page-state"));
@@ -378,12 +415,25 @@ public class LinkedInExtractor extends Extractor {
                 String pageText = pageStateDiv.getAttribute("innerHTML").replaceAll("\\W", "").substring(4);
                 pageText = pageText.replaceAll("of", " ");
                 Integer currentPage = Integer.parseInt(pageText.split(" ")[0]);
+                Integer maxPage = Integer.parseInt(pageText.split(" ")[1]);
+                return List.of(currentPage,maxPage);
+            }
+        } catch (NoSuchElementException nse) {
+            //this usually  happens when we look for a next page that is not there
+        }
+        return null;
+    }
+
+
+    private WebElement getNextPageButton(WebDriver driver,Integer currentPage) {
+        WebElement nextPage = null;
+        try {
+
                 WebElement pageDiv = driver.findElement(By.className("jobs-search-results-list__pagination"));
                 Document pageDoc = Jsoup.parse(pageDiv.getAttribute("innerHTML"));
                 String attributeVal = "Page " + ++currentPage;
                 //Element nextPageElement=pageDoc.getElementsByAttributeValue("aria-label",attributeVal).first();
                 nextPage = driver.findElement(By.cssSelector("button[aria-label='" + attributeVal + "']"));
-            }
         } catch (NoSuchElementException nse) {
             //this usually  happens when we look for a next page that is not there
         }

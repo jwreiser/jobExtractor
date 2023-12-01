@@ -64,13 +64,9 @@ public class ExampleController {
     }
 
     @GetMapping("/blocks/two")
-    public QueryInput getFewApplicantsExampleDelegate() {
-        return getFewApplicantsExample();
-    }
+    public QueryInput getBlock2() {
 
-        @GetMapping("/fewApplicants")
-    public QueryInput getFewApplicantsExample() {
-        List<String> urls=List.of(
+        List<String> urls = List.of(
 
                 //less than 10
                 //entry (530)
@@ -96,9 +92,35 @@ public class ExampleController {
                 //telecom
                 "https://www.linkedin.com/jobs/search/?currentJobId=3715349877&f_E=2&f_I=8&f_JT=F&f_T=9%2C25201%2C10738%2C1660%2C23347%2C39&f_WT=2&geoId=103644278&keywords=java%20&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
                 //all non shady industries that don't have a  big number of job positions (as big industries search on their own)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3755781961&f_E=2&f_I=119%2C93%2C133%2C16%2C130%2C7%2C33%2C17%2C12%2C3%2C114%2C68%2C75%2C84%2C112%2C116%2C122%2C124%2C126%2C132%2C135%2C51%2C88%2C100%2C101%2C102%2C103%2C105%2C107%2C108%2C110%2C111%2C113%2C115%2C120%2C125%2C127%2C13%2C134%2C136%2C138%2C139%2C141%2C144%2C145%2C146%2C147%2C148%2C150%2C20%2C23%2C24%2C28%2C30%2C31%2C32%2C34%2C35%2C37%2C38%2C39%2C40%2C49%2C53%2C55%2C56%2C57%2C62%2C63%2C66%2C67%2C69%2C70%2C73%2C74%2C82%2C83%2C85%2C86%2C87%2C89%2C90%2C91%2C92%2C95%2C99&f_JT=F&f_T=9%2C10738%2C25201%2C1660%2C23347%2C39&f_WT=2&geoId=103644278&keywords=java%20&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
+                "https://www.linkedin.com/jobs/search/?currentJobId=3755781961&f_E=2&f_I=119%2C93%2C133%2C16%2C130%2C7%2C33%2C17%2C12%2C3%2C114%2C68%2C75%2C84%2C112%2C116%2C122%2C124%2C126%2C132%2C135%2C51%2C88%2C100%2C101%2C102%2C103%2C105%2C107%2C108%2C110%2C111%2C113%2C115%2C120%2C125%2C127%2C13%2C134%2C136%2C138%2C139%2C141%2C144%2C145%2C146%2C147%2C148%2C150%2C20%2C23%2C24%2C28%2C30%2C31%2C32%2C34%2C35%2C37%2C38%2C39%2C40%2C49%2C53%2C55%2C56%2C57%2C62%2C63%2C66%2C67%2C69%2C70%2C73%2C74%2C82%2C83%2C85%2C86%2C87%2C89%2C90%2C91%2C92%2C95%2C99&f_JT=F&f_T=9%2C10738%2C25201%2C1660%2C23347%2C39&f_WT=2&geoId=103644278&keywords=java%20&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD"
+        );
 
-                //associate 361
+        PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
+        preferences.setMaxJobAgeInDays(90);
+        preferences.setMinJobAgeInDays(2);
+        preferences.setMaxApplicants(90);
+
+        preferences.setExcludeFresher(false);
+        preferences.setExcludeSenior(false);
+        preferences.setExcludeBigData(false);
+        preferences.setExcludeBlockchain(false);
+        preferences.setExcludeComplexJobs(false);
+        preferences.setExcludeRealEstate(false);
+        preferences.setSkipTooManyApplicants(true);
+        preferences.setSkipUnknownNumberOfApplicants(true);
+        preferences.setSkipJobsSourcedFromExternalJobBoard(true);
+
+        return new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
+    }
+        @GetMapping("/blocks/seven")
+        /**
+         * Looks for jobs with few applicants
+         */
+        public QueryInput getBlock7() {
+
+            List<String> urls=List.of(
+
+                    //associate 361
                 "https://www.linkedin.com/jobs/search/?currentJobId=3730575940&f_E=3&f_JT=F%2CO&f_T=9%2C10738%2C23347%2C39%2C25201%2C1660&f_WT=2&geoId=103644278&keywords=java%20-affirm%20-nvidia%20-pinterest%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD",
 
                 // mid/senior
@@ -386,13 +408,16 @@ public class ExampleController {
                 "https://www.linkedin.com/jobs/search/?currentJobId=3756317836&f_C=1007957&f_E=2%2C3%2C4&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true",
                 //trimble (4)
                 "https://www.linkedin.com/jobs/search/?currentJobId=3738942969&f_C=5160%2C96206&f_E=2%2C3%2C4&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20-field&location=United%20States&origin=JOB_SEARCH_PAGE_LOCATION_HISTORY&refresh=true&sortBy=DD",
-
+                //fearless
+                "https://www.linkedin.com/jobs/search/?currentJobId=3754729701&f_C=771382&f_E=2%2C3%2C4&f_T=9%2C10738%2C1660&f_WT=2&geoId=92000000&keywords=java&location=Worldwide&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=R",
                 //cedar (4)
                 "https://www.linkedin.com/jobs/search/?currentJobId=3733820005&f_C=10988174&f_T=9&f_WT=2&geoId=103644278&location=United%20States&origin=JOB_SEARCH_PAGE_LOCATION_HISTORY&refresh=true&sortBy=R",
                 //nationwide(4)
                 "https://www.linkedin.com/jobs/search/?currentJobId=3743131455&f_C=2340&f_E=2%2C3%2C4&f_WT=2&geoId=103644278&keywords=java&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
                 //blackbaud (public good) (87)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3723298721&f_C=162724&f_E=2%2C3%2C4&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD"
+                "https://www.linkedin.com/jobs/search/?currentJobId=3723298721&f_C=162724&f_E=2%2C3%2C4&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
+                //adhoc llc (55)
+                "https://www.linkedin.com/jobs/search/?currentJobId=3758139279&f_C=10350118&f_E=2%2C3%2C4&f_WT=2&geoId=92000000&keywords=java%20-salesforce&location=Worldwide&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true"
         );
 
         PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
@@ -431,10 +456,18 @@ public class ExampleController {
                 //(100)
                 "https://www.linkedin.com/jobs/search/?currentJobId=3751496265&f_E=2&f_I=133%2C17%2C12%2C3%2C112%2C114%2C68%2C75%2C84%2C116%2C122%2C124%2C126%2C132%2C135%2C144%2C33%2C51%2C55%2C88%2C100%2C101%2C102%2C103%2C105%2C107%2C108%2C110%2C111%2C113%2C115%2C119%2C120%2C125%2C127%2C13%2C130%2C134%2C136%2C138%2C139%2C141%2C145%2C146%2C147%2C148%2C150%2C16%2C20%2C23%2C24%2C28%2C30%2C31%2C32%2C34%2C35%2C37%2C38%2C39%2C40%2C49%2C53%2C56%2C57%2C62%2C63%2C66%2C67%2C69%2C7%2C70%2C73%2C74%2C82%2C83%2C85%2C86%2C87%2C89%2C90%2C91%2C92%2C93%2C95%2C99&f_JT=F&f_T=9%2C10738%2C25201%2C1660%2C23347%2C39&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
 
-
-
                 //associate 123
-                "https://www.linkedin.com/jobs/search/?currentJobId=3762937161&f_E=3&f_JT=F&f_T=9%2C10738%2C1660&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20%20-%22full%20stack%22%20-consultant%20-consulting%20%20-php%20-ruby&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD",
+                "https://www.linkedin.com/jobs/search/?currentJobId=3762937161&f_E=3&f_JT=F&f_T=9%2C10738%2C1660&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20%20-%22full%20stack%22%20-consultant%20-consulting%20%20-php%20-ruby&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD"
+
+                );
+        PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
+        return  new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
+
+    }
+        @GetMapping("/blocks/five")
+        public QueryInput getBlock5() {
+            List<String> urls=List.of(
+
 
                 //backend title
                 //entry/associate (23)
@@ -509,7 +542,20 @@ public class ExampleController {
                 // entry/associate (50)
                 "https://www.linkedin.com/jobs/search/?currentJobId=3748841303&f_CM=1&f_E=2%2C3&f_JT=F&f_T=9%2C10738%2C25194&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20%20-affirm%20-nvidia%20-pinterest%20-canonical%20-clevertech%20-crossover&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=R",
                 //mid-senior (66)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3730026375&f_CM=1&f_E=4&f_JT=F&f_T=9%2C10738&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20%20-%22full%20stack%22%20-consultant%20-consulting%20%20-php%20-ruby&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=D",
+                "https://www.linkedin.com/jobs/search/?currentJobId=3730026375&f_CM=1&f_E=4&f_JT=F&f_T=9%2C10738&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20%20-%22full%20stack%22%20-consultant%20-consulting%20%20-php%20-ruby&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=D"
+
+
+        );
+
+        PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
+        return  new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
+    }
+
+
+
+    @GetMapping("/blocks/six")
+    public QueryInput getBlock6() {
+        List<String> urls=List.of(
 
                 //public trust
                 //entry/associate (24)
@@ -530,8 +576,16 @@ public class ExampleController {
                 //entry/associate (0)
                 "https://www.linkedin.com/jobs/search/?currentJobId=3757161325&f_E=2%2C3&f_JIYN=true&f_T=9%2C24%2C10738&f_TPR=r604800&f_WT=2&keywords=java&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
                 //mid-senior(1)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3737110818&f_E=4&f_JIYN=true&f_T=9%2C24%2C10738&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20-affirm%20-nvidia%20-pinterest%20-startup%20-php%20-ruby%20-canonical%20-clevertech%20-instructor%20-tutor%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20%20-embedded%20&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD"
+                "https://www.linkedin.com/jobs/search/?currentJobId=3737110818&f_E=4&f_JIYN=true&f_T=9%2C24%2C10738&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20-affirm%20-nvidia%20-pinterest%20-startup%20-php%20-ruby%20-canonical%20-clevertech%20-instructor%20-tutor%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20%20-embedded%20&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD",
 
+                //NY
+                "https://www.linkedin.com/jobs/search/?currentJobId=3738008301&f_E=2%2C3%2C4&f_JT=F&f_T=9%2C24%2C10738&f_TPR=r604800&f_WT=2&geoId=105080838&keywords=java%20-%22SAIC%22%20-%22Outcoder%20iO%22%20-groundswell%20-affirm%20-nvidia%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20-%22systems%20engineer%22%20-%22full%20stack%22%20-consultant%20-consulting%20%20-php%20-ruby&location=New%20York%2C%20United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=R",
+                //Hauppauge
+                "https://www.linkedin.com/jobs/search/?currentJobId=3704090179&distance=10&f_E=2%2C3%2C4&f_JT=F&f_T=9%2C24%2C10738&f_TPR=r604800&f_WT=1%2C3&geoId=102570389&keywords=java&location=Hauppauge%2C%20New%20York%2C%20United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true",
+                //suffolk
+                "https://www.linkedin.com/jobs/search/?currentJobId=3738008301&f_E=2%2C3%2C4&f_JT=F&f_T=9%2C24%2C10738&f_TPR=r604800&f_WT=2&geoId=104148244&keywords=java%20-%22SAIC%22%20-%22Outcoder%20iO%22%20-groundswell%20-affirm%20-nvidia%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20-%22systems%20engineer%22%20-%22full%20stack%22%20-consultant%20-consulting%20%20-php%20-ruby&location=Suffolk%20County%2C%20New%20York%2C%20United%20States&origin=JOB_SEARCH_PAGE_LOCATION_AUTOCOMPLETE&refresh=true&sortBy=R",
+                //NYC Metro
+                "https://www.linkedin.com/jobs/search/?currentJobId=3738008301&f_E=2%2C3%2C4&f_JT=F&f_T=9%2C24%2C10738&f_TPR=r604800&f_WT=2&geoId=90000070&keywords=java%20-%22SAIC%22%20-%22Outcoder%20iO%22%20-groundswell%20-affirm%20-nvidia%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20-%22systems%20engineer%22%20-%22full%20stack%22%20-consultant%20-consulting%20%20-php%20-ruby&location=New%20York%20City%20Metropolitan%20Area&origin=JOB_SEARCH_PAGE_LOCATION_HISTORY&refresh=true&sortBy=R"
                 //big collections
                 /* these never work so they are commented out at least for now
                 //flex pto
@@ -563,6 +617,4 @@ public class ExampleController {
         PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
         return  new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
     }
-
-
 }

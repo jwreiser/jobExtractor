@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CyberSecurityFilter implements JobFilter {
     List<String> companyNames =List.of( "Zscaler","Fortra","Concourse Labs",
-            "PropelAuth","Trinity Cyber");
+            "PropelAuth","Trinity Cyber","Quokka.io");
     List<String> titles=List.of("Vulnerability engineer","Detection","Sentinel", "SIEM ","Risk ","Cyber Security","CyberSecurity","Cyber-Security");
 
 

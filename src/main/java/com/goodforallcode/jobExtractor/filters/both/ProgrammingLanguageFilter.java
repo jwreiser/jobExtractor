@@ -1,4 +1,4 @@
-package com.goodforallcode.jobExtractor.filters.shallow.title;
+package com.goodforallcode.jobExtractor.filters.both;
 
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
@@ -7,6 +7,9 @@ import com.goodforallcode.jobExtractor.util.RegexUtil;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.goodforallcode.jobExtractor.util.RegexUtil.getUntilNextBoundary;
+import static com.goodforallcode.jobExtractor.util.RegexUtil.isPresentAndImportant;
 
 /**
  * This is designed for languages that usually do not play together
@@ -61,21 +64,19 @@ public class ProgrammingLanguageFilter implements JobFilter {
                 return false;
             }
 
+            //don't reject shared lanaguages with conjunctions in the title
+            if (!title.contains(" and ") && !title.contains("/")) {
+                if (sharedLanguages.stream().anyMatch(l -> title.contains(l.toLowerCase() + " engineer"))) {
+                    System.err.println("shared language engineer ->reject: " + job);
+                    return false;
+                }
 
-            if (title.contains(" and ") || title.contains("/")) {
-                //don't reject shared lanaguages with conjunctions in the title
-                return true;
+                if (sharedLanguages.stream().anyMatch(l -> title.contains(l.toLowerCase() + " developer"))) {
+                    System.err.println("shared language developer ->reject: " + job);
+                    return false;
+                }
             }
 
-            if (sharedLanguages.stream().anyMatch(l -> title.contains(l.toLowerCase() + " engineer"))) {
-                System.err.println("shared language engineer ->reject: " + job);
-                return false;
-            }
-
-            if (sharedLanguages.stream().anyMatch(l -> title.contains(l.toLowerCase() + " developer"))) {
-                System.err.println("shared language developer ->reject: " + job);
-                return false;
-            }
 
             if (job.getDescription() != null) {
                 final String description = job.getDescription().toLowerCase();
@@ -139,31 +140,12 @@ public class ProgrammingLanguageFilter implements JobFilter {
         return originalCasedTitle;
     }
 
-    public static boolean isLanguagePresentAndImportant(String descriptionLower, String language, String basePattern, boolean expert) {
-        if (!RegexUtil.matchesPattern(descriptionLower, basePattern)) {
-            return false;
-        } else {
-            if (!expert) {
-                if (RegexUtil.matchesPattern(descriptionLower, basePattern + ".*a bonus")) {
-                    return false;
-                }
-                if (RegexUtil.matchesPattern(descriptionLower, basePattern + ".*a plus")) {
-                    return false;
-                }
-                if (RegexUtil.matchesPattern(descriptionLower, "bonus.*" + basePattern)) {
-                    return false;
-                }
-                return true;
-            }
-            return true;
-        }
-    }
 
     public boolean containsUnknownLanguage(String descriptionLower, Preferences preferences) {
-        List<String> expertPatterns = List.of("expert[^\\d\\)\\.\\;]*", "strong[^\\d\\)\\.\\;]*");
-        List<String> knowledgePatterns = List.of("proficien[^\\d\\)\\.\\;]*", "fluency[^\\d\\)\\.\\;]*"
-                , "fluent[^\\d\\)\\.\\;]*", "with[^\\d\\)\\.\\;]*",
-                "using[^\\d\\)\\.\\;]*");
+        List<String> expertPatterns = List.of("expert"+getUntilNextBoundary(), "strong[^\\d\\)\\.\\;]*");
+        List<String> knowledgePatterns = List.of("proficien"+getUntilNextBoundary(), "fluency[^\\d\\)\\.\\;]*"
+                , "fluent[^\\d\\)\\.\\;]*", "with"+getUntilNextBoundary(),
+                "using"+getUntilNextBoundary());
         boolean contains = false;
         if (expertPatterns.stream().anyMatch(p -> containsUnknownLanguage(p, descriptionLower, preferences, true))) {
             contains = true;
@@ -186,7 +168,7 @@ public class ProgrammingLanguageFilter implements JobFilter {
             }
         }
         if (languages.stream().anyMatch(l ->
-                isLanguagePresentAndImportant(descriptionLower, l, patternText +
+                isPresentAndImportant(descriptionLower,  patternText +
                         prepareLanguageForRegularExpression(l), expert))) {
             containsUnknownLanguage = true;
         }
