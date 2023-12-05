@@ -11,16 +11,14 @@ import org.openqa.selenium.Cookie;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 import static com.goodforallcode.jobExtractor.cache.MongoDbJobCache.uri;
 
@@ -51,6 +49,13 @@ public abstract class Extractor {
     public static List<String> standAloneSkillPhrases = List.of(
             "TMS", "embedded", "mulesoft");
 
+    public static WebDriver getWebDriver() {
+        System.setProperty("webdriver.gecko.driver", "D:/development/geckodriver.exe");
+        WebDriver driver = new FirefoxDriver();
+//        WebDriver driver=new HtmlUnitDriver(true);
+        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+        return driver;
+    }
 
     public JobResult getJobs(Set<Cookie> cookies, Preferences preferences, List<String> urls) {
         List<Job> acceptedJobs = new ArrayList<>();

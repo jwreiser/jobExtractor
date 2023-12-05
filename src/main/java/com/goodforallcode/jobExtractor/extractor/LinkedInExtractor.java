@@ -61,13 +61,6 @@ public class LinkedInExtractor extends Extractor {
 
     }
 
-    public static WebDriver getWebDriver() {
-        System.setProperty("webdriver.gecko.driver", "D:/development/geckodriver.exe");
-        WebDriver driver = new FirefoxDriver();
-//        WebDriver driver=new HtmlUnitDriver(true);
-        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-        return driver;
-    }
 
     public void doubleClickOnElement(WebDriver driver, WebElement element) {
         super.doubleClickOnElement(driver, element);

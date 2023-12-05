@@ -2,8 +2,16 @@
 	You are a product on LinkedIn. Even if you pay every month, there is no amount of money you can pay to avoid getting promoted jobs or get new features added. In fact, the API that used to exist which would allow developers to provide additional features has gone away so LinkedIn's future is limited to what they decide. There are not too many competitors to LinkedIn and in general they are following similar pratices. It seems like although these big players are not a monopoly, they have enough market share to not be particularly worried about what hungry job seekers want.
 	
 overview
-	this is a Spring Boot web Service that looks to use currently ignored actionable data (average employee tenure, company size) and functionality (salary less than X filter beyond the built in min salary) beyond what LinkedIn provides. In the long term this seeks to be a tool for people who want to make the world a better place. It hopes to branch out to non profit centered job sites and provide a way to give them additional leverage. 
-	
+	this is a Spring Boot web Service that looks to use currently ignored actionable data
+	(average employee tenure, company size) and functionality
+	(salary less than X filter beyond the built in min salary) beyond what LinkedIn provides.
+	In the long term this seeks to be a tool for people who want to make the world a better place
+	while still encouraging people to think beyond salary.
+
+implementation
+    this uses web crawling at this point as no API exists. As other job sites are brought on there
+    will hopefully be some API usage, but every site I have looked into so far does not have an API.
+
 target users
 	 people who care about more than just salary. That's not quite true as you can't just do a salary search on LinkedIn from what I've seen. It looks like every job with no salary automatically gets rejected from these searches as otherwise I would expect the number of software developer jobs 40K+ to be about the same number of jobs as without a salary filter, but that was not the way that worked last I checked. So yes this will help with that too, but its not the main intent.
 	 
@@ -23,6 +31,7 @@ goals
 		I use streams pretty heavily and I always try to stop as soon as I have a reason to include/exclude a job. While it would be useful in debugging to see all the reasons a job was rejected I am going to return only those that can be returned at first glance.
 	agility
 		LinkedIn will sometimes display inconsistent behavior, from timeouts to getting a no more matching jobs message even though there were several more pages left I want to be able to recover from problems automatically to help me the above goals
+
 directory structure
 
 	notes
@@ -50,4 +59,10 @@ directory structure
 					TestUtil
 						this generates the shared preferences used by example calls
 						
-					
+
+setup needed to run web service:
+    Currently we use firefox as the driver. Hopefully that will change to HTMLUnitDriver, but for
+    now I could only get things to work for firefox. The firefox web driver needs to be pointed to
+    the location of the driver's exe. Right now it is hardcoded in Extractor.java's getWebDriver mwthod
+    as such: System.setProperty("webdriver.gecko.driver", "D:/development/geckodriver.exe");
+    I will try to have it use an existing system property soon but this has been low priority
