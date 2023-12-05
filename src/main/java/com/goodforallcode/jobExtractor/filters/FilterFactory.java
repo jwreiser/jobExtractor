@@ -230,7 +230,6 @@ public class FilterFactory {
         List<JobFilter> filters = new ArrayList<>();
         filters.add(new LocalFilter());
         filters.add(new ProgrammingFrameworkFilter());
-        filters.add(new UnixFilter());
         return filters;
     }
 
@@ -301,6 +300,7 @@ public class FilterFactory {
         filters.add(new StartupFilter());
         filters.add(new TelecomFilter());
         filters.add(new TravelFilter());
+        filters.add(new UnixFilter());
         filters.add(new WorkLifeBalanceFilter(false));
 
         //lang

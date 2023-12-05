@@ -2,6 +2,7 @@ package com.goodforallcode.jobExtractor.extractor;
 
 import com.goodforallcode.jobExtractor.cache.JobCache;
 import com.goodforallcode.jobExtractor.exception.ContentLoadingException;
+import com.goodforallcode.jobExtractor.filters.ExceptionFilter;
 import com.goodforallcode.jobExtractor.filters.FilterFactory;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.job.populate.DeepJobPopulator;
@@ -82,7 +83,7 @@ public class LinkedInExtractor extends Extractor {
         List<Job> acceptedJobs = new ArrayList<>();
         List<Job> rejectedJobs = new ArrayList<>();
         WebDriver newDriver = null;
-        int totalHidden=0,totalJobs=0,totalSkipped=0,totalCached=0;
+        int totalHidden=0,totalJobs=0,totalSkipped=0,totalCached=0,currentPageNum = 0,actualPageNum=0;
         try {
 
 
@@ -93,18 +94,18 @@ public class LinkedInExtractor extends Extractor {
             }
 
             newDriver.get(url);
-            int currentPageNum = 0,hiddenJobs=0,numJobs,skippedJobs=0,cachedJobs=0;
+            int hiddenJobs=0,numJobs,skippedJobs=0,cachedJobs=0;
             boolean everyJobHiddenOrSkipped=false;
             WebElement nextPageButton = null;
             List<Integer>pageValues;
-            Integer lastPageNumber;
+            Integer lastPageNumber=1;
             do {
                 currentPageNum++;
 
                 //TODO return something more complex that will return at least a no more results flag
                 WebElement resultsDiv = null;
                 try{
-                    resultsDiv = loadMainElement(newDriver);
+                    resultsDiv = loadMainElement(newDriver,actualPageNum,lastPageNumber);
                 }catch(ContentLoadingException cle){
                     try {
                         Thread.sleep(1_000);
@@ -112,7 +113,7 @@ public class LinkedInExtractor extends Extractor {
 
                     }
                     newDriver.get(url);
-                    resultsDiv = loadMainElement(newDriver);
+                    resultsDiv = loadMainElement(newDriver,actualPageNum,lastPageNumber);
                 }
                 if (resultsDiv == null) {
                     /*
@@ -124,7 +125,8 @@ public class LinkedInExtractor extends Extractor {
                 }
                 pageValues = getCurrentAndMaxPage(newDriver);
 
-                nextPageButton = getNextPageButton(newDriver,pageValues.get(0));
+                actualPageNum=pageValues.get(0);
+                nextPageButton = getNextPageButton(newDriver,actualPageNum);
                 if (preferences.getSkipFirstPages() != null && preferences.getSkipFirstPages() > currentPageNum) {
                     doubleClickOnElement(newDriver, nextPageButton);
                     continue;
@@ -223,7 +225,7 @@ public class LinkedInExtractor extends Extractor {
 
             }
         }
-        return new JobResult(acceptedJobs, rejectedJobs,totalJobs,totalHidden,totalSkipped,totalCached);
+        return new JobResult(acceptedJobs, rejectedJobs,totalJobs,totalHidden,totalSkipped,totalCached,actualPageNum);
     }
 
     public ExcludeJobResults handleShallowInclude(Job currentJob, Preferences preferences) {
@@ -244,7 +246,13 @@ public class LinkedInExtractor extends Extractor {
             return new ExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
         }
 
-        boolean success = deepLoadJob(currentJob, driver);
+        boolean success = false;
+        try {
+            success=deepLoadJob(currentJob, driver);
+        }catch (Exception exception){
+            return new ExcludeJobResults(false, false, true, null, new ExceptionFilter(exception));
+        }
+
         if (!success) {
             ExcludeJobResults results = handleShallowInclude(currentJob, preferences);
             if(results!=null){
@@ -370,7 +378,7 @@ public class LinkedInExtractor extends Extractor {
         return span.text().replaceAll("<!---->", "").split(" ")[0];
     }
 
-    private static WebElement loadMainElement(WebDriver driver) throws ContentLoadingException {
+    private static WebElement loadMainElement(WebDriver driver,Integer currentPageNumber,Integer lastPageNumber) throws ContentLoadingException {
         WebElement resultsDiv = null;
         FluentWait wait = new FluentWait(driver);
         wait.withTimeout(Duration.ofSeconds(30));
@@ -381,10 +389,9 @@ public class LinkedInExtractor extends Extractor {
             try {
                 resultsDiv = driver.findElement(By.className("jobs-search-results-list__subtitle"));
             } catch (NoSuchElementException nse) {
-                if (driver.findElement(By.className("jobs-search-no-results-banner")) != null) {
-                    return null;
-                } else {
-                    System.err.println();
+                if(currentPageNumber<lastPageNumber) {
+                    driver.navigate().back();
+                    resultsDiv=loadMainElement(driver,currentPageNumber,lastPageNumber);
                 }
             }
         } catch (TimeoutException te) {

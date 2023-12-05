@@ -58,7 +58,7 @@ public abstract class Extractor {
         JobCache cache = new MongoDbJobCache();
         int numThreads = 10;
         int size = 1;
-        int totalJobs=0,totalHidden=0,totalSkipped=0,totalCached=0;
+        int totalJobs=0,totalHidden=0,totalSkipped=0,totalCached=0,totalPages=0;
         if (urls.size() > numThreads) {
             size = urls.size() / numThreads;
         }
@@ -97,6 +97,7 @@ public abstract class Extractor {
                             totalHidden+=future.get().hiddenJobs();
                             totalSkipped+=future.get().skippedJobs();
                             totalCached+=future.get().cachedJobs();
+                            totalPages+=future.get().numPages();
                             acceptedJobs.addAll(future.get().acceptedJobs());
                             rejectedJobs.addAll(future.get().rejectedJobs());
                         } catch (InterruptedException | ExecutionException e) {
@@ -111,7 +112,7 @@ public abstract class Extractor {
 
         executorService.shutdown();
 
-        return new JobResult(acceptedJobs, rejectedJobs,totalJobs,totalHidden,totalSkipped,totalCached);
+        return new JobResult(acceptedJobs, rejectedJobs,totalJobs,totalHidden,totalSkipped,totalCached,totalPages);
     }
 
     abstract JobResult getJobs(Set<Cookie> cookies, Preferences preferences, String url, JobCache cache, MongoClient mongoClient);

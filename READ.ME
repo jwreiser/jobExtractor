@@ -1,0 +1,53 @@
+﻿why this exists
+	You are a product on LinkedIn. Even if you pay every month, there is no amount of money you can pay to avoid getting promoted jobs or get new features added. In fact, the API that used to exist which would allow developers to provide additional features has gone away so LinkedIn's future is limited to what they decide. There are not too many competitors to LinkedIn and in general they are following similar pratices. It seems like although these big players are not a monopoly, they have enough market share to not be particularly worried about what hungry job seekers want.
+	
+overview
+	this is a Spring Boot web Service that looks to use currently ignored actionable data (average employee tenure, company size) and functionality (salary less than X filter beyond the built in min salary) beyond what LinkedIn provides. In the long term this seeks to be a tool for people who want to make the world a better place. It hopes to branch out to non profit centered job sites and provide a way to give them additional leverage. 
+	
+target users
+	 people who care about more than just salary. That's not quite true as you can't just do a salary search on LinkedIn from what I've seen. It looks like every job with no salary automatically gets rejected from these searches as otherwise I would expect the number of software developer jobs 40K+ to be about the same number of jobs as without a salary filter, but that was not the way that worked last I checked. So yes this will help with that too, but its not the main intent.
+	 
+	 software developers will be focus on much of the product as this is mostly going to be something for people who are currently working on it. see the rollout plan for more on this
+	 
+rollout plan
+	If LinkedIn wanted people to be able all that I am enabling they would reopen their API. If this software becomes the wrong amount of successful it will not be maintainable. It will be far easier for LinkedIn to change the DOM a little bit every few months than it will be for a few developers to adapt to these changes. I think strategy will have to be low profile until there are enough dedicated developers working on this so that it won't make sense to throw monkey wrenches at us.
+	
+goals 
+	be nice to LinkedIn 
+		While I do use multi-threading I don't want to crush LinkedIn and try to make everything go at a reasonable speed. While I find the promoted material to be mostly irrelevant I currently leave it in, in hopes that LinkedIn will play nice with us.
+	to get results without staring at thousands of jobs
+		I can get a < 1% hit rate without few false negatives
+	to see why jobs are being filtered out
+		I want to make sure that if the search has 1K hits I either get 1k acceptable jobs or know why I did not. If I see that many of my jobs are being rejected by the same filter I am going to start looking for a bug in that filter.
+	to get results quickly time wise
+		I use streams pretty heavily and I always try to stop as soon as I have a reason to include/exclude a job. While it would be useful in debugging to see all the reasons a job was rejected I am going to return only those that can be returned at first glance.
+	agility
+		LinkedIn will sometimes display inconsistent behavior, from timeouts to getting a no more matching jobs message even though there were several more pages left I want to be able to recover from problems automatically to help me the above goals
+directory structure
+
+	notes
+		contains supporting documents including project plans
+		
+	postman
+		contains postman scripts that can run jobs
+		blocks
+			this is the current set of calls I make with the LinkedIn username and password blocked out
+
+	src
+		main
+			java
+				controller
+					ExampleController
+						this does not do any real work. It is used to generate the different combinations of preferences and URLs I use
+					ExtractionController
+						this one method controller is the entry point into this Spring Boot web service 
+				filters
+					most of the new functionality is here. Each filter addresses something you might want to always include or always exclude (is the job a startup, is it in finance, is it in retail, do they micromanage?). 
+				model
+					preferences 
+						these preference objects should contain all the configuration needed to drive preferences. In practice everything is currently driven but I want. For example, I want to avoid startups. I suppose there are some who don't care and others who want only startups. In the future this should all be driven by preferences 
+				util
+					TestUtil
+						this generates the shared preferences used by example calls
+						
+					

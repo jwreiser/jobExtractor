@@ -79,7 +79,7 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
             addAgeInformation(item, job);
             addLevel(title.toUpperCase(), job);
             if (!title.isEmpty()) {
-                Element hideButton = item.getElementsByAttributeValue("aria-label", "Dismiss job " + title).first();
+                Element hideButton = item.getElementsByAttributeValueStarting("aria-label", "Dismiss ").first();
                 if(hideButton!=null) {
                     try {
                         job.setHideButton(driver.findElement(By.id(hideButton.id())));

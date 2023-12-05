@@ -36,16 +36,17 @@ public class UrlExctractingCallable implements Callable<JobResult> {
                 extractor.getJobs(cookies, preferences, url, cache,mongoClient)).collect(Collectors.toList());
         List<Job> acceptedJobs=new ArrayList<>();
         List<Job> rejectedJobs=new ArrayList<>();
-        int totalJobs=0,totalHidden=0,totalSkipped=0,totalCached=0;
+        int totalJobs=0,totalHidden=0,totalSkipped=0,totalCached=0,totalPages=0;
         for(JobResult result:jobResults){
             totalJobs+= result.totalJobs();
             totalHidden+= result.hiddenJobs();
             totalSkipped+= result.skippedJobs();
             totalCached+= result.cachedJobs();
+            totalPages+= result.numPages();
             acceptedJobs.addAll(result.acceptedJobs());
             rejectedJobs.addAll(result.rejectedJobs());
         }
-        return new JobResult(acceptedJobs,rejectedJobs,totalJobs,totalHidden,totalSkipped,totalCached);
+        return new JobResult(acceptedJobs,rejectedJobs,totalJobs,totalHidden,totalSkipped,totalCached,totalPages);
     }
 
 }

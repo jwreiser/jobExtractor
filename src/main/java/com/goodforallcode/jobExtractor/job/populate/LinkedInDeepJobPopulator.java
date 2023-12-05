@@ -59,35 +59,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
                 }
             }
 
-            Element summary = detailsDoc.getElementsByClass("job-details-jobs-unified-top-card__primary-description").first();
-            Elements summaryElements = summary.getElementsByTag("span");
-            for(Element summaryElement:summaryElements){
-                text=summaryElement.text();
-                if(text.contains("applicants")){
-                    if(text.toLowerCase().contains("over ")){
-                        job.setNumApplicants(300);//I don’t like the magic number but since the actual value is unknown I don’t want to waste time guessing
-                    }else {
-                        Float applicants = getValueFromTwoWordText(text, 1);
-
-                        if (applicants != null) {
-                            job.setNumApplicants(applicants.intValue());
-                        }
-                    }
-                }else if(job.getJobAgeInDays()==null && text.contains(" ago")){
-                    Long value=Long.parseLong(CharMatcher.inRange('0', '9').retainFrom(text));
-                    if(text.contains("day ago")){
-                        job.setJobAgeInDays(value);
-                    }else if(text.contains("days ago")){
-                        job.setJobAgeInDays(value);
-                    }else if(text.contains("week ago")){
-                        job.setJobAgeInDays(7*value);
-                    }else if(text.contains("weeks ago")){
-                        job.setJobAgeInDays(7*value);
-                    }
-
-                }
-            }
-
+            populateSummaryBasedFields(job, detailsDoc);
             Elements appliedDivs=detailsDoc.getElementsByClass("jobs-s-apply");
             for(Element appliedDiv:appliedDivs){
                 if(appliedDiv.text().contains("ago")) {
@@ -134,6 +106,40 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
         }
 
         return success;
+    }
+
+    private static void populateSummaryBasedFields(Job job, Document detailsDoc) {
+        String text;
+        Element summary = detailsDoc.getElementsByClass("job-details-jobs-unified-top-card__primary-description").first();
+        if(summary!=null) {
+            Elements summaryElements = summary.getElementsByTag("span");
+            for (Element summaryElement : summaryElements) {
+                text = summaryElement.text();
+                if (text.contains("applicants")) {
+                    if (text.toLowerCase().contains("over ")) {
+                        job.setNumApplicants(300);//I don’t like the magic number but since the actual value is unknown I don’t want to waste time guessing
+                    } else {
+                        Float applicants = getValueFromTwoWordText(text, 1);
+
+                        if (applicants != null) {
+                            job.setNumApplicants(applicants.intValue());
+                        }
+                    }
+                } else if (job.getJobAgeInDays() == null && text.contains(" ago")) {
+                    Long value = Long.parseLong(CharMatcher.inRange('0', '9').retainFrom(text));
+                    if (text.contains("day ago")) {
+                        job.setJobAgeInDays(value);
+                    } else if (text.contains("days ago")) {
+                        job.setJobAgeInDays(value);
+                    } else if (text.contains("week ago")) {
+                        job.setJobAgeInDays(7 * value);
+                    } else if (text.contains("weeks ago")) {
+                        job.setJobAgeInDays(7 * value);
+                    }
+
+                }
+            }
+        }
     }
 
     private void addDescriptionBasedDetails(Job job, Document detailsDoc) {
