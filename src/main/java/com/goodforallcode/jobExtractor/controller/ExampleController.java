@@ -112,51 +112,6 @@ public class ExampleController {
 
         return new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
     }
-        @GetMapping("/blocks/seven")
-        /**
-         * Looks for jobs with few applicants
-         */
-        public QueryInput getBlock7() {
-
-            List<String> urls=List.of(
-
-                    //associate 361
-                "https://www.linkedin.com/jobs/search/?currentJobId=3730575940&f_E=3&f_JT=F%2CO&f_T=9%2C10738%2C23347%2C39%2C25201%2C1660&f_WT=2&geoId=103644278&keywords=java%20-affirm%20-nvidia%20-pinterest%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD",
-
-                // mid/senior
-                // it services and it consulting
-                "https://www.linkedin.com/jobs/search/?currentJobId=3741605661&f_E=4&f_I=96&f_JT=F&f_T=9%2C10738%2C39%2C1660%2C23347&f_WT=2&geoId=103644278&keywords=java%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20-senior%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-%22reliability%20engineer%22%20-%22data%20engineer%22%20-bootstrap%20-typescript%20-android%20-embedded%20-principal%20-lead%20-sr.%20%20-staff%20-crossover%20%20-.net&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
-                //staffing and recruiting
-                "https://www.linkedin.com/jobs/search/?currentJobId=3745429021&f_E=4&f_I=104&f_JT=F&f_T=9%2C10738%2C39%2C1660%2C23347&f_WT=2&geoId=103644278&keywords=java%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20-senior%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-%22reliability%20engineer%22%20-%22data%20engineer%22%20-bootstrap%20-typescript%20-android%20-embedded%20-principal%20-lead%20-sr.%20%20-staff%20-crossover%20%20-.net&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
-                //tech information and internet
-                "https://www.linkedin.com/jobs/search/?currentJobId=3757504320&f_E=4&f_I=6&f_JT=F&f_T=9%2C10738%2C1660%2C23347%2C39&f_WT=2&geoId=103644278&keywords=java%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20-senior%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-%22reliability%20engineer%22%20-%22data%20engineer%22%20-bootstrap%20-typescript%20-android%20-embedded%20-principal%20-lead%20-sr.%20%20-staff%20-crossover%20%20-.net&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
-                //software development
-                "https://www.linkedin.com/jobs/search/?currentJobId=3757504320&f_E=4&f_I=4&f_JT=F&f_T=9%2C10738%2C1660%2C23347%2C39&f_WT=2&geoId=103644278&keywords=java%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20-senior%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-%22reliability%20engineer%22%20-%22data%20engineer%22%20-bootstrap%20-typescript%20-android%20-embedded%20-principal%20-lead%20-sr.%20%20-staff%20-crossover%20%20-.net&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
-                //hr
-                "https://www.linkedin.com/jobs/search/?currentJobId=3751249914&f_E=4&f_I=137&f_JT=F&f_T=9%2C10738%2C1660%2C23347%2C39&f_WT=2&geoId=103644278&keywords=java%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20-senior%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-%22reliability%20engineer%22%20-%22data%20engineer%22%20-bootstrap%20-typescript%20-android%20-embedded%20-principal%20-lead%20-sr.%20%20-staff%20-crossover%20%20-.net&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
-                //it and services, hospital and healthcare
-                "https://www.linkedin.com/jobs/search/?currentJobId=3751249914&f_E=4&f_I=137&f_JT=F&f_T=9%2C10738%2C1660%2C23347%2C39&f_WT=2&geoId=103644278&keywords=java%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20-senior%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-%22reliability%20engineer%22%20-%22data%20engineer%22%20-bootstrap%20-typescript%20-android%20-embedded%20-principal%20-lead%20-sr.%20%20-staff%20-crossover%20%20-.net&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
-                //all non shady industries that don't have a  big number of job positions (as big industries search on their own)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3614760213&f_E=4&f_I=119%2C93%2C133%2C16%2C130%2C7%2C33%2C17%2C12%2C3%2C114%2C68%2C75%2C84%2C112%2C116%2C122%2C124%2C126%2C132%2C135%2C51%2C88%2C100%2C101%2C102%2C103%2C105%2C107%2C108%2C110%2C111%2C113%2C115%2C120%2C125%2C127%2C13%2C134%2C136%2C138%2C139%2C141%2C144%2C145%2C146%2C147%2C148%2C150%2C20%2C23%2C24%2C28%2C30%2C31%2C32%2C34%2C35%2C37%2C38%2C39%2C40%2C49%2C53%2C55%2C56%2C57%2C62%2C63%2C66%2C67%2C69%2C70%2C73%2C74%2C82%2C83%2C85%2C86%2C87%2C89%2C90%2C91%2C92%2C95%2C99&f_JT=F&f_T=9%2C10738%2C25201%2C1660%2C23347%2C39&f_WT=2&geoId=103644278&keywords=java%20-affirm%20-nvidia%20-pinterest%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-%22reliability%20engineer%22%20-%22data%20engineer%22%20-bootstrap%20-typescript%20-android%20-embedded&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD"
-                );
-
-        PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
-        preferences.setMaxJobAgeInDays(90);
-        preferences.setMinJobAgeInDays(2);
-        preferences.setMaxApplicants(90);
-
-        preferences.setExcludeFresher(false);
-        preferences.setExcludeSenior(false);
-        preferences.setExcludeBigData(false);
-        preferences.setExcludeBlockchain(false);
-        preferences.setExcludeComplexJobs(false);
-        preferences.setExcludeRealEstate(false);
-        preferences.setSkipTooManyApplicants(true);
-        preferences.setSkipUnknownNumberOfApplicants(true);
-        preferences.setSkipJobsSourcedFromExternalJobBoard(true);
-
-        return  new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
-    }
 
 
     @GetMapping("/industry")
@@ -346,39 +301,6 @@ public class ExampleController {
 
 
 
-    @GetMapping("/bigCollections")
-    public QueryInput getBigCollectionsExample() {
-        List<String> urls=List.of(
-                //flex pto
-                "https://www.linkedin.com/jobs/collections/unlimited-vacation/?currentJobId=3694909287&discover=true&subscriptionOrigin=JOBS_HOME",
-                //small business
-                "https://www.linkedin.com/jobs/collections/small-business/?currentJobId=3735665450&discover=true&subscriptionOrigin=JOBS_HOME",
-                //nonprofit
-                "https://www.linkedin.com/jobs/collections/non-profits/?currentJobId=3729190356&discover=true&subscriptionOrigin=JOBS_HOME",
-                //mobility tech
-                "https://www.linkedin.com/jobs/collections/mobility-tech/?currentJobId=3737834163&discover=true&subscriptionOrigin=JOBS_HOME",
-                //healthcare
-                "https://www.linkedin.com/jobs/collections/hospitals-and-healthcare/?currentJobId=3715841847&discover=true&subscriptionOrigin=JOBS_HOME",
-                //govt
-                "https://www.linkedin.com/jobs/collections/government/?currentJobId=3721910416&discover=true&subscriptionOrigin=JOBS_HOME",
-
-                //family friendly
-                "https://www.linkedin.com/jobs/collections/family-friendly/?currentJobId=3710666847",
-                //401k match
-                "https://www.linkedin.com/jobs/collections/employer-401k-match/?currentJobId=3693981987&discover=true&subscriptionOrigin=JOBS_HOME",
-
-                //education
-                "https://www.linkedin.com/jobs/collections/education/?currentJobId=3724520461",
-                //climate tech
-                "https://www.linkedin.com/jobs/collections/climate-and-cleantech/?currentJobId=3737833230&discover=true&subscriptionOrigin=JOBS_HOME",
-                //pharmacueticals
-                "https://www.linkedin.com/jobs/collections/pharmaceuticals/?currentJobId=3652886006&discover=true&subscriptionOrigin=JOBS_HOME"
-        );
-
-        PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
-        return  new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
-    }
-
 
     @GetMapping("/blocks/one")
     public QueryInput getBlock1() {
@@ -464,6 +386,49 @@ public class ExampleController {
         return  new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
 
     }
+
+
+    @GetMapping("/blocks/four")
+    public QueryInput getBlock4() {
+        List<String> urls=List.of(
+                //work life balance (25)
+                //entry/associate
+                "https://www.linkedin.com/jobs/search/?currentJobId=3761955716&f_CM=3&f_E=2%2C3&f_F=it&f_JT=F&f_T=9%2C10738%2C24&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-canonical%20-clevertech%20-crossover%20-daugherty%20-softrams&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
+                //mid-senior (64)
+                "https://www.linkedin.com/jobs/search/?currentJobId=3752842801&f_CM=3&f_E=4&f_F=it&f_JT=F&f_T=9%2C10738%2C24&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-canonical%20-clevertech%20-crossover%20-daugherty%20-softrams&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
+
+                //social impact
+                // entry (32)
+                "https://www.linkedin.com/jobs/search/?currentJobId=3737839535&f_CM=4&f_E=2&f_T=9%2C2385%2C14827%2C24%2C23131&f_TPR=r604800&f_WT=2&keywords=java&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=R",
+                //associate (10)
+                "https://www.linkedin.com/jobs/search/?currentJobId=3748823524&f_CM=4&f_E=3&f_T=9%2C2385%2C14827%2C24%2C23131&f_TPR=r604800&f_WT=2&keywords=java&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=R",
+                //mid-senior(70)
+                "https://www.linkedin.com/jobs/search/?currentJobId=3752842801&f_CM=4&f_E=4&f_T=9%2C2385%2C14827%2C24%2C23131&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20%20-%22full%20stack%22%20-consultant%20-consulting%20%20-php%20-ruby&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=R",
+
+                //career growth
+                //entry/associate (17)
+                "https://www.linkedin.com/jobs/search/?currentJobId=3737967287&f_CM=5&f_E=2%2C3&f_F=it&f_JT=F&f_T=9&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-canonical%20-clevertech%20-crossover%20-daugherty%20-softrams&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
+                //mid-senior (50)
+                "https://www.linkedin.com/jobs/search/?currentJobId=3730026375&f_CM=5&f_E=4&f_F=it&f_JT=F&f_T=9&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20%20%20-%22full%20stack%22%20-consultant%20-consulting%20%20-php%20-ruby&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD",
+
+                //sustainable
+                // entry/associate (34)
+                "https://www.linkedin.com/jobs/search/?currentJobId=3734762817&f_CM=2&f_E=2%2C3&f_JT=F&f_T=9%2C24%2C10738&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=R",
+                //mid-senior (66)
+                "https://www.linkedin.com/jobs/search/?currentJobId=3713862713&f_CM=2&f_E=4&f_JT=F&f_T=9%2C24%2C10738&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20%20-consultant%20-consulting%20%20&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=R",
+
+                //DEI
+                // entry/associate (50)
+                "https://www.linkedin.com/jobs/search/?currentJobId=3748841303&f_CM=1&f_E=2%2C3&f_JT=F&f_T=9%2C10738%2C25194&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20%20-affirm%20-nvidia%20-pinterest%20-canonical%20-clevertech%20-crossover&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=R",
+                //mid-senior (66)
+                "https://www.linkedin.com/jobs/search/?currentJobId=3730026375&f_CM=1&f_E=4&f_JT=F&f_T=9%2C10738&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20%20-%22full%20stack%22%20-consultant%20-consulting%20%20-php%20-ruby&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=D"
+
+
+        );
+
+        PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
+        return  new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
+    }
         @GetMapping("/blocks/five")
         public QueryInput getBlock5() {
             List<String> urls=List.of(
@@ -509,47 +474,6 @@ public class ExampleController {
         return  new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
     }
 
-    @GetMapping("/blocks/four")
-    public QueryInput getBlock4() {
-        List<String> urls=List.of(
-                //work life balance (25)
-                //entry/associate
-                "https://www.linkedin.com/jobs/search/?currentJobId=3761955716&f_CM=3&f_E=2%2C3&f_F=it&f_JT=F&f_T=9%2C10738%2C24&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-canonical%20-clevertech%20-crossover%20-daugherty%20-softrams&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
-                //mid-senior (64)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3752842801&f_CM=3&f_E=4&f_F=it&f_JT=F&f_T=9%2C10738%2C24&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-canonical%20-clevertech%20-crossover%20-daugherty%20-softrams&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
-
-                //social impact
-                // entry (32)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3737839535&f_CM=4&f_E=2&f_T=9%2C2385%2C14827%2C24%2C23131&f_TPR=r604800&f_WT=2&keywords=java&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=R",
-                //associate (10)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3748823524&f_CM=4&f_E=3&f_T=9%2C2385%2C14827%2C24%2C23131&f_TPR=r604800&f_WT=2&keywords=java&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=R",
-                //mid-senior(70)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3752842801&f_CM=4&f_E=4&f_T=9%2C2385%2C14827%2C24%2C23131&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20%20-%22full%20stack%22%20-consultant%20-consulting%20%20-php%20-ruby&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=R",
-
-                //career growth
-                //entry/associate (17)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3737967287&f_CM=5&f_E=2%2C3&f_F=it&f_JT=F&f_T=9&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-canonical%20-clevertech%20-crossover%20-daugherty%20-softrams&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
-                //mid-senior (50)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3730026375&f_CM=5&f_E=4&f_F=it&f_JT=F&f_T=9&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20%20%20-%22full%20stack%22%20-consultant%20-consulting%20%20-php%20-ruby&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD",
-
-                //sustainable
-                // entry/associate (34)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3734762817&f_CM=2&f_E=2%2C3&f_JT=F&f_T=9%2C24%2C10738&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=R",
-                //mid-senior (66)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3713862713&f_CM=2&f_E=4&f_JT=F&f_T=9%2C24%2C10738&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20%20-consultant%20-consulting%20%20&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=R",
-
-                //DEI
-                // entry/associate (50)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3748841303&f_CM=1&f_E=2%2C3&f_JT=F&f_T=9%2C10738%2C25194&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20%20-affirm%20-nvidia%20-pinterest%20-canonical%20-clevertech%20-crossover&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=R",
-                //mid-senior (66)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3730026375&f_CM=1&f_E=4&f_JT=F&f_T=9%2C10738&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20%20-groundswell%20-affirm%20-nvidia%20-pinterest%20-daugherty%20%20-canonical%20-clevertech%20-startup%20%20-instructor%20-tutor%20%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded%20%20-%22full%20stack%22%20-consultant%20-consulting%20%20-php%20-ruby&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=D"
-
-
-        );
-
-        PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
-        return  new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
-    }
 
 
 
@@ -617,4 +541,51 @@ public class ExampleController {
         PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
         return  new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
     }
+
+    @GetMapping("/blocks/seven")
+    /**
+     * Looks for jobs with few applicants
+     */
+    public QueryInput getBlock7() {
+
+        List<String> urls=List.of(
+
+                //associate 361
+                "https://www.linkedin.com/jobs/search/?currentJobId=3730575940&f_E=3&f_JT=F%2CO&f_T=9%2C10738%2C23347%2C39%2C25201%2C1660&f_WT=2&geoId=103644278&keywords=java%20-affirm%20-nvidia%20-pinterest%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD",
+
+                // mid/senior
+                // it services and it consulting
+                "https://www.linkedin.com/jobs/search/?currentJobId=3741605661&f_E=4&f_I=96&f_JT=F&f_T=9%2C10738%2C39%2C1660%2C23347&f_WT=2&geoId=103644278&keywords=java%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20-senior%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-%22reliability%20engineer%22%20-%22data%20engineer%22%20-bootstrap%20-typescript%20-android%20-embedded%20-principal%20-lead%20-sr.%20%20-staff%20-crossover%20%20-.net&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
+                //staffing and recruiting
+                "https://www.linkedin.com/jobs/search/?currentJobId=3745429021&f_E=4&f_I=104&f_JT=F&f_T=9%2C10738%2C39%2C1660%2C23347&f_WT=2&geoId=103644278&keywords=java%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20-senior%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-%22reliability%20engineer%22%20-%22data%20engineer%22%20-bootstrap%20-typescript%20-android%20-embedded%20-principal%20-lead%20-sr.%20%20-staff%20-crossover%20%20-.net&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
+                //tech information and internet
+                "https://www.linkedin.com/jobs/search/?currentJobId=3757504320&f_E=4&f_I=6&f_JT=F&f_T=9%2C10738%2C1660%2C23347%2C39&f_WT=2&geoId=103644278&keywords=java%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20-senior%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-%22reliability%20engineer%22%20-%22data%20engineer%22%20-bootstrap%20-typescript%20-android%20-embedded%20-principal%20-lead%20-sr.%20%20-staff%20-crossover%20%20-.net&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
+                //software development
+                "https://www.linkedin.com/jobs/search/?currentJobId=3757504320&f_E=4&f_I=4&f_JT=F&f_T=9%2C10738%2C1660%2C23347%2C39&f_WT=2&geoId=103644278&keywords=java%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20-senior%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-%22reliability%20engineer%22%20-%22data%20engineer%22%20-bootstrap%20-typescript%20-android%20-embedded%20-principal%20-lead%20-sr.%20%20-staff%20-crossover%20%20-.net&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
+                //hr
+                "https://www.linkedin.com/jobs/search/?currentJobId=3751249914&f_E=4&f_I=137&f_JT=F&f_T=9%2C10738%2C1660%2C23347%2C39&f_WT=2&geoId=103644278&keywords=java%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20-senior%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-%22reliability%20engineer%22%20-%22data%20engineer%22%20-bootstrap%20-typescript%20-android%20-embedded%20-principal%20-lead%20-sr.%20%20-staff%20-crossover%20%20-.net&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
+                //it and services, hospital and healthcare
+                "https://www.linkedin.com/jobs/search/?currentJobId=3751249914&f_E=4&f_I=137&f_JT=F&f_T=9%2C10738%2C1660%2C23347%2C39&f_WT=2&geoId=103644278&keywords=java%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20-senior%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-%22reliability%20engineer%22%20-%22data%20engineer%22%20-bootstrap%20-typescript%20-android%20-embedded%20-principal%20-lead%20-sr.%20%20-staff%20-crossover%20%20-.net&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
+                //all non shady industries that don't have a  big number of job positions (as big industries search on their own)
+                "https://www.linkedin.com/jobs/search/?currentJobId=3614760213&f_E=4&f_I=119%2C93%2C133%2C16%2C130%2C7%2C33%2C17%2C12%2C3%2C114%2C68%2C75%2C84%2C112%2C116%2C122%2C124%2C126%2C132%2C135%2C51%2C88%2C100%2C101%2C102%2C103%2C105%2C107%2C108%2C110%2C111%2C113%2C115%2C120%2C125%2C127%2C13%2C134%2C136%2C138%2C139%2C141%2C144%2C145%2C146%2C147%2C148%2C150%2C20%2C23%2C24%2C28%2C30%2C31%2C32%2C34%2C35%2C37%2C38%2C39%2C40%2C49%2C53%2C55%2C56%2C57%2C62%2C63%2C66%2C67%2C69%2C70%2C73%2C74%2C82%2C83%2C85%2C86%2C87%2C89%2C90%2C91%2C92%2C95%2C99&f_JT=F&f_T=9%2C10738%2C25201%2C1660%2C23347%2C39&f_WT=2&geoId=103644278&keywords=java%20-affirm%20-nvidia%20-pinterest%20-startup%20-php%20-ruby%20-sdet%20-canonical%20-clevertech%20-instructor%20-tutor%20-%22systems%20engineer%22%20-%22full%20stack%22%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-%22reliability%20engineer%22%20-%22data%20engineer%22%20-bootstrap%20-typescript%20-android%20-embedded&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD"
+        );
+
+        PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
+        preferences.setMaxJobAgeInDays(90);
+        preferences.setMinJobAgeInDays(2);
+        preferences.setMaxApplicants(90);
+
+        preferences.setExcludeFresher(false);
+        preferences.setExcludeSenior(false);
+        preferences.setExcludeBigData(false);
+        preferences.setExcludeBlockchain(false);
+        preferences.setExcludeComplexJobs(false);
+        preferences.setExcludeRealEstate(false);
+        preferences.setSkipTooManyApplicants(true);
+        preferences.setSkipUnknownNumberOfApplicants(true);
+        preferences.setSkipJobsSourcedFromExternalJobBoard(true);
+
+        return  new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
+    }
+
 }

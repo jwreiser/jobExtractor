@@ -14,6 +14,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.mongodb.client.MongoClient;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -23,6 +24,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.MoveTargetOutOfBoundsException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
+import org.springframework.data.relational.core.sql.In;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -76,7 +78,8 @@ public class LinkedInExtractor extends Extractor {
         List<Job> acceptedJobs = new ArrayList<>();
         List<Job> rejectedJobs = new ArrayList<>();
         WebDriver newDriver = null;
-        int totalHidden=0,totalJobs=0,totalSkipped=0,totalCached=0,currentPageNum = 0,actualPageNum=0;
+        int totalHidden=0,totalJobs=0,numJobs=0,totalSkipped=0,totalCached=0,currentPageNum = 0,actualPageNum=0;
+        Optional<Integer>currNumberOfResults=Optional.empty();
         try {
 
 
@@ -87,18 +90,42 @@ public class LinkedInExtractor extends Extractor {
             }
 
             newDriver.get(url);
-            int hiddenJobs=0,numJobs,skippedJobs=0,cachedJobs=0;
+            int hiddenJobs=0,skippedJobs=0,cachedJobs=0;
             boolean everyJobHiddenOrSkipped=false;
             WebElement nextPageButton = null;
             List<Integer>pageValues;
             Integer lastPageNumber=1;
             do {
                 currentPageNum++;
+                /*
+                the current number of results can change as the page loads so we
+                don't want to JUST read it right away as it may get lowered
+                 */
+                try {
+                    Thread.sleep(3_000);
+                }catch (InterruptedException ex){
+
+                }
+                if(isPageEmpty(newDriver)){
+                    break;
+                }
+                currNumberOfResults=getCurrentNumberOfResults(newDriver);
+                if(currNumberOfResults.isPresent() && currNumberOfResults.get()<=25){
+                    actualPageNum = 1;
+                    lastPageNumber=1;
+                }else {
+                    pageValues = getCurrentAndMaxPage(newDriver);
+                    if(pageValues!=null) {
+                        actualPageNum = pageValues.get(0);
+                        lastPageNumber = pageValues.get(1);
+                    }
+                }
 
                 //TODO return something more complex that will return at least a no more results flag
                 WebElement resultsDiv = null;
                 try{
-                    resultsDiv = loadMainElement(newDriver,actualPageNum,lastPageNumber);
+
+                    resultsDiv = loadMainElement(newDriver,actualPageNum,lastPageNumber,currNumberOfResults);
                 }catch(ContentLoadingException cle){
                     try {
                         Thread.sleep(1_000);
@@ -106,7 +133,7 @@ public class LinkedInExtractor extends Extractor {
 
                     }
                     newDriver.get(url);
-                    resultsDiv = loadMainElement(newDriver,actualPageNum,lastPageNumber);
+                    resultsDiv = loadMainElement(newDriver,actualPageNum,lastPageNumber,currNumberOfResults);
                 }
                 if (resultsDiv == null) {
                     /*
@@ -116,15 +143,14 @@ public class LinkedInExtractor extends Extractor {
                      */
                     break;
                 }
-                pageValues = getCurrentAndMaxPage(newDriver);
 
-                actualPageNum=pageValues.get(0);
+
                 nextPageButton = getNextPageButton(newDriver,actualPageNum);
                 if (preferences.getSkipFirstPages() != null && preferences.getSkipFirstPages() > currentPageNum) {
                     doubleClickOnElement(newDriver, nextPageButton);
                     continue;
                 }
-                lastPageNumber=pageValues.get(1);
+
 
                 /*
                 if we are already passed the last page count wise; we are spinning and need to get
@@ -144,6 +170,7 @@ public class LinkedInExtractor extends Extractor {
                 cachedJobs=0;
                 everyJobHiddenOrSkipped=false;
                 numJobs=items.size();
+
                 for (Element item : items) {
                     totalJobs++;
                     final Job currentJob = populator.populateJob(item, newDriver);
@@ -202,10 +229,10 @@ public class LinkedInExtractor extends Extractor {
 
 
                 }
-                if (nextPageButton != null) {
+                if (nextPageButton != null && numJobs==25) {
                     doubleClickOnElement(newDriver, nextPageButton);
                 }
-            } while (nextPageButton != null);
+            } while (nextPageButton != null && numJobs==25);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -371,7 +398,7 @@ public class LinkedInExtractor extends Extractor {
         return span.text().replaceAll("<!---->", "").split(" ")[0];
     }
 
-    private static WebElement loadMainElement(WebDriver driver,Integer currentPageNumber,Integer lastPageNumber) throws ContentLoadingException {
+    private static WebElement loadMainElement(WebDriver driver,Integer currentPageNumber,Integer lastPageNumber,Optional<Integer> currNumOfResults) throws ContentLoadingException {
         WebElement resultsDiv = null;
         FluentWait wait = new FluentWait(driver);
         wait.withTimeout(Duration.ofSeconds(30));
@@ -382,9 +409,16 @@ public class LinkedInExtractor extends Extractor {
             try {
                 resultsDiv = driver.findElement(By.className("jobs-search-results-list__subtitle"));
             } catch (NoSuchElementException nse) {
-                if(currentPageNumber<lastPageNumber) {
+                if(currentPageNumber<lastPageNumber-1) {
                     driver.navigate().back();
-                    resultsDiv=loadMainElement(driver,currentPageNumber,lastPageNumber);
+                    resultsDiv=loadMainElement(driver,currentPageNumber,lastPageNumber,currNumOfResults);
+                }else if(currentPageNumber==(lastPageNumber-1) && currNumOfResults.isPresent()) {
+                    int approxResultsSeen=25*currentPageNumber;
+                    int approxRemainingResults=currNumOfResults.get()-approxResultsSeen;
+                    if(approxRemainingResults>10) {
+                        driver.navigate().back();
+                        resultsDiv = loadMainElement(driver, currentPageNumber, lastPageNumber, currNumOfResults);
+                    }
                 }
             }
         } catch (TimeoutException te) {
@@ -408,22 +442,80 @@ public class LinkedInExtractor extends Extractor {
 
     private List<Integer> getCurrentAndMaxPage(WebDriver driver) {
         WebElement nextPage = null;
+        WebElement pageStateDiv =null;
         try {
-            WebElement pageStateDiv = driver.findElement(By.className("artdeco-pagination__page-state"));
-
-            if (pageStateDiv != null) {
-                String pageText = pageStateDiv.getAttribute("innerHTML").replaceAll("\\W", "").substring(4);
-                pageText = pageText.replaceAll("of", " ");
-                Integer currentPage = Integer.parseInt(pageText.split(" ")[0]);
-                Integer maxPage = Integer.parseInt(pageText.split(" ")[1]);
-                return List.of(currentPage,maxPage);
-            }
-        } catch (NoSuchElementException nse) {
-            //this usually  happens when we look for a next page that is not there
+            pageStateDiv = driver.findElement(By.className("artdeco-pagination__page-state"));
         }
-        return null;
+        catch (NoSuchElementException nse) {
+            if(isPageEmpty(driver)) {
+                driver.navigate().refresh();//at least sometimes we can't get pages when the page is not fully loaded
+                try {//waiting does not seem to help
+                    Thread.sleep(5_000);
+                    pageStateDiv = driver.findElement(By.className("artdeco-pagination__page-state"));
+                } catch (InterruptedException | NoSuchElementException nse2) {
+                    return null;
+                }
+            }else {
+                return null;
+            }
+        }
+        if (pageStateDiv != null) {
+            String pageText = pageStateDiv.getAttribute("innerHTML").replaceAll("\\W", "").substring(4);
+            pageText = pageText.replaceAll("of", " ");
+            Integer currentPage = Integer.parseInt(pageText.split(" ")[0]);
+            Integer maxPage = Integer.parseInt(pageText.split(" ")[1]);
+            return List.of(currentPage,maxPage);
+        }else{
+            return null;
+        }
+
     }
 
+    private boolean isPageEmpty(WebDriver driver) {
+        String pageSource=driver.getPageSource();
+        if(pageSource.contains("No matching jobs found.")){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    private Optional<Integer> getCurrentNumberOfResults(WebDriver driver) {
+        WebElement nextPage = null;
+        WebElement resultsDiv=null;
+        try {
+             resultsDiv = driver.findElement(By.className("jobs-search-results-list__subtitle"));
+
+        } catch (NoSuchElementException nse) {
+            try {
+                if(!isPageEmpty(driver)){
+                    driver.navigate().refresh();//some times the page has been loaded wrong
+                    Thread.sleep(5_000);
+                    resultsDiv = driver.findElement(By.className("jobs-search-results-list__subtitle"));
+                }else {
+                    return Optional.empty();
+                }
+            }catch (InterruptedException|NoSuchElementException nse2) {
+                return Optional.empty();
+            }
+        }
+
+        if (resultsDiv != null) {
+            String innerHTML = resultsDiv.getAttribute("innerHTML");
+            int resultsLoc = innerHTML.indexOf(" results");
+            if (resultsLoc > 0) {
+                int start = innerHTML.indexOf("<!---->") + "<!---->".length();
+                String results = innerHTML.substring(start, resultsLoc).replaceAll(",","");
+                if (NumberUtils.isCreatable(results)) {
+                    return Optional.of(Integer.parseInt(results));
+                }
+            } else if(innerHTML.indexOf(" result")>0){
+                return  Optional.of(1);
+            }else {
+                return Optional.empty();
+            }
+        }
+        return Optional.empty();
+    }
 
     private WebElement getNextPageButton(WebDriver driver,Integer currentPage) {
         WebElement nextPage = null;

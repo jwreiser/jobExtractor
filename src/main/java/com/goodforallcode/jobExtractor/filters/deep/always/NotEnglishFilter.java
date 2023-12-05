@@ -11,7 +11,7 @@ public class NotEnglishFilter implements JobFilter {
             , "inženýr", "Japanese", "Pessoa", "Desenvolvedor", "Pleno", "Sênior", "Especialista",
             "Trabalho", "Remoto", "automatizadora", " de ", "testes", "Pleno", "Sênior",
             "Geliştirici", "NİTELİKLER","merkezli","şirketi","deneyimi","Güçlü","analizi",
-            "equipo","Desarrollo"," Wir ","Ingeniero","Especializado","Japanese"
+            "equipo","Desarrollo"," Wir ","Ingeniero","Especializado","Japanese","Mandarin"
     );
 
     @Override

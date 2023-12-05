@@ -66,3 +66,12 @@ setup needed to run web service:
     the location of the driver's exe. Right now it is hardcoded in Extractor.java's getWebDriver mwthod
     as such: System.setProperty("webdriver.gecko.driver", "D:/development/geckodriver.exe");
     I will try to have it use an existing system property soon but this has been low priority
+
+Annoyances
+    Right now dealing with security challenges is manual. We don't have a way to manually verify captchas. I think it would be
+    possible to retrieve codes from emails but for now the solution is manual
+    put a breakpoint at the line reading:
+        System.err.println("You need to pass verification to login");
+    in the LinkedInExtractor's doubleClickOnElement method
+
+    it seems like
