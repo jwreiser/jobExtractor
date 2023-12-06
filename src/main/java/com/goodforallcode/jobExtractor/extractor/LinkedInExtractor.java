@@ -20,18 +20,15 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.MoveTargetOutOfBoundsException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
-import org.springframework.data.relational.core.sql.In;
 
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 @Getter
 @Setter
@@ -78,7 +75,7 @@ public class LinkedInExtractor extends Extractor {
         List<Job> acceptedJobs = new ArrayList<>();
         List<Job> rejectedJobs = new ArrayList<>();
         WebDriver newDriver = null;
-        int totalHidden=0,totalJobs=0,numJobs=0,totalSkipped=0,totalCached=0,currentPageNum = 0,actualPageNum=0;
+        int totalHidden=0,totalJobs=0,numJobs=0,totalSkipped=0,totalCached=0,currentPageNum = 0,actualPageNum=1;
         Optional<Integer>currNumberOfResults=Optional.empty();
         try {
 
@@ -102,17 +99,21 @@ public class LinkedInExtractor extends Extractor {
                 don't want to JUST read it right away as it may get lowered
                  */
                 try {
-                    Thread.sleep(3_000);
+                    Thread.sleep(5_000);
                 }catch (InterruptedException ex){
 
                 }
-                if(isPageEmpty(newDriver)){
+                if(noMatchingJobs(newDriver)){
                     break;
                 }
                 currNumberOfResults=getCurrentNumberOfResults(newDriver);
                 if(currNumberOfResults.isPresent() && currNumberOfResults.get()<=25){
-                    actualPageNum = 1;
-                    lastPageNumber=1;
+                    if(currNumberOfResults.get()==0){
+                        break;
+                    }else{
+                        actualPageNum = 1;
+                        lastPageNumber = 1;
+                    }
                 }else {
                     pageValues = getCurrentAndMaxPage(newDriver);
                     if(pageValues!=null) {
@@ -366,10 +367,28 @@ public class LinkedInExtractor extends Extractor {
 
 
     private Elements getJobItems(WebDriver driver) {
-        WebElement ul = driver.findElement(By.className("scaffold-layout__list-container"));
+        WebElement ul=null;
+        Elements items= new Elements();
+        try{
+            ul = driver.findElement(By.className("scaffold-layout__list-container"));
+        }catch (NoSuchElementException nse){
+            if(isPageEmpty(driver)) {
+                driver.navigate().refresh();//at least sometimes we can't get pages when the page is not fully loaded
+                try {//waiting does not seem to help
+                    Thread.sleep(5_000);
+                    ul = driver.findElement(By.className("artdeco-pagination__page-state"));
+                } catch (InterruptedException | NoSuchElementException nse2) {
+                    return items;
+                }
+            }else {
+                return items;
+            }
+        }
 
-        Document doc = Jsoup.parse(ul.getAttribute("innerHTML"));
-        Elements items = doc.select("li.jobs-search-results__list-item");
+        if(ul!=null) {
+            Document doc = Jsoup.parse(ul.getAttribute("innerHTML"));
+            items = doc.select("li.jobs-search-results__list-item");
+        }
         return items;
     }
 
@@ -447,7 +466,9 @@ public class LinkedInExtractor extends Extractor {
             pageStateDiv = driver.findElement(By.className("artdeco-pagination__page-state"));
         }
         catch (NoSuchElementException nse) {
-            if(isPageEmpty(driver)) {
+            if(noMatchingJobs(driver)) {
+                return List.of(1,1);
+            }else if(isPageEmpty(driver)) {
                 driver.navigate().refresh();//at least sometimes we can't get pages when the page is not fully loaded
                 try {//waiting does not seem to help
                     Thread.sleep(5_000);
@@ -473,7 +494,15 @@ public class LinkedInExtractor extends Extractor {
 
     private boolean isPageEmpty(WebDriver driver) {
         String pageSource=driver.getPageSource();
-        if(pageSource.contains("No matching jobs found.")){
+        if(pageSource.length()<1000){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    private boolean noMatchingJobs(WebDriver driver) {
+        String pageSource=driver.getPageSource();
+        if(pageSource.contains("No matching jobs found")){
             return true;
         }else{
             return false;
@@ -487,9 +516,11 @@ public class LinkedInExtractor extends Extractor {
 
         } catch (NoSuchElementException nse) {
             try {
-                if(!isPageEmpty(driver)){
-                    driver.navigate().refresh();//some times the page has been loaded wrong
-                    Thread.sleep(5_000);
+                if(noMatchingJobs(driver)){
+                    return Optional.of(0);
+                }else if(isPageEmpty(driver)){
+                    driver.navigate().refresh();//sometimes the page has been loaded wrong
+                    Thread.sleep(10_000);
                     resultsDiv = driver.findElement(By.className("jobs-search-results-list__subtitle"));
                 }else {
                     return Optional.empty();
