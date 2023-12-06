@@ -141,11 +141,11 @@ public abstract class Extractor {
         try {
             //        in FF: we need to scroll the page until the item we need is visible
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();", element);
-            Thread.sleep(1_000);
+            Thread.sleep(5_000);
             act.moveToElement(element).doubleClick(element).perform();
-            Thread.sleep(1_000);
+            Thread.sleep(5_000);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace();//this seems to be the cause of the endless spinning that happens
         }
     }
 }

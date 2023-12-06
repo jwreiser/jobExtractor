@@ -1,6 +1,7 @@
 package com.goodforallcode.jobExtractor.cache;
 
 import com.goodforallcode.jobExtractor.model.Job;
+import com.mongodb.MongoTimeoutException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -23,6 +24,7 @@ import static com.mongodb.client.model.Filters.eq;
 
 public class MongoDbJobCache implements JobCache {
     public static String uri = "mongodb+srv://devUser:fakePass1@cluster0.q2ny9rm.mongodb.net/?retryWrites=true&w=majority";
+    private static boolean serverUp=true;
     final private static String databaseName="MyJobSearch";
     final private static String collectionName="Jobs";
     private HashSet<String> currentJobIndexCache =new HashSet<>();
@@ -40,15 +42,19 @@ public class MongoDbJobCache implements JobCache {
          */
         if(currentJobIndexCache.contains(job.getTitle()+"_"+job.getCompanyName())){
             containsJob=true;
-        }else {
-            MongoDatabase database = mongoClient.getDatabase(databaseName);
-            MongoCollection<Document> collection = database.getCollection(collectionName);
-            int numDocs = 0;
-            Bson query = and(eq("title", job.getTitle()), eq("companyName", job.getCompanyName()));
-            CountOptions options=new CountOptions();
-            options.limit(1);
-            if ( collection.countDocuments(query,options)>0) {
-                containsJob=true;
+        }else if(serverUp){
+            try {
+                MongoDatabase database = mongoClient.getDatabase(databaseName);
+                MongoCollection<Document> collection = database.getCollection(collectionName);
+                int numDocs = 0;
+                Bson query = and(eq("title", job.getTitle()), eq("companyName", job.getCompanyName()));
+                CountOptions options = new CountOptions();
+                options.limit(1);
+                if (collection.countDocuments(query, options) > 0) {
+                    containsJob = true;
+                }
+            }catch (MongoTimeoutException mt){
+                serverUp=false;
             }
         }
         return containsJob;
@@ -66,13 +72,18 @@ public class MongoDbJobCache implements JobCache {
 
     public void addRemainingJobs(MongoClient mongoClient){
         if(!currentJobCache.isEmpty()) {
-            MongoDatabase database = mongoClient.getDatabase(databaseName);
-            MongoCollection<Document> collection = database.getCollection(collectionName);
-            System.err.println(collection.estimatedDocumentCount() + "PRE");
-            collection.insertMany(currentJobCache);
-            System.err.println(collection.estimatedDocumentCount() + "POST");
+            try {
+                MongoDatabase database = mongoClient.getDatabase(databaseName);
+                MongoCollection<Document> collection = database.getCollection(collectionName);
+                System.err.println(collection.estimatedDocumentCount() + "PRE");
+                collection.insertMany(currentJobCache);
+                System.err.println(collection.estimatedDocumentCount() + "POST");
 
-            currentJobCache.clear();
+                currentJobCache.clear();
+                serverUp=true;
+            }catch (MongoTimeoutException mte){
+                serverUp=false;
+            }
         }
     }
 

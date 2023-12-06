@@ -24,7 +24,7 @@ public class StartupFilter implements JobFilter {
             "seed-stage", "y combinator","backed"," early stage",
             " VC","investors","pre-seed","valuation");
     List<String> bothPhrases =List.of("startup","start-up"," start up "
-            ,"B corp","Series A","Series B","foundational");
+            ,"B corp","Series A","Series B","foundational","scale-up");
     List<String> notPhrases =List.of("public benefit corporation","PBC");
     List<String> companyNames =List.of("Patterned Learning AI","minware","Included Health",
             "Storm 3","Storm 4","Storm 5","Storm 6",

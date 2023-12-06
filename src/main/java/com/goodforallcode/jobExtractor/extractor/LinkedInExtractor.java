@@ -88,7 +88,7 @@ public class LinkedInExtractor extends Extractor {
 
             newDriver.get(url);
             int hiddenJobs=0,skippedJobs=0,cachedJobs=0;
-            boolean everyJobHiddenOrSkipped=false;
+            boolean everyJobHiddenCachedOrSkipped=false;
             WebElement nextPageButton = null;
             List<Integer>pageValues;
             Integer lastPageNumber=1;
@@ -157,7 +157,7 @@ public class LinkedInExtractor extends Extractor {
                 if we are already passed the last page count wise; we are spinning and need to get
                 to the final page
                  */
-                if(lastPageNumber<currentPageNum && everyJobHiddenOrSkipped){
+                if(lastPageNumber<currentPageNum && everyJobHiddenCachedOrSkipped){
                     doubleClickOnElement(newDriver, nextPageButton);
                 }
 
@@ -169,7 +169,7 @@ public class LinkedInExtractor extends Extractor {
                 hiddenJobs=0;
                 skippedJobs=0;
                 cachedJobs=0;
-                everyJobHiddenOrSkipped=false;
+                everyJobHiddenCachedOrSkipped=false;
                 numJobs=items.size();
 
                 for (Element item : items) {
@@ -181,7 +181,7 @@ public class LinkedInExtractor extends Extractor {
                         hiddenJobs++;
                         totalHidden++;
                         if(hiddenJobs+skippedJobs==numJobs){
-                            everyJobHiddenOrSkipped=true;
+                            everyJobHiddenCachedOrSkipped=true;
                         }
                         continue;
                     }
@@ -194,8 +194,8 @@ public class LinkedInExtractor extends Extractor {
                          */
                         skippedJobs++;
                         totalSkipped++;
-                        if(hiddenJobs+skippedJobs==numJobs){
-                            everyJobHiddenOrSkipped=true;
+                        if(hiddenJobs+cachedJobs+skippedJobs==numJobs){
+                            everyJobHiddenCachedOrSkipped=true;
                         }
                         continue;
                     }
@@ -372,7 +372,7 @@ public class LinkedInExtractor extends Extractor {
         try{
             ul = driver.findElement(By.className("scaffold-layout__list-container"));
         }catch (NoSuchElementException nse){
-            if(isPageEmpty(driver)) {
+            if(!isPageFullyLoaded(driver)) {
                 driver.navigate().refresh();//at least sometimes we can't get pages when the page is not fully loaded
                 try {//waiting does not seem to help
                     Thread.sleep(5_000);
@@ -468,7 +468,7 @@ public class LinkedInExtractor extends Extractor {
         catch (NoSuchElementException nse) {
             if(noMatchingJobs(driver)) {
                 return List.of(1,1);
-            }else if(isPageEmpty(driver)) {
+            }else if(!isPageFullyLoaded(driver)) {
                 driver.navigate().refresh();//at least sometimes we can't get pages when the page is not fully loaded
                 try {//waiting does not seem to help
                     Thread.sleep(5_000);
@@ -492,13 +492,27 @@ public class LinkedInExtractor extends Extractor {
 
     }
 
-    private boolean isPageEmpty(WebDriver driver) {
+    /**
+     * I want this to use the page source rather than trying to get actual elements
+     * I don't want to worry that things are getting messed up in the DOM until we at least
+     * know that the basics of the page are in order
+     * @param driver
+     * @return
+     */
+    private boolean isPageFullyLoaded(WebDriver driver) {
         String pageSource=driver.getPageSource();
         if(pageSource.length()<1000){
-            return true;
-        }else{
             return false;
         }
+        if(pageSource.contains("There was a problem loading your filters")){
+            return false;
+        }
+        if(pageSource.contains("Ad Choices")&&pageSource.contains("Business Services")
+                &&pageSource.contains("Help Center")){
+            return true;
+        }
+
+        return false;
     }
     private boolean noMatchingJobs(WebDriver driver) {
         String pageSource=driver.getPageSource();
@@ -516,9 +530,10 @@ public class LinkedInExtractor extends Extractor {
 
         } catch (NoSuchElementException nse) {
             try {
+                Thread.sleep(10_000);
                 if(noMatchingJobs(driver)){
                     return Optional.of(0);
-                }else if(isPageEmpty(driver)){
+                }else if(!isPageFullyLoaded(driver)){
                     driver.navigate().refresh();//sometimes the page has been loaded wrong
                     Thread.sleep(10_000);
                     resultsDiv = driver.findElement(By.className("jobs-search-results-list__subtitle"));
