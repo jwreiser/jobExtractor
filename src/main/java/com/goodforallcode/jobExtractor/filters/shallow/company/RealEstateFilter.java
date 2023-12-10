@@ -29,6 +29,13 @@ public class RealEstateFilter implements JobFilter {
             System.err.println("Real Estate name starts with ->reject: "+job);
             return false;
         }
+        if(job.getDescription()!=null){
+            String description=job.getDescription().toLowerCase();
+            if(description.toLowerCase().contains("real estate")||description.toLowerCase().contains("real-estate")){
+                System.err.println("Real Estate description ->reject: "+job);
+                return false;
+            }
+        }
         return true;
     }
 }

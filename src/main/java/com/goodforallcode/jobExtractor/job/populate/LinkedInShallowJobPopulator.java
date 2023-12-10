@@ -156,20 +156,29 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
 
     }
 
+    /**
+     * Even though reposted times will be different than original posting dates
+     * we need something to distinguish job duplicates and time seems like a necessary
+     * @param item
+     * @param job
+     */
     private static void addAgeInformation(Element item, Job job) {
         Elements time = item.getElementsByTag("time");
         if(time.text().contains("Reposted")){
             job.setReposted(true);
-            return;//ignore reposted times
         }
-        String dateString = time.attr("datetime");
+        String dateString = item.getElementsByClass("job-search-card__listdate").attr("datetime");
         if (!dateString.isEmpty()) {
             job.setJobAgeInDays(DateUtil.getAgeInDays(dateString));
+            job.setPostingDate(DateUtil.getLocalDate(dateString));
+        }else {
+            dateString = time.attr("datetime");
+            if (!dateString.isEmpty()) {
+                job.setJobAgeInDays(DateUtil.getAgeInDays(dateString));
+                job.setPostingDate(DateUtil.getLocalDate(dateString));
+            }
         }
-        dateString = item.getElementsByClass("job-search-card__listdate").attr("datetime");
-        if (!dateString.isEmpty()) {
-            job.setJobAgeInDays(DateUtil.getAgeInDays(dateString));
-        }
+
     }
 
 

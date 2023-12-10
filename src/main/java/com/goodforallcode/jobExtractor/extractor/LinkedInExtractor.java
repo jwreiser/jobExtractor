@@ -550,9 +550,13 @@ public class LinkedInExtractor extends Extractor {
             int resultsLoc = innerHTML.indexOf(" results");
             if (resultsLoc > 0) {
                 int start = innerHTML.indexOf("<!---->") + "<!---->".length();
-                String results = innerHTML.substring(start, resultsLoc).replaceAll(",","");
-                if (NumberUtils.isCreatable(results)) {
-                    return Optional.of(Integer.parseInt(results));
+                if(start<resultsLoc) {
+                    String results = innerHTML.substring(start, resultsLoc).replaceAll(",", "");
+                    if (NumberUtils.isCreatable(results)) {
+                        return Optional.of(Integer.parseInt(results));
+                    }
+                } else if (innerHTML.indexOf("0 results")>0) {
+                    return  Optional.of(0);
                 }
             } else if(innerHTML.indexOf(" result")>0){
                 return  Optional.of(1);

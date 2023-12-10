@@ -6,6 +6,8 @@ import com.goodforallcode.jobExtractor.filters.JobFilter;
 import lombok.Data;
 import org.openqa.selenium.WebElement;
 
+import java.time.LocalDate;
+
 @Data
 public class Job {
 
@@ -55,6 +57,9 @@ public class Job {
     Integer level;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Long jobAgeInDays=null;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    LocalDate postingDate=null;
+
     @JsonIgnore
     boolean sourcedFromJobBoard=false;
     @JsonIgnore

@@ -24,15 +24,15 @@ import static com.mongodb.client.model.Filters.eq;
 
 public class MongoDbJobCache implements JobCache {
     public static String uri = "mongodb+srv://devUser:fakePass1@cluster0.q2ny9rm.mongodb.net/?retryWrites=true&w=majority";
-    private static boolean serverUp=true;
-    final private static String databaseName="MyJobSearch";
-    final private static String collectionName="Jobs";
-    private HashSet<String> currentJobIndexCache =new HashSet<>();
-    private List<Document> currentJobCache =new ArrayList<>();
-    private static int CACHE_SIZE=20220;
+    private static boolean serverUp = true;
+    final private static String databaseName = "MyJobSearch";
+    final private static String collectionName = "Jobs";
+    private HashSet<String> currentJobIndexCache = new HashSet<>();
+    private List<Document> currentJobCache = new ArrayList<>();
+    private static int CACHE_SIZE = 20220;
 
     public boolean containsJob(Job job, MongoClient mongoClient) {
-        boolean containsJob=false;
+        boolean containsJob = false;
 
         /*
         look at current run first
@@ -40,21 +40,31 @@ public class MongoDbJobCache implements JobCache {
         where calling mongo misses recently added documents
         this is even true within the same extractor(thread)
          */
-        if(currentJobIndexCache.contains(job.getTitle()+"_"+job.getCompanyName())){
-            containsJob=true;
-        }else if(serverUp){
+        if (currentJobIndexCache.contains(job.getTitle()
+                + "_" + job.getCompanyName()
+                + "_" + job.getPostingDate()
+        )
+        ) {
+            containsJob = true;
+        } else if (serverUp) {
             try {
                 MongoDatabase database = mongoClient.getDatabase(databaseName);
                 MongoCollection<Document> collection = database.getCollection(collectionName);
                 int numDocs = 0;
                 Bson query = and(eq("title", job.getTitle()), eq("companyName", job.getCompanyName()));
+                if (job.getPostingDate() != null) {
+                    query = and(eq("title", job.getTitle())
+                            , eq("companyName", job.getCompanyName())
+                            , eq("postingDate", job.getPostingDate())
+                    );
+                }
                 CountOptions options = new CountOptions();
                 options.limit(1);
                 if (collection.countDocuments(query, options) > 0) {
                     containsJob = true;
                 }
-            }catch (MongoTimeoutException mt){
-                serverUp=false;
+            } catch (MongoTimeoutException mt) {
+                serverUp = false;
             }
         }
         return containsJob;
@@ -64,14 +74,19 @@ public class MongoDbJobCache implements JobCache {
     public void addJob(Job job, boolean include, MongoClient mongoClient) {
         Document doc = getQueryDocument(job, include);
         currentJobCache.add(doc);
-        currentJobIndexCache.add(job.getTitle()+"_"+job.getCompanyName());
-        if(currentJobCache.size()>CACHE_SIZE){
+        currentJobIndexCache.add(job.getTitle()
+                + "_" + job.getCompanyName()
+                + "_" + job.getPostingDate()
+        );
+        if (currentJobCache.size() > CACHE_SIZE) {
             addRemainingJobs(mongoClient);
         }
     }
 
-    public void addRemainingJobs(MongoClient mongoClient){
-        if(!currentJobCache.isEmpty()) {
+    public void addRemainingJobs(MongoClient mongoClient) {
+        if ((serverUp && !currentJobCache.isEmpty())
+        ||(!currentJobCache.isEmpty()&&currentJobCache.size()%50==0)
+        ){
             try {
                 MongoDatabase database = mongoClient.getDatabase(databaseName);
                 MongoCollection<Document> collection = database.getCollection(collectionName);
@@ -80,58 +95,66 @@ public class MongoDbJobCache implements JobCache {
                 System.err.println(collection.estimatedDocumentCount() + "POST");
 
                 currentJobCache.clear();
-                serverUp=true;
-            }catch (MongoTimeoutException mte){
-                serverUp=false;
+                serverUp = true;
+            } catch (MongoTimeoutException mte) {
+                serverUp = false;
             }
         }
     }
 
     private static Document getQueryDocument(Job job, boolean include) {
-        HashMap<String,Object>docValues=new HashMap<>();
+        HashMap<String, Object> docValues = new HashMap<>();
         docValues.put("title", job.getTitle());
         docValues.put("companyName", job.getCompanyName());
         docValues.put("include", include);
         docValues.put("url", job.getUrl());
-        if(job.isHidden()) {
+        if (job.isHidden()) {
             docValues.put("hidden", true);
-        }else if(job.isApplied()) {
+        }
+        if (job.isApplied()) {
             docValues.put("applied", true);
-        }else if(!job.isAcceptingApplications()) {
+        }
+        if (!job.isAcceptingApplications()) {
             docValues.put("notAcceptingApplications", true);
-        }else{
-            if (!include && job.getExcludeFilter() != null) {
-                docValues.put("excludeFilter", job.getExcludeFilter().getName());
-            }
-            if (include && job.getIncludeFilter() != null) {
-                docValues.put("includeFilter", job.getIncludeFilter().getName());
-            }
-            if (job.getIndustry() != null) {
-                docValues.put("industry", job.getIndustry());
-            }
-            if(job.getNumApplicants()!=null) {
-                docValues.put("numApplicants", job.getNumApplicants());
-            }
-            if (job.getMinYearlySalary() != null) {
-                docValues.put("minYearlySalary", job.getMinYearlySalary());
-            }
-            if (job.getMaxYearlySalary() != null) {
-                docValues.put("maxYearlySalary", job.getMaxYearlySalary());
-            }
-            if(job.isContract()) {
-                docValues.put("contract", job.isContract());
-            }
-            docValues.put("jobAge", job.getJobAgeInDays());
         }
 
-        LocalDate now=LocalDate.now();
-        LocalDate beginningOfYear=LocalDate.of(now.getYear(),1,1);
-        Period elapsed=beginningOfYear.until(now);
-        int daysPassed=elapsed.getDays()+ (elapsed.getMonths()*30);
-        docValues.put("daysSinceYear", daysPassed);
+        if (!include && job.getExcludeFilter() != null) {
+            docValues.put("excludeFilter", job.getExcludeFilter().getName());
+        }
+        if (include && job.getIncludeFilter() != null) {
+            docValues.put("includeFilter", job.getIncludeFilter().getName());
+        }
+        if (job.getIndustry() != null) {
+            docValues.put("industry", job.getIndustry());
+        }
+        if (job.getNumApplicants() != null) {
+            docValues.put("numApplicants", job.getNumApplicants());
+        }
+        if (job.getMinYearlySalary() != null) {
+            docValues.put("minYearlySalary", job.getMinYearlySalary());
+        }
+        if (job.getMaxYearlySalary() != null) {
+            docValues.put("maxYearlySalary", job.getMaxYearlySalary());
+        }
+        if (job.getMinHourlySalary() != null) {
+            docValues.put("minHourlySalary", job.getMinHourlySalary());
+        }
+        if (job.getMaxHourlySalary() != null) {
+            docValues.put("maxHourlySalary", job.getMaxHourlySalary());
+        }
+        if (job.getPostingDate() != null) {
+            docValues.put("postingDate", job.getPostingDate());
+        }
+        if (job.isContract()) {
+            docValues.put("contract", job.isContract());
+        }
+        docValues.put("jobAge", job.getJobAgeInDays());
 
 
-        Document doc =new Document(docValues);
+
+
+
+        Document doc = new Document(docValues);
         return doc;
     }
 }
