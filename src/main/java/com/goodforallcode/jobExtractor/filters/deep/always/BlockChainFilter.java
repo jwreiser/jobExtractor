@@ -9,7 +9,8 @@ import java.util.List;
 
 public class BlockChainFilter implements JobFilter {
     List<String>keywords=List.of("Blockchain","Crypto"," NFT "," DeFi ");
-    List<String>companyNames=List.of("CryptoRecruit","Trust Machines","Kraken Digital Asset Exchange");
+    List<String>companyNames=List.of("CryptoRecruit","Trust Machines",
+            "Kraken Digital Asset Exchange","CoinTracker");
 
 
     @Override

@@ -14,7 +14,7 @@ public class FinanceFilter implements JobFilter {
      */
     List<String> companyNames =List.of( "Affirm","Citibank","Kraken Digital Asset Exchange"
             ,"Jack Henry","Equitable","American Express","U.S. Bank","Modulus","Clerkie",
-            "Juniper Square","Peach","T. Rowe Price");
+            "Juniper Square","Peach","T. Rowe Price","Studio Management");
 
     List<String> descriptionPhrases =List.of("FinTech","asset manager",
             "hedge fund", "banking","trading","Brokers","Brokerage"," investment management");

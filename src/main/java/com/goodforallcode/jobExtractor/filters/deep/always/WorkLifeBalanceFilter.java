@@ -33,7 +33,7 @@ public class WorkLifeBalanceFilter implements JobFilter {
             "Arize AI","Gevo, Inc.","Harmonia Holdings Group, LLC","Block",
             "Penn State Health","Actalent","Grafana Labs","Softrams","FinTech LLC",
             "Cruise","Paytient","DaVita","Businessolver","Integra Connect",
-            "Discover Financial Services","CivicPlus","Saxon-Global"
+            "Discover Financial Services","CivicPlus","Saxon-Global","GE"
     );
     List<String> fastCompanies =List.of("Clarifai","Digital Technology Partners",
             "Stryker","Clover Health"

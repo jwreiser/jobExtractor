@@ -9,7 +9,7 @@ import java.util.List;
 
 public class RealEstateFilter implements JobFilter {
     List<String> companyName =List.of( "Anywhere Real Estate Inc.","Pacaso",
-            "Aalto");
+            "Aalto","MRI Software");
     List<String> companyNameStartsWith =List.of( "RE/MAX");
 
     @Override
@@ -32,7 +32,8 @@ public class RealEstateFilter implements JobFilter {
         if(job.getDescription()!=null){
             String description=job.getDescription().toLowerCase();
             if(description.toLowerCase().contains("real estate")||description.toLowerCase().contains("real-estate")){
-                System.err.println("Real Estate description ->reject: "+job);
+                System.err.println("Real Estate description" +
+                        " ->reject: "+job);
                 return false;
             }
         }

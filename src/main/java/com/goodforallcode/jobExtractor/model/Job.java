@@ -94,6 +94,8 @@ public class Job {
     Float tenure=null;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String description;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    String compressedDescription;
     String title;
     String companyName;
     @JsonInclude(JsonInclude.Include.NON_NULL)

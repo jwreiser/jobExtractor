@@ -75,6 +75,7 @@ public class FilterFactory {
         filters.add(new OldAgeFilter());
         filters.add(new OracleTechFilter());
         filters.add(new PeopleFocusedFilter(false));
+        filters.add(new PLMFilter());
         filters.add(new PromotedFilter());
         filters.add(new ProgrammingFrameworkFilter());
         filters.add(new RealEstateFilter());
@@ -287,6 +288,7 @@ public class FilterFactory {
         filters.add(new OperatingSystemCompanyFilter());
         filters.add(new PharmacyFilter());
         filters.add(new PharmaceuticalFilter());
+        filters.add(new PLMFilter());
 
 //        filters.add(new ProgrammingFrameworkFilter());
         filters.add(new ProgrammingLanguageFilter(false));
@@ -299,6 +301,7 @@ public class FilterFactory {
         filters.add(new SeniorFilter());
         filters.add(new StartupFilter());
         filters.add(new TelecomFilter());
+        filters.add(new TransportationFilter());
         filters.add(new TravelFilter());
         filters.add(new UnixFilter());
         filters.add(new WorkLifeBalanceFilter(false));

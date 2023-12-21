@@ -1,6 +1,7 @@
 package com.goodforallcode.jobExtractor.extractor;
 
 import com.goodforallcode.jobExtractor.cache.JobCache;
+import com.goodforallcode.jobExtractor.cache.MongoDbJobCache;
 import com.goodforallcode.jobExtractor.exception.ContentLoadingException;
 import com.goodforallcode.jobExtractor.filters.ExceptionFilter;
 import com.goodforallcode.jobExtractor.filters.FilterFactory;
@@ -46,7 +47,7 @@ public class LinkedInExtractor extends Extractor {
     static List<JobFilter> shallowSkipFilters = FilterFactory.getShallowFiltersSkip();
 
     static DeepJobPopulator deepJobPopulator = new LinkedInDeepJobPopulator();
-
+    private static int RESULTS_PER_PAGE=25;
     @Override
     public WebDriver login(String userName, String password) {
         WebDriver driver = getWebDriver();
@@ -76,11 +77,12 @@ public class LinkedInExtractor extends Extractor {
         List<Job> rejectedJobs = new ArrayList<>();
         WebDriver newDriver = null;
         int totalHidden=0,totalJobs=0,numJobs=0,totalSkipped=0,totalCached=0,currentPageNum = 0,actualPageNum=1;
-        Optional<Integer>currNumberOfResults=Optional.empty();
+        Optional<Integer>numResultsOption=Optional.empty();
         try {
 
 
             newDriver = getWebDriver();
+            //if we don't get the url first we can't add the cookies
             newDriver.get(url);
             for (Cookie cookie : cookies) {
                 newDriver.manage().addCookie(cookie);
@@ -106,9 +108,16 @@ public class LinkedInExtractor extends Extractor {
                 if(noMatchingJobs(newDriver)){
                     break;
                 }
-                currNumberOfResults=getCurrentNumberOfResults(newDriver);
-                if(currNumberOfResults.isPresent() && currNumberOfResults.get()<=25){
-                    if(currNumberOfResults.get()==0){
+
+                waitForPageToLoad(newDriver);
+                if(noMatchingJobs(newDriver)){
+                    numResultsOption=Optional.of(0);
+                }else {
+                    numResultsOption = getCurrentNumberOfResults(newDriver);
+                }
+
+                if(numResultsOption.isPresent() && numResultsOption.get()<=RESULTS_PER_PAGE){
+                    if(numResultsOption.get()==0){
                         break;
                     }else{
                         actualPageNum = 1;
@@ -126,7 +135,7 @@ public class LinkedInExtractor extends Extractor {
                 WebElement resultsDiv = null;
                 try{
 
-                    resultsDiv = loadMainElement(newDriver,actualPageNum,lastPageNumber,currNumberOfResults);
+                    resultsDiv = loadMainElement(newDriver,actualPageNum,lastPageNumber,numResultsOption);
                 }catch(ContentLoadingException cle){
                     try {
                         Thread.sleep(1_000);
@@ -134,7 +143,7 @@ public class LinkedInExtractor extends Extractor {
 
                     }
                     newDriver.get(url);
-                    resultsDiv = loadMainElement(newDriver,actualPageNum,lastPageNumber,currNumberOfResults);
+                    resultsDiv = loadMainElement(newDriver,actualPageNum,lastPageNumber,numResultsOption);
                 }
                 if (resultsDiv == null) {
                     /*
@@ -174,10 +183,12 @@ public class LinkedInExtractor extends Extractor {
 
                 for (Element item : items) {
                     totalJobs++;
-                    final Job currentJob = populator.populateJob(item, newDriver);
-                    if (currentJob == null) {
+
+                    final Job job = populator.populateJob(item, newDriver);
+
+                    if (job == null) {
                         break;
-                    }else if(currentJob.isHidden()){
+                    }else if(job.isHidden()){
                         hiddenJobs++;
                         totalHidden++;
                         if(hiddenJobs+skippedJobs==numJobs){
@@ -185,10 +196,10 @@ public class LinkedInExtractor extends Extractor {
                         }
                         continue;
                     }
-                    currentJob.setSourceUrl(url);
+                    job.setSourceUrl(url);
 
 
-                    if (shallowSkipFilters.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
+                    if (shallowSkipFilters.stream().anyMatch(f -> !f.include(preferences, job))) {
                         /*we don't want to cache acceptedJobs that are too new otherwise we may
                         not see them again in other future searches
                          */
@@ -199,25 +210,27 @@ public class LinkedInExtractor extends Extractor {
                         }
                         continue;
                     }
+                    deepLoadJob(job,newDriver);
 
-                    if (cache.containsJob(currentJob,mongoClient)) {
+
+                    if (cache.containsJob(job,mongoClient)) {
                         cachedJobs++;
                         totalCached++;
-                        excludeJob(newDriver, currentJob);
+                        excludeJob(newDriver, job);
                         continue;
                     }
 
-                    ExcludeJobResults excludeJobResults = excludeJob(currentJob, preferences,
-                            newDriver, deepJobPopulator);
+                    ExcludeJobResults excludeJobResults = excludeJob(job, preferences,
+                            newDriver);
                     if (excludeJobResults.excludeJob()) {
-                        currentJob.setExcludeFilter(excludeJobResults.excludeFilter());
-                        cache.addJob(currentJob,false,mongoClient);
-                        excludeJob(newDriver, currentJob);
-                        rejectedJobs.add(currentJob);
+                        job.setExcludeFilter(excludeJobResults.excludeFilter());
+                        cache.addJob(job,false,mongoClient);
+                        excludeJob(newDriver, job);
+                        rejectedJobs.add(job);
                     } else if (excludeJobResults.includeJob()) {
-                        currentJob.setIncludeFilter(excludeJobResults.includeFilter());
-                        cache.addJob(currentJob,true,mongoClient);
-                        includeJob(newDriver, acceptedJobs, currentJob);
+                        job.setIncludeFilter(excludeJobResults.includeFilter());
+                        cache.addJob(job,true,mongoClient);
+                        includeJob(newDriver, acceptedJobs, job);
                     }
 
                     if (excludeJobResults.skipRemainingJobs()) {
@@ -259,28 +272,16 @@ public class LinkedInExtractor extends Extractor {
         return null;
     }
 
-    public ExcludeJobResults excludeJob(Job currentJob, Preferences preferences, WebDriver driver
-            , DeepJobPopulator deepJobPopulator) {
+    public ExcludeJobResults excludeJob(Job currentJob, Preferences preferences, WebDriver driver) {
 
         Optional<JobFilter> firstExcludeFilter = alwaysExcludeShallowFilters.stream().filter(f -> !f.include(preferences, currentJob)).findFirst();
         if (firstExcludeFilter.isPresent()) {
             return new ExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
         }
 
-        boolean success = false;
-        try {
-            success=deepLoadJob(currentJob, driver);
-        }catch (Exception exception){
-            return new ExcludeJobResults(false, false, true, null, new ExceptionFilter(exception));
-        }
-
-        if (!success) {
-            ExcludeJobResults results = handleShallowInclude(currentJob, preferences);
-            if(results!=null){
-                return results;
-            }else {
-                return new ExcludeJobResults(false, false, true, null, null);
-            }
+        ExcludeJobResults results = handleShallowInclude(currentJob, preferences);
+        if(results!=null){
+            return results;
         }
 
         if (deepSkipFilters.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
@@ -298,7 +299,7 @@ public class LinkedInExtractor extends Extractor {
             return new ExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
         }
 
-        ExcludeJobResults results = handleShallowInclude(currentJob, preferences);
+        results = handleShallowInclude(currentJob, preferences);
         if(results!=null){
             return results;
         }
@@ -328,6 +329,7 @@ public class LinkedInExtractor extends Extractor {
 
     public boolean deepLoadJob(Job currentJob, WebDriver driver) {
         boolean success = false;
+        int numAttempts=0,maxAttempts=10;
         if (currentJob.getJobDetailsLink() != null) {
             doubleClickOnElement(driver, currentJob.getJobDetailsLink());
         }
@@ -342,9 +344,19 @@ public class LinkedInExtractor extends Extractor {
         }
         try {
             if (driver != null) {
-                success = deepJobPopulator.populateJob(currentJob, driver);
-            }
-        } catch (java.util.concurrent.TimeoutException te) {
+                do{
+                    success = deepJobPopulator.populateJob(currentJob, driver);
+                    numAttempts++;
+                    if(!success && numAttempts<maxAttempts){
+                        if (currentJob.getJobDetailsLink() != null) {
+                            doubleClickOnElement(driver, currentJob.getJobDetailsLink());
+                            Thread.sleep(5_000);
+                        }
+                    }
+                }while(!success && numAttempts<maxAttempts);
+                }
+
+        } catch (java.util.concurrent.TimeoutException|InterruptedException te) {
             success = false;
         }
         return success;
@@ -493,9 +505,13 @@ public class LinkedInExtractor extends Extractor {
     }
 
     /**
-     * I want this to use the page source rather than trying to get actual elements
-     * I don't want to worry that things are getting messed up in the DOM until we at least
-     * know that the basics of the page are in order
+     * I would like to rely on the simple page source to have this step move quickly and without worrying about DOM
+     * problems that being said you can't rely on:
+     * Are these results helpful?
+     * Help Center
+     * Accessibility
+     *
+     * consistently being there
      * @param driver
      * @return
      */
@@ -507,12 +523,26 @@ public class LinkedInExtractor extends Extractor {
         if(pageSource.contains("There was a problem loading your filters")){
             return false;
         }
-        if(pageSource.contains("Ad Choices")&&pageSource.contains("Business Services")
-                &&pageSource.contains("Help Center")){
-            return true;
-        }
 
-        return false;
+        WebElement resultsDiv = null;
+        try {
+            resultsDiv = driver.findElement(By.className("jobs-search-results-list__subtitle"));
+        } catch (NoSuchElementException nse) {
+            return false;
+        }
+        Optional<Integer> currentNumberOfResults = getCurrentNumberOfResults(driver, resultsDiv);
+        if(currentNumberOfResults.isPresent() && currentNumberOfResults.get()>RESULTS_PER_PAGE) {
+            WebElement paginationDiv = null;
+            try {
+                paginationDiv = driver.findElement(By.className("jobs-search-results-list__pagination"));
+            } catch (NoSuchElementException nse) {
+                return false;
+            }
+            if (paginationDiv == null) {
+                return false;
+            }
+        }
+        return true;
     }
     private boolean noMatchingJobs(WebDriver driver) {
         String pageSource=driver.getPageSource();
@@ -522,29 +552,31 @@ public class LinkedInExtractor extends Extractor {
             return false;
         }
     }
-    private Optional<Integer> getCurrentNumberOfResults(WebDriver driver) {
-        WebElement nextPage = null;
-        WebElement resultsDiv=null;
-        try {
-             resultsDiv = driver.findElement(By.className("jobs-search-results-list__subtitle"));
 
-        } catch (NoSuchElementException nse) {
-            try {
-                Thread.sleep(10_000);
-                if(noMatchingJobs(driver)){
-                    return Optional.of(0);
-                }else if(!isPageFullyLoaded(driver)){
-                    driver.navigate().refresh();//sometimes the page has been loaded wrong
-                    Thread.sleep(10_000);
-                    resultsDiv = driver.findElement(By.className("jobs-search-results-list__subtitle"));
-                }else {
-                    return Optional.empty();
-                }
-            }catch (InterruptedException|NoSuchElementException nse2) {
-                return Optional.empty();
+    private void waitForPageToLoad(WebDriver driver){
+        int maxTries=10,numTries=0;
+
+        while((noMatchingJobs(driver)||!isPageFullyLoaded(driver))
+                && numTries<maxTries){
+            driver.navigate().refresh();//sometimes the page has been loaded wrong
+            try{
+                Thread.sleep(12_000);
+            }catch (InterruptedException ex) {
+
             }
+            numTries++;
         }
-
+    }
+    private Optional<Integer> getCurrentNumberOfResults(WebDriver driver) {
+        WebElement resultsDiv = null;
+        try {
+            resultsDiv = driver.findElement(By.className("jobs-search-results-list__subtitle"));
+        } catch (NoSuchElementException nse) {
+            return Optional.empty();
+        }
+        return getCurrentNumberOfResults(driver,resultsDiv);
+    }
+    private Optional<Integer> getCurrentNumberOfResults(WebDriver driver,WebElement resultsDiv) {
         if (resultsDiv != null) {
             String innerHTML = resultsDiv.getAttribute("innerHTML");
             int resultsLoc = innerHTML.indexOf(" results");

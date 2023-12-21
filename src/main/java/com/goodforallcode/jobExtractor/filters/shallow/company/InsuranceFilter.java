@@ -10,7 +10,7 @@ import java.util.List;
 public class InsuranceFilter implements JobFilter {
     List<String> titlePhrases =List.of( "Duck Creek");
     List<String> companyNames =List.of( "Transamerica","Travelers",
-            "State Farm","GEICO","Allstate","Coalition, Inc.");
+            "State Farm","GEICO","Allstate","Coalition, Inc.","One80 Intermediaries");
     List<String> descriptionPhrases =List.of( "insurance");
 
     @Override

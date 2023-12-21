@@ -25,7 +25,7 @@ public class ProgrammingLanguageFilter implements JobFilter {
     private static List<String> languages = List.of(
             "Ruby", "Rust", "Golang", "Net ", "DotNet", ".Net", "iOS ", "React ",
             "Angular", "Typescript", "Javascript", "CNO", "C#", "C++", "Visual C", "Scala ",
-            "Swift ", "Fortran","Delphi",
+            "Swift ", "Fortran","Delphi","Ignition",
             "Dart", " C ", " R ", "PHP", "Apex", "React Native",
             "VB.NET", "perl ", "MATLAB", "SAS", "COBOL", "ABAP", "Tcl", "Elixir", "Erlang",
             "F#",

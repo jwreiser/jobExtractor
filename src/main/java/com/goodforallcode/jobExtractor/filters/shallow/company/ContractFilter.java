@@ -14,7 +14,7 @@ public class ContractFilter implements JobFilter {
             "NTT DATA Services","Spatial Front, Inc","Tential Solutions",
             "IT Crowd","Koniag Government Services","SCIGON","Latitude Inc","IT Labs",
             "AgileEngine","Bitsoft International, Inc.","Revature","Gridiron IT",
-            "Brillio");
+            "Brillio","GE");
 
     List<String> bothPhrases =List.of( "contract");
 

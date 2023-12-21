@@ -18,100 +18,119 @@ import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 
 public class LinkedInDeepJobPopulator implements DeepJobPopulator {
-    String emptyComment="<!---->";
-    public boolean populateJob(Job job,WebDriver driver) throws TimeoutException{
+    String emptyComment = "<!---->";
+
+    public boolean populateJob(Job job, WebDriver driver) throws TimeoutException {
         String text;
-        WebElement mainDiv=null;
-        boolean success=true;
-        int failures=0;
-        while(failures<4) {
+        WebElement mainDiv = null;
+        boolean success = true;
+        int failures = 0;
+        while (failures < 4) {
             try {
                 mainDiv = driver.findElement(By.className("jobs-search__job-details--container"));
                 break;
-            }catch (org.openqa.selenium.NoSuchElementException nse){
+            } catch (org.openqa.selenium.NoSuchElementException nse) {
                 try {
                     mainDiv = driver.findElement(By.className("scaffold-layout__main"));
                     break;
-                }catch (org.openqa.selenium.NoSuchElementException nse2){
+                } catch (org.openqa.selenium.NoSuchElementException nse2) {
                     return false;//nothing to handle; proceed with no deep details
                 }
-            }
-            catch (Exception te){
+            } catch (Exception te) {
                 try {
                     Thread.sleep(3_000);
-                }catch (Exception ex){
+                } catch (Exception ex) {
 
                 }
                 failures++;
-                if(failures>=4){
+                if (failures >= 4) {
                     throw new TimeoutException();
                 }
             }
         }
-         Document detailsDoc= Jsoup.parse(mainDiv.getAttribute("innerHTML"));
+        Document detailsDoc = Jsoup.parse(mainDiv.getAttribute("innerHTML"));
         int start;
         try {
+            //this is most important so it should go first
+            success = addDescriptionBasedDetails(job, detailsDoc);
+            if (!success) {
+                return success;
+            }
             Element tenureLink = detailsDoc.getElementsByClass("jobs-premium-company-growth__median-tenure-years-clock-icon").first();
-            if(tenureLink!=null) {
+            if (tenureLink != null) {
                 Element tenure = tenureLink.parent().getElementsByTag("strong").first();
-                if(tenure!=null){
-                    job.setTenure(getValueFromTwoWordText(tenure.text(),1));
+                if (tenure != null) {
+                    job.setTenure(getValueFromTwoWordText(tenure.text(), 1));
                 }
             }
 
             populateSummaryBasedFields(job, detailsDoc);
-            Elements appliedDivs=detailsDoc.getElementsByClass("jobs-s-apply");
-            for(Element appliedDiv:appliedDivs){
-                if(appliedDiv.text().contains("ago")) {
+            Elements appliedDivs = detailsDoc.getElementsByClass("jobs-s-apply");
+            for (Element appliedDiv : appliedDivs) {
+                if (appliedDiv.text().contains("ago")) {
                     job.setApplied(true);
+                    break;
                 }
             }
-            Elements messages=detailsDoc.getElementsByClass("artdeco-inline-feedback__message");
-            for(Element element:messages){
-                if(element.text().equals("No longer accepting applications")) {
+            Elements messages = detailsDoc.getElementsByClass("artdeco-inline-feedback__message");
+            for (Element element : messages) {
+                if (element.text().equals("No longer accepting applications")) {
                     job.setAcceptingApplications(false);
+                    break;
                 }
             }
 
-            Elements insightElements = detailsDoc.getElementsByClass("job-details-jobs-unified-top-card__job-insight");
-            for(Element element:insightElements){
-
-
-                for(Element span:element.getElementsByTag("span")) {
-                    text=span.text();
-                    if (text.contains("employees")) {
-                        job.setNumEmployees(getValueFromTwoWordText(text, 2).intValue());
-                        start = text.indexOf("·");
-                        if (start > 0) {
-                            String industry = text.substring(start + 2);
-                            job.setIndustry(industry);
-                        }
-                    }
-                    if (text.equals("Contract")) {
-                        job.setContract(true);
-                    }
-                    if (text.equals("Remote")) {
-                        job.setRemote(true);
-                    }
-                }
-            }
-
+            addInsightBasedInformation(job, detailsDoc);
             List<WebElement> elements = driver.findElements(By.className("jobs-save-button"));
-            if(elements.size()==2) {
+            if (elements.size() == 2) {
                 job.setSaveButton(elements.get(1));
             }
-            addDescriptionBasedDetails(job, detailsDoc);
-        }catch (Exception ex){
+
+        } catch (Exception ex) {
             throw ex;//catching as a way to allow for inserting a breakpoint
         }
 
         return success;
     }
 
+    private static void addInsightBasedInformation(Job job, Document detailsDoc) {
+        int start;
+        String text;
+        int foundInsights = 0, knownInsights = 3;
+        Elements insightElements = detailsDoc.getElementsByClass("job-details-jobs-unified-top-card__job-insight");
+        for (Element element : insightElements) {
+
+
+            for (Element span : element.getElementsByTag("span")) {
+                text = span.text();
+                if (text.contains("employees")) {
+                    job.setNumEmployees(getValueFromTwoWordText(text, 2).intValue());
+                    start = text.indexOf("·");
+                    if (start > 0) {
+                        String industry = text.substring(start + 2);
+                        job.setIndustry(industry);
+                        foundInsights++;
+                    }
+                }
+                if (text.equals("Contract")) {
+                    job.setContract(true);
+                    foundInsights++;
+                }
+                if (text.equals("Remote")) {
+                    job.setRemote(true);
+                    foundInsights++;
+                }
+                if (foundInsights >= knownInsights) {
+                    break;
+                }
+            }
+        }
+    }
+
     private static void populateSummaryBasedFields(Job job, Document detailsDoc) {
         String text;
         Element summary = detailsDoc.getElementsByClass("job-details-jobs-unified-top-card__primary-description").first();
-        if(summary!=null) {
+        if (summary != null) {
             Elements summaryElements = summary.getElementsByTag("span");
             for (Element summaryElement : summaryElements) {
                 text = summaryElement.text();
@@ -142,67 +161,74 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
         }
     }
 
-    private void addDescriptionBasedDetails(Job job, Document detailsDoc) {
+    private boolean addDescriptionBasedDetails(Job job, Document detailsDoc) {
         Element descriptionDiv = detailsDoc.getElementById("job-details");
-        String description= detailsDoc.getElementById("job-details").text();
-        String descriptionLower= description.toLowerCase();
-        job.setDescription(description);
-        Optional<Integer> maxExperienceRequired = getMaxExperienceNeeded(description);
-        if(maxExperienceRequired.isPresent()){
-            job.setMaxExperienceRequired(maxExperienceRequired.get());
-
-        }
-        Optional<Integer> contractDuration = getContractDuration(description);
-        if(contractDuration.isPresent()){
-            job.setContractMonths(contractDuration.get());
-            job.setContract(true);
-
-        }
-
-        Elements descriptionStatuses = descriptionDiv.getElementsByAttributeValue("role", "status");
-        for(Element status:descriptionStatuses){
-            if(status.text().contains("This job is sourced from a job board.")){
-                job.setSourcedFromJobBoard(true);
-                break;
+        if (descriptionDiv != null) {
+            String description = detailsDoc.getElementById("job-details").text();
+            String descriptionLower = description.toLowerCase();
+            if (descriptionLower.equals("about the job")) {
+                return false;
+            } else if (descriptionLower.isEmpty()) {
+                return false;
             }
+            job.setDescription(description);
+            Optional<Integer> maxExperienceRequired = getMaxExperienceNeeded(description);
+            if (maxExperienceRequired.isPresent()) {
+                job.setMaxExperienceRequired(maxExperienceRequired.get());
+
+            }
+            Optional<Integer> contractDuration = getContractDuration(description);
+            if (contractDuration.isPresent()) {
+                job.setContractMonths(contractDuration.get());
+                job.setContract(true);
+
+            }
+
+            Elements descriptionStatuses = descriptionDiv.getElementsByAttributeValue("role", "status");
+            for (Element status : descriptionStatuses) {
+                if (status.text().contains("This job is sourced from a job board.")) {
+                    job.setSourcedFromJobBoard(true);
+                    break;
+                }
+            }
+            job.setTravelPercent(getTravelPercentage(descriptionLower));
         }
-        job.setTravelPercent(getTravelPercentage(descriptionLower));
+        return true;
     }
 
     public static Integer getTravelPercentage(String descriptionLower) {
-        List<String> patterns=List.of("(\\d*)% travel","travel[:\\s]+(\\d*)%",
-                "travel[:\\s]+up to[:\\s]+(\\d*)%","travel[:\\s]+less than[:\\s]+(\\d*)%"
-                ,"travel[^\\d\\)\\.\\,\\;]*\\d*-(\\d*)%","travel[^\\d\\)\\.\\,\\;]*(\\d*)%");
+        List<String> patterns = List.of("(\\d*)% travel", "travel[:\\s]+(\\d*)%",
+                "travel[:\\s]+up to[:\\s]+(\\d*)%", "travel[:\\s]+less than[:\\s]+(\\d*)%"
+                , "travel[^\\d\\)\\.\\,\\;]*\\d*-(\\d*)%", "travel[^\\d\\)\\.\\,\\;]*(\\d*)%");
 
-        Integer percent=null;
+        Integer percent = null;
 
-        if(descriptionLower.contains("travel")){
-            percent= RegexUtil.getValue(descriptionLower,patterns);
+        if (descriptionLower.contains("travel")) {
+            percent = RegexUtil.getValue(descriptionLower, patterns);
         }
         return percent;
     }
 
 
-
-    private static Float getValueFromTwoWordText(String text,int numValue) {
-        Float value=null;
-        text=text.replaceAll("<!---->"," ")
-                .replaceAll("\\+","").replaceAll(",","");
-        int index=text.indexOf("·");
-        if(index>0){
-            text=text.substring(0,index);
+    private static Float getValueFromTwoWordText(String text, int numValue) {
+        Float value = null;
+        text = text.replaceAll("<!---->", " ")
+                .replaceAll("\\+", "").replaceAll(",", "");
+        int index = text.indexOf("·");
+        if (index > 0) {
+            text = text.substring(0, index);
         }
-        text=text.replaceAll("-"," ").trim();
-        String[] values= text.split(" ");
+        text = text.replaceAll("-", " ").trim();
+        String[] values = text.split(" ");
 
-        if(values.length>numValue){
-         String valueText=values[numValue-1];
-         if(NumberUtils.isCreatable(valueText)) {
-             value = Float.parseFloat(valueText);
-         }
-        } else if (values.length>0) {
-            String valueText=values[0];
-            value=Float.parseFloat(valueText);
+        if (values.length > numValue) {
+            String valueText = values[numValue - 1];
+            if (NumberUtils.isCreatable(valueText)) {
+                value = Float.parseFloat(valueText);
+            }
+        } else if (values.length > 0) {
+            String valueText = values[0];
+            value = Float.parseFloat(valueText);
         }
 
 
