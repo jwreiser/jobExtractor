@@ -210,6 +210,17 @@ public class LinkedInExtractor extends Extractor {
                         }
                         continue;
                     }
+
+                    Optional<JobFilter> firstShallowExcludeFilter = alwaysExcludeShallowFilters.stream().filter(f -> !f.include(preferences, job)).findFirst();
+                    if (firstShallowExcludeFilter.isPresent()) {
+                        job.setExcludeFilter(firstShallowExcludeFilter.get());
+                        job.setShallowExclude(true);
+                        cache.addJob(job,false,mongoClient);
+                        excludeJob(newDriver, job);
+                        rejectedJobs.add(job);
+                        continue;
+                    }
+
                     deepLoadJob(job,newDriver);
 
 
@@ -274,10 +285,6 @@ public class LinkedInExtractor extends Extractor {
 
     public ExcludeJobResults excludeJob(Job currentJob, Preferences preferences, WebDriver driver) {
 
-        Optional<JobFilter> firstExcludeFilter = alwaysExcludeShallowFilters.stream().filter(f -> !f.include(preferences, currentJob)).findFirst();
-        if (firstExcludeFilter.isPresent()) {
-            return new ExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
-        }
 
         ExcludeJobResults results = handleShallowInclude(currentJob, preferences);
         if(results!=null){
@@ -288,7 +295,7 @@ public class LinkedInExtractor extends Extractor {
             return new ExcludeJobResults(false, false, false, null, null);
         }
 
-        firstExcludeFilter = alwaysExcludeDeepFiltersTrusted.stream().filter(f -> !f.include(preferences, currentJob)).findFirst();
+        Optional<JobFilter> firstExcludeFilter = alwaysExcludeDeepFiltersTrusted.stream().filter(f -> !f.include(preferences, currentJob)).findFirst();
         if (firstExcludeFilter.isPresent()) {
             return new ExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
         }

@@ -7,6 +7,8 @@ import lombok.Data;
 import org.openqa.selenium.WebElement;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class Job {
@@ -70,6 +72,7 @@ public class Job {
     boolean promoted=false;
     @JsonIgnore
     boolean hidden=false;
+    boolean shallowExclude=false;
     boolean easyApply=false;
     boolean contract=false;
     @JsonIgnore
@@ -96,6 +99,9 @@ public class Job {
     String description;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String compressedDescription;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    List<String> skills=new ArrayList<>();
     String title;
     String companyName;
     @JsonInclude(JsonInclude.Include.NON_NULL)

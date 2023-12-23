@@ -34,7 +34,7 @@ public class PreferencesWithDefaults implements Preferences {
     Integer maxTravelPercentage=10;
     Integer maxEmployees=null;
     Integer maxApplicants=300;
-    Float desiredTenure=2.2F;
+    Float desiredTenure=2.6F;
     Integer maxJobAgeInDays=34;
     Integer minJobAgeInDays=null;
     boolean excludeFresher=false;

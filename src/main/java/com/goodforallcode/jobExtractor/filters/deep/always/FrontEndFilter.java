@@ -21,8 +21,11 @@ public class FrontEndFilter implements JobFilter {
             ,"FreeMarker", "Handlebars","multiple front-end frameworks");
 
     List<String> jobTitlePhrases=List.of(
-            "Front end developer","Frontend developer","Front-end developer", "Ui developer","Ui engineer","UX developer",
+            "Ui developer","Ui engineer","UX developer",
             " React","Angular","Typescript","Javascript"," UX"
+    );
+    List<String> jobTitleStartsWithPhrases=List.of(
+            "Front end","Frontend","Front-end"
     );
 
     @Override
@@ -30,6 +33,10 @@ public class FrontEndFilter implements JobFilter {
         String title =job.getTitle().toLowerCase();
 
         //if this is a job title we are not qualified for
+        if(jobTitleStartsWithPhrases.stream().anyMatch(t->title.startsWith(t.toLowerCase()))){
+            System.err.println("Front end job title->reject: "+job);
+            return false;
+        }
         if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
             System.err.println("Front end job title->reject: "+job);
             return false;

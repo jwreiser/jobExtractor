@@ -14,7 +14,8 @@ public class PhysicalEngineerTitleFilter implements JobFilter {
     List<String> jobTitlePhrases=List.of(
             "Service Engineer","Project developer","Civil Engineer",
             "Design engineer","Project Engineer","field services","field service",
-            "field engineer","Applications Engineer", " OEM ","Autodesk"," CAD ","MES "
+            "field engineer","Applications Engineer", " OEM ","Autodesk"," CAD ","MES ",
+            "OSP Engineer"
             );
     List<String> notPhysicalJobTitlePhrases=List.of(
             "Business Applications"

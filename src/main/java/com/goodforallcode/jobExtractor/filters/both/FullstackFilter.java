@@ -31,10 +31,4 @@ public class FullstackFilter implements JobFilter {
         return true;
     }
 
-    private boolean missingRequiredSkill(String skill,String jobTitle,List<String> qualifiedSkills){
-        boolean missing= jobTitle.contains(skill)
-                /* if there is a skill in the title we don't have*/
-                && qualifiedSkills.stream().noneMatch(qs -> qs.toLowerCase().equals(skill));
-        return missing;
-    }
 }

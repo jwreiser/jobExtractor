@@ -15,6 +15,7 @@ public class SalaryFilter implements JobFilter {
         }
 
         if ( preferences.getMinYearlySalary()!=null && job.getMaxYearlySalary()!=null
+                && job.getMaxYearlySalary()>1000//make sure we don't get hourly here by accident
                 && job.getMaxYearlySalary()< preferences.getMinYearlySalary()){
             System.err.println("Yearly Salary too low->reject: "+job);
             return false;

@@ -24,11 +24,8 @@ public class JobExtractorApplication {
 			MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
  			MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
 
-			/*
-			collection.dropIndexes();
-
-
-			collection.dropIndex("hashedDescription_1");
+			 //			collection.dropIndex("hashedDescription_1");
+			/*collection.dropIndexes();
 
 
 			IndexOptions options=new IndexOptions();
@@ -37,15 +34,15 @@ public class JobExtractorApplication {
 
 			collection.createIndex(Indexes.compoundIndex(
 					Indexes.text("description"),Indexes.text("industry"),
-					Indexes.text("title"),Indexes.text("companyName")
+					Indexes.text("title"),Indexes.text("companyName"),Indexes.text("skills")
 			));
+
 			collection.createIndex(Indexes.ascending("description"));
 			collection.createIndex(Indexes.compoundIndex(
 					Indexes.ascending("industry"),
 					Indexes.ascending("title"),Indexes.ascending("minSalary")
 			));
 */
-
 			ListIndexesIterable<Document> documents = collection.listIndexes();
 			for(Document document:documents) {
 				System.err.println(document);

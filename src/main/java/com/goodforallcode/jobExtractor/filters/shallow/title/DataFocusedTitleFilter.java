@@ -23,6 +23,11 @@ public class DataFocusedTitleFilter implements JobFilter {
             System.err.println("Data focused job title->reject: "+job);
             return false;
         }
+        if(title.startsWith("ETL ")){
+            System.err.println("Data focused job title->reject: "+job);
+            return false;
+        }
+
         return true;
     }
 

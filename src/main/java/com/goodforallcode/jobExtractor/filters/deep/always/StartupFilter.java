@@ -28,7 +28,7 @@ public class StartupFilter implements JobFilter {
     List<String> notPhrases =List.of("public benefit corporation","PBC");
     List<String> companyNames =List.of("Patterned Learning AI","minware","Included Health",
             "Storm 3","Storm 4","Storm 5","Storm 6",
-            "Nira Energy","Apploi","Convictional",
+            "Nira Energy","Apploi","Convictional","Bramkas",
             "Ascendion","WellSaid Labs","Alma","Maven Clinic","hims & hers","Amberflo.io",
             "AllVoices","Certificial","Rutter","Hazel Health","AIQ (Alpine IQ)","Jerry",
             "Underdog.io","ONE","Apexon","Docugami","Clerkie","Human Interest",

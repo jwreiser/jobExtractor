@@ -12,7 +12,7 @@ public class BusinessIntelligenceFilter implements JobFilter {
             "Cognos","Pyramid",
 
             "PO Developer","abinitio","ab initio","Yardi ","QuickSight","Crystal Report");
-    final List<String>titles=List.of("Reporting");
+    final List<String>titles=List.of("Reporting","Dashboard");
 
 
     @Override

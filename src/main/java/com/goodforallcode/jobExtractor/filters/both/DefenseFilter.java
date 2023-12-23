@@ -12,12 +12,9 @@ public class DefenseFilter implements JobFilter {
     /**
      * Defense can be used to describe defense of a paper
      */
-    List<String> phrases =List.of("military"," DLA "," DOD ","defense","intelligence"
-            ,"national security","missions"," DHS "
+    List<String> phrases =List.of("military"," DLA "," DOD ","defense",
+            "national security","missions"," DHS "
             ,"army","navy","air force","Lockheed Martin","Marine Corps","missile");
-    List<String> companyNames =List.of("General Dynamics Information Technology"
-            ,"Parsons Corporation","SAIC","Leidos","RVCM (RevaComm)","BAE Systems",
-            "ECS","Raytheon","Innovative Defense Technologies (IDT)");
     @Override
     public boolean include(Preferences preferences, Job job) {
         if(job.getIndustry()!=null){
@@ -27,14 +24,16 @@ public class DefenseFilter implements JobFilter {
             }
         }
 
-        if(companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
-            System.err.println("military defense company->reject: "+job);
-            return false;
-        }
         if(job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
             if (phrases.stream().anyMatch(k -> description.contains(k.toLowerCase()))) {
                 System.err.println("military defense ->reject: " + job);
+                return false;
+            }
+            if(description.contains("intelligence") && !description.contains(" ai ")
+                    && !description.contains("/ai ") && !description.contains(" ai/")
+                    && !description.contains(" artificial ") && !description.contains(" business ") ){
+                System.err.println("defense (intelligence) ->reject: " + job);
                 return false;
             }
         }

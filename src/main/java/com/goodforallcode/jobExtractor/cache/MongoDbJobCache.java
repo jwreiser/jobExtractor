@@ -1,6 +1,7 @@
 package com.goodforallcode.jobExtractor.cache;
 
 import com.goodforallcode.jobExtractor.model.Job;
+import com.goodforallcode.jobExtractor.util.StringUtil;
 import com.mongodb.MongoTimeoutException;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -17,69 +18,6 @@ import java.util.stream.Stream;
 import static com.mongodb.client.model.Filters.*;
 
 public class MongoDbJobCache implements JobCache {
-    private static List<String> stopWords=List.of("a","ability","about",
-            "across","advancement","afterwards","all","also",
-            "an","analytical","and","any","application","applications","apply",
-            "are", "area","areas","as","at",
-            "be","been","being","between","both", "building","by",
-            "can","career","careers",  "chance","change","check","code","could",
-            "collaborate","collaborative",
-            "communication","competitive","complex","consider",
-            "contact","correcting","cross","customers","cycle",
-            "data-entry","description","destination","details",
-            "develop","developer","developing","development",
-            "dice","didn't","diligent","direction",
-            "do","does","doesn't","doing",
-            "domains","don't","drive",
-            "each","effective","email","employer","engineer","engineering","engineers",
-            "enhance",
-            "enterprise","environment","environments","ensure",
-            "errors","execute","excellent",
-            "exemplary", "expect","experience","experts",
-            "extension","externally","every",
-            "features","focus","following","for","from","functional",
-            "get","go","growth","had","hands-on",
-            "hasn't","haven't","hadn't","has","have",
-            "having","helping","how",
-            "identifying","if","immediate","implement","implements","implementing",
-            "in","inc","including","independent",
-            "industry","influence",
-            "influential","innovation", "internally","interview","into",
-            "is","isn't","issues","it","it's","its",
-            "job","join",
-            "key","kindly","knowledge",
-            "languages","llc","life","like","location",
-            "make","many",
-            "managers","may","members","might", "minimum",
-            "must","my",
-            "needed","new","no","not",
-            "of","old","on","only","opportunity","or","organization","other","ought",
-            "our","ours","over",
-            "partner","partnering","performance","please",
-            "proactive","problem","product","production","profile","programming","problem-solving",
-            "problems","provide","proven",
-            "quality","quickly",
-            "related","relationships","research","roadmap","role",
-            "seeking","services","should","skilled","skills","so","software",
-            "solve","solutions","solving","some",
-            "stage","stakeholders","stand","strategic","strategy","strengthen","strong",
-            "talented","team","teams","tech","technical","technology","the","than","that","this",
-            "then","these","those","thought","thrive","title","to","today",
-            "too","tooling","tools",
-            "track-record","transforming",
-            "transferring",
-            "understand","up","us","usability","utilize",
-            "variety","verbal","very","via",
-            "was","we","we'll","we've","were","what","which","why",
-            "will","with","within",
-            "without",
-            "work","worker","working","would","written",
-            "you'd","you'll","you're","you've");
-
-    private static List<String>startOfDescription=List.of("required","requirements",
-            "responsibilities","the role","you bring","qualifications",
-            "what you will do","what you'll do");
-    private static List<String>endOfDescription=List.of("pay transparency","compensation","benefits");
     public static String uri = "mongodb+srv://devUser:fakePass1@cluster0.q2ny9rm.mongodb.net/?retryWrites=true&w=majority";
     private static boolean serverUp = true;
     final public static String DATABASE_NAME = "MyJobSearch";
@@ -87,14 +25,13 @@ public class MongoDbJobCache implements JobCache {
     private HashSet<String> localJobCache = new HashSet<>();
     private List<Document> currentJobCache = new ArrayList<>();
     private static int CACHE_SIZE = 20220;
-    private static Bson QUERY_NULL_OP =Filters.ne("_id",0);
+    private static Bson QUERY_NULL_OP = Filters.ne("_id", 0);
+
     public boolean containsJob(Job job, MongoClient mongoClient) {
         boolean containsJob = false;
-        Bson baseQuery = and(eq("title", job.getTitle()), eq("companyName", job.getCompanyName()));
-        ;
-        String compressedDescription=null;
-        if(job.getDescription()!=null){
-            compressedDescription=compressDescription(job.getDescription(),job.getTitle());
+        String compressedDescription = null;
+        if (job.getDescription() != null) {
+            compressedDescription = StringUtil.compressDescription(job.getDescription(), job.getTitle());
             job.setCompressedDescription(compressedDescription);
         }
 
@@ -104,23 +41,23 @@ public class MongoDbJobCache implements JobCache {
         where calling mongo misses recently added documents
         this is even true within the same extractor(thread)
          */
-        if (job.getDescription()!=null && compressedDescription.length()>10 && localJobCache.contains(compressedDescription)){
+        if (job.getDescription() != null && compressedDescription.length() > 10 && localJobCache.contains(compressedDescription)) {
             containsJob = true;
         } else if (serverUp) {
             try {
                 MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
                 MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
                 int numDocs = 0;
-                List<Bson> filters=new ArrayList<>();
-                if(job.getDescription()!=null && compressedDescription.length()>10 ){
+                List<Bson> filters = new ArrayList<>();
+                if (job.getDescription() != null && compressedDescription.length() > 10) {
                     filters.add(eq("description", compressedDescription));
-                }else {
+                } else {
                     filters.add(eq("title", job.getTitle()));
                     filters.add(eq("companyName", job.getCompanyName()));
 
                     if (job.getMinYearlySalary() != null) {
                         filters.add(eq("minSalary", job.getMinYearlySalary()));
-                    }else  if (job.getMinHourlySalary() != null) {
+                    } else if (job.getMinHourlySalary() != null) {
                         filters.add(eq("minSalary", job.getMinHourlySalary()));
                     }
                 }
@@ -139,15 +76,14 @@ public class MongoDbJobCache implements JobCache {
     }
 
 
-
     public void addJob(Job job, boolean include, MongoClient mongoClient) {
-        String compressedDescription=null;
-        if(job.getDescription()!=null){
-            compressedDescription=compressDescription(job.getDescription(),job.getTitle());
+        String compressedDescription = null;
+        if (job.getDescription() != null) {
+            compressedDescription = StringUtil.compressDescription(job.getDescription(), job.getTitle());
         }
-        Document doc = getJobDocumentToInsert(job, include,compressedDescription);
+        Document doc = getJobDocumentToInsert(job, include, compressedDescription);
         currentJobCache.add(doc);
-        if(job.getDescription()!=null) {
+        if (job.getDescription() != null) {
             localJobCache.add(compressedDescription);
         }
         if (currentJobCache.size() > CACHE_SIZE) {
@@ -157,14 +93,14 @@ public class MongoDbJobCache implements JobCache {
 
     public void addRemainingJobs(MongoClient mongoClient) {
         if ((serverUp && !currentJobCache.isEmpty())
-        ||(!currentJobCache.isEmpty()&&currentJobCache.size()%50==0)
-        ){
+                || (!currentJobCache.isEmpty() && currentJobCache.size() % 25 == 0)
+        ) {
             try {
                 MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
                 MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
-                System.err.println(collection.estimatedDocumentCount() + "PRE");
+                System.err.println(collection.estimatedDocumentCount() + " cache size PRE Mongo insert");
                 collection.insertMany(currentJobCache);
-                System.err.println(collection.estimatedDocumentCount() + "POST");
+                System.err.println(collection.estimatedDocumentCount() + " cache size POST Mongo insert");
 
                 currentJobCache.clear();
                 serverUp = true;
@@ -200,10 +136,14 @@ public class MongoDbJobCache implements JobCache {
         if (job.getPostingDate() != null) {
             docValues.put("postingDate", job.getPostingDate());
         }
+        if (!job.getSkills().isEmpty()) {
+            docValues.put("skills", job.getSkills());
+        }
+
         if (job.isContract()) {
             docValues.put("contract", job.isContract());
         }
-        if(job.getDescription()!=null){
+        if (job.getDescription() != null) {
             docValues.put("description", compressedDescription);
         }
 
@@ -216,26 +156,5 @@ public class MongoDbJobCache implements JobCache {
         return serverUp;
     }
 
-    private  String compressDescription(String description,String title){
-        final String editedDescription=description=description.toLowerCase().
-                replaceAll(" - ","").replaceAll("\\("," ").
-                replaceAll("\\)"," ").
-                replaceAll(",","").replaceAll(":","")
-                .replaceAll("!","").replaceAll("\\.","")
-                .replaceAll("/"," ").replaceAll(title.toLowerCase()," ").
-                replaceAll("dice is the leading career destination for tech experts at every stage of their careers","");
-        OptionalInt lastReqtsText=startOfDescription.stream().mapToInt(p->editedDescription.lastIndexOf(p.toLowerCase())).max();
-        final int startingLoc=lastReqtsText.orElse(0);
-        OptionalInt endOfRelevantText=endOfDescription.stream().mapToInt(p->editedDescription.lastIndexOf(p.toLowerCase())).filter(cv->cv>startingLoc).min();
-        String truncatedDesc=editedDescription;
-        if(endOfRelevantText.isPresent()){
-            truncatedDesc=editedDescription.substring(0,endOfRelevantText.getAsInt());
-        }
 
-        ArrayList<String> allWords;
-        allWords = Stream.of(truncatedDesc.toLowerCase().split(" "))
-                .collect(Collectors.toCollection(ArrayList<String>::new));
-        allWords.removeAll(stopWords);
-        return  allWords.stream().collect(Collectors.joining(" "));
-    }
 }

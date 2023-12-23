@@ -1,8 +1,7 @@
 package com.goodforallcode.jobExtractor.filter;
 
 import com.goodforallcode.jobExtractor.filters.JobFilter;
-import com.goodforallcode.jobExtractor.filters.deep.CloudFilter;
-import com.goodforallcode.jobExtractor.filters.deep.always.DevSecOpsFilter;
+import com.goodforallcode.jobExtractor.filters.deep.always.DevSecOpsDescriptionFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.util.TestUtil;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DevSecOpsTests {
-    JobFilter filter =new DevSecOpsFilter();
+    JobFilter filter =new DevSecOpsDescriptionFilter();
     @Test
     void testIncludeInstallMaintain() {
         Job job=new Job("SOLID BACK END JAVA DEVELOPER");

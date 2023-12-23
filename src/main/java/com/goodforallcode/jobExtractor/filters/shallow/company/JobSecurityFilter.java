@@ -11,7 +11,7 @@ public class JobSecurityFilter implements JobFilter {
     List<String> badCompanyNames =List.of( "Allstate","New Relic","Breezeline","Slack",
     "Crossover","Invitae","Omnicell","Komodo Health","Rocket Software","Zinnia","CSG",
     "NTT DATA Services","Cruise","VMware","Intelerad Medical Systems",
-    "Air Apps","CivicPlus");
+    "Air Apps","CivicPlus","Vertisystem Inc.");
 
     List<String> goodCompanyNames =List.of( "Mayo Clinic");
 

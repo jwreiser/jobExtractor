@@ -81,6 +81,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
             }
 
             addInsightBasedInformation(job, detailsDoc);
+            addPremiumComparisonInformation(job, detailsDoc);
             List<WebElement> elements = driver.findElements(By.className("jobs-save-button"));
             if (elements.size() == 2) {
                 job.setSaveButton(elements.get(1));
@@ -91,6 +92,26 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
         }
 
         return success;
+    }
+
+    private static void addPremiumComparisonInformation(Job job, Document detailsDoc) {
+        Element howYouCompare= detailsDoc.getElementById("how-you-match-card-container");
+        if(howYouCompare!=null){
+            Elements skillDivs = howYouCompare.getElementsByClass("pt5");
+            for(Element skillDiv:skillDivs){
+                Element label=skillDiv.getElementsByTag("h3").first();
+                if(label!=null && !label.text().contains("applicants")){
+                    for(Element link:skillDiv.getElementsByTag("a")) {
+                        String skills = link.text();
+                        for (String skill : skills.split(" · ")) {
+                            if (!job.getSkills().contains(skill)) {
+                                job.getSkills().add(skill);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private static void addInsightBasedInformation(Job job, Document detailsDoc) {

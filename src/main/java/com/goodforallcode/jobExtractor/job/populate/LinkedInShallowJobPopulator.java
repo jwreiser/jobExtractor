@@ -98,7 +98,7 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
 
     }
 
-    private static void addLevel(String title, Job job) {
+    public static void addLevel(String title, Job job) {
         if (title.toLowerCase().contains("level")) {
             int start = title.indexOf("level");
             if(start<0){
@@ -133,11 +133,11 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
             }
             job.setLevel(level);
         } else {
-            if (title.contains("III")) {
+            if (title.contains("III")||title.contains("L3")) {
                 job.setLevel(3);
-            } else  if (title.contains(" II")) {//must be after III for III to match correctly
+            } else  if (title.contains(" II")||title.contains("L2")) {//must be after III for III to match correctly
                 job.setLevel(2);
-            } else if (title.contains(" IV ")) {
+            } else if (title.contains(" IV ")||title.contains("L4")) {
                 job.setLevel(4);
             }else if (title.contains(" VI ")) {
                     job.setLevel(6);
@@ -151,6 +151,8 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
                 job.setLevel(6);
             } else if (title.endsWith(" V")) {
                 job.setLevel(5);
+            }else if(title.contains("L1")){
+                job.setLevel(1);
             }
         }
 

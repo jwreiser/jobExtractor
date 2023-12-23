@@ -1,4 +1,4 @@
-package com.goodforallcode.jobExtractor.filters.deep;
+package com.goodforallcode.jobExtractor.filters.shallow.title;
 
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
@@ -6,7 +6,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.List;
 
-public class HumanAndCustomerManagementAndSalesTechnologyFilter implements JobFilter {
+public class HumanAndCustomerManagementAndSalesTechnologyTitleFilter implements JobFilter {
 
     /**
      * M365 can be just sharepoint and not be a HCM job
@@ -16,13 +16,10 @@ public class HumanAndCustomerManagementAndSalesTechnologyFilter implements JobFi
             "HRIS","Kitewheel"," HCM ","Vlocity","Medallia","SFCC");
 
     public boolean include(Preferences preferences, Job job){
-
-        if(job.getDescription()!=null) {
-            String description = job.getDescription().toLowerCase();
-            if (phrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
-                System.err.println("Customer management->reject: " + job);
-                return false;
-            }
+        String title = job.getTitle().toLowerCase();
+        if (phrases.stream().anyMatch(p -> title.contains(p.toLowerCase()))) {
+            System.err.println("Customer management title ->reject: " + job);
+            return false;
         }
      return true;
 

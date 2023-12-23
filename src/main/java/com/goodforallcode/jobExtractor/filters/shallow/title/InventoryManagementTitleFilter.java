@@ -6,7 +6,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.List;
 
-public class InventoryManagementFilter implements JobFilter {
+public class InventoryManagementTitleFilter implements JobFilter {
     List<String> jobTitlePhrases=List.of(
             "RF Smart","RF-Smart"
             );
