@@ -7,10 +7,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.google.common.collect.Lists;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 
@@ -61,14 +58,14 @@ public abstract class Extractor {
     public JobResult getJobs(Set<Cookie> cookies, Preferences preferences, List<String> urls) {
         List<Job> acceptedJobs = new ArrayList<>();
         List<Job> rejectedJobs = new ArrayList<>();
+        List<Job> shallowCachedJobs = new ArrayList<>();
+        List<Job> deepCachedJobs = new ArrayList<>();
         JobCache cache = new MongoDbJobCache();
-        int numThreads = 10;
-        int size = 1;
-        int totalJobs=0,totalHidden=0,totalSkipped=0,totalCached=0,totalPages=0;
-        if (urls.size() > numThreads) {
-            size = urls.size() / numThreads;
-        }
-        Collection<List<String>> urlLists = Lists.partition(urls, size);
+        int totalJobs=0,totalHidden=0,totalSkipped=0,totalPages=0;
+
+        int numThreads = 8;
+
+        Collection<List<String>> urlLists = breakListIntoThreadSizeChunks(urls, numThreads);
         ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
         Collection<UrlExctractingCallable> tasks = new ArrayList<>();
         try (MongoClient mongoClient = MongoClients.create(uri)) {
@@ -102,10 +99,11 @@ public abstract class Extractor {
                             totalJobs+=future.get().totalJobs();
                             totalHidden+=future.get().hiddenJobs();
                             totalSkipped+=future.get().skippedJobs();
-                            totalCached+=future.get().cachedJobs();
                             totalPages+=future.get().numPages();
                             acceptedJobs.addAll(future.get().acceptedJobs());
                             rejectedJobs.addAll(future.get().rejectedJobs());
+                            shallowCachedJobs.addAll(future.get().shallowCachedJobs());
+                            deepCachedJobs.addAll(future.get().deepCachedJobs());
                         } catch (InterruptedException | ExecutionException e) {
                             throw new RuntimeException(e);
                         }
@@ -118,7 +116,16 @@ public abstract class Extractor {
 
         executorService.shutdown();
 
-        return new JobResult(acceptedJobs, rejectedJobs,totalJobs,totalHidden,totalSkipped,totalCached,totalPages);
+        return new JobResult(acceptedJobs, rejectedJobs,shallowCachedJobs,deepCachedJobs,totalJobs,totalHidden,totalSkipped,totalPages);
+    }
+
+    private static Collection<List<String>> breakListIntoThreadSizeChunks(List<String> urls, int numThreads) {
+        int desiredListSize = 1;
+        if (urls.size() > numThreads) {
+            desiredListSize = urls.size() / numThreads;
+        }
+        Collection<List<String>> urlLists = Lists.partition(urls, desiredListSize);
+        return urlLists;
     }
 
     abstract JobResult getJobs(Set<Cookie> cookies, Preferences preferences, String url, JobCache cache, MongoClient mongoClient);
@@ -145,7 +152,10 @@ public abstract class Extractor {
             Thread.sleep(3_000);
             act.moveToElement(element).doubleClick(element).perform();
             Thread.sleep(2_000);
-        } catch (Exception ex) {
+        }catch (StaleElementReferenceException ex) {
+            //once there is a stale element there is nothing we can do. We just swallow and move on
+        }
+        catch (Exception ex) {
             ex.printStackTrace();
         }
     }

@@ -75,13 +75,19 @@ public class LinkedInExtractor extends Extractor {
     public JobResult getJobs(Set<Cookie> cookies, Preferences preferences, String url, JobCache cache, MongoClient mongoClient) {
         List<Job> acceptedJobs = new ArrayList<>();
         List<Job> rejectedJobs = new ArrayList<>();
+        List<Job> deepCachedJobs = new ArrayList<>();
+        List<Job> shallowCachedJobs = new ArrayList<>();
         WebDriver newDriver = null;
         int totalHidden=0,totalJobs=0,numJobs=0,totalSkipped=0,totalCached=0,currentPageNum = 0,actualPageNum=1;
         Optional<Integer>numResultsOption=Optional.empty();
+
         try {
 
-
             newDriver = getWebDriver();
+        }catch (SessionNotCreatedException e){
+            newDriver = getWebDriver();
+        }
+        try {
             //if we don't get the url first we can't add the cookies
             newDriver.get(url);
             for (Cookie cookie : cookies) {
@@ -89,6 +95,9 @@ public class LinkedInExtractor extends Extractor {
             }
 
             newDriver.get(url);
+            if(notOnJobsPage(newDriver)){
+                return new JobResult(acceptedJobs, rejectedJobs,shallowCachedJobs,deepCachedJobs,totalJobs,totalHidden,totalSkipped,actualPageNum);
+            }
             int hiddenJobs=0,skippedJobs=0,cachedJobs=0;
             boolean everyJobHiddenCachedOrSkipped=false;
             WebElement nextPageButton = null;
@@ -114,6 +123,10 @@ public class LinkedInExtractor extends Extractor {
                     numResultsOption=Optional.of(0);
                 }else {
                     numResultsOption = getCurrentNumberOfResults(newDriver);
+                }
+
+                if(notOnJobsPage(newDriver)){
+                    return new JobResult(acceptedJobs, rejectedJobs,shallowCachedJobs,deepCachedJobs,totalJobs,totalHidden,totalSkipped,actualPageNum);
                 }
 
                 if(numResultsOption.isPresent() && numResultsOption.get()<=RESULTS_PER_PAGE){
@@ -182,6 +195,7 @@ public class LinkedInExtractor extends Extractor {
                 numJobs=items.size();
 
                 for (Element item : items) {
+                    hideMessages(newDriver);
                     totalJobs++;
 
                     final Job job = populator.populateJob(item, newDriver);
@@ -197,6 +211,13 @@ public class LinkedInExtractor extends Extractor {
                         continue;
                     }
                     job.setSourceUrl(url);
+                    if (cache.containsJobNoDescription(job,mongoClient)) {
+                        cachedJobs++;
+                        shallowCachedJobs.add(job);
+                        totalCached++;
+                        excludeJob(newDriver, job);
+                        continue;
+                    }
 
 
                     if (shallowSkipFilters.stream().anyMatch(f -> !f.include(preferences, job))) {
@@ -226,6 +247,7 @@ public class LinkedInExtractor extends Extractor {
 
                     if (cache.containsJob(job,mongoClient)) {
                         cachedJobs++;
+                        deepCachedJobs.add(job);
                         totalCached++;
                         excludeJob(newDriver, job);
                         continue;
@@ -270,12 +292,42 @@ public class LinkedInExtractor extends Extractor {
 
             }
         }
-        return new JobResult(acceptedJobs, rejectedJobs,totalJobs,totalHidden,totalSkipped,totalCached,actualPageNum);
+        return new JobResult(acceptedJobs, rejectedJobs,shallowCachedJobs,deepCachedJobs,totalJobs,totalHidden,totalSkipped,actualPageNum);
     }
 
-    public ExcludeJobResults handleShallowInclude(Job currentJob, Preferences preferences) {
+    private void hideMessages(WebDriver newDriver) {
+        try {
+            WebElement svg = newDriver.findElement(By.cssSelector("svg[data-test-icon='chevron-down-small']"));
+            WebElement button = svg.findElement(By.xpath(".."));
+            if (button != null && button.getTagName().equals("button")) {
+                button.click();
+            }
+        }catch(NoSuchElementException nse){
+            //I don't like how this does not just return false. If the item is there don't click it
+        }
+        try {
+            List<WebElement> closeImages = newDriver.findElements(By.cssSelector("svg[data-test-icon='close-small']"));
+            WebElement button;
+            for (WebElement image : closeImages) {
+                if (image.isDisplayed()) {
+                    button = image.findElement(By.xpath(".."));
+                    if (button != null && button.getTagName().equals("button")) {
+                        button.click();
+                    }
+                }
+            }
+        }catch(NoSuchElementException nse){
+            //I don't like how this does not just return false. If the item is there don't click it
+        }
+    }
 
-        Optional<JobFilter> firstIncludeFilter = alwaysIncludeShallowFilters.stream().filter(f -> f.include(preferences, currentJob)).findFirst();
+    private static boolean notOnJobsPage(WebDriver newDriver) {
+        return newDriver.getCurrentUrl().equals("https://www.linkedin.com/jobs/");
+    }
+
+    public ExcludeJobResults handleShallowInclude(Job job, Preferences preferences) {
+
+        Optional<JobFilter> firstIncludeFilter = alwaysIncludeShallowFilters.stream().filter(f -> f.include(preferences, job)).findFirst();
         if (firstIncludeFilter.isPresent()) {
             return new ExcludeJobResults(true, false, false, firstIncludeFilter.get(), null);
         }
@@ -283,49 +335,49 @@ public class LinkedInExtractor extends Extractor {
         return null;
     }
 
-    public ExcludeJobResults excludeJob(Job currentJob, Preferences preferences, WebDriver driver) {
+    public ExcludeJobResults excludeJob(Job job, Preferences preferences, WebDriver driver) {
 
 
-        ExcludeJobResults results = handleShallowInclude(currentJob, preferences);
+        ExcludeJobResults results = handleShallowInclude(job, preferences);
         if(results!=null){
             return results;
         }
 
-        if (deepSkipFilters.stream().anyMatch(f -> !f.include(preferences, currentJob))) {
+        if (deepSkipFilters.stream().anyMatch(f -> !f.include(preferences, job))) {
             return new ExcludeJobResults(false, false, false, null, null);
         }
 
-        Optional<JobFilter> firstExcludeFilter = alwaysExcludeDeepFiltersTrusted.stream().filter(f -> !f.include(preferences, currentJob)).findFirst();
+        Optional<JobFilter> firstExcludeFilter = alwaysExcludeDeepFiltersTrusted.stream().filter(f -> !f.include(preferences, job)).findFirst();
         if (firstExcludeFilter.isPresent()) {
             return new ExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
         }
 
         //TODO MOVE ALL FILTERS TO TRUSTED AND REMOVE THIS BLOCK
-        firstExcludeFilter = alwaysExcludeDeepFilters.stream().filter(f -> !f.include(preferences, currentJob)).findFirst();
+        firstExcludeFilter = alwaysExcludeDeepFilters.stream().filter(f -> !f.include(preferences, job)).findFirst();
         if (firstExcludeFilter.isPresent()) {
             return new ExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
         }
 
-        results = handleShallowInclude(currentJob, preferences);
+        results = handleShallowInclude(job, preferences);
         if(results!=null){
             return results;
         }
 
-        Optional<JobFilter>firstIncludeFilter = alwaysIncludeDeepFilters.stream().filter(f -> f.include(preferences, currentJob)).findFirst();
+        Optional<JobFilter>firstIncludeFilter = alwaysIncludeDeepFilters.stream().filter(f -> f.include(preferences, job)).findFirst();
         if (firstIncludeFilter.isPresent()) {
             return new ExcludeJobResults(true, false, false, firstIncludeFilter.get(), null);
         }
 
-        firstExcludeFilter = lowPriorityDeepFiltersTrusted.stream().filter(f -> !f.include(preferences, currentJob)).findFirst();
+        firstExcludeFilter = lowPriorityDeepFiltersTrusted.stream().filter(f -> !f.include(preferences, job)).findFirst();
 
 
         if (firstExcludeFilter.isPresent()) {
-            doubleClickOnElement(driver, currentJob.getHideButton());
+            doubleClickOnElement(driver, job.getHideButton());
             return new ExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
         } else {
-            firstExcludeFilter = lowPriorityDeepFilters.stream().filter(f -> !f.include(preferences, currentJob)).findFirst();
+            firstExcludeFilter = lowPriorityDeepFilters.stream().filter(f -> !f.include(preferences, job)).findFirst();
             if (firstExcludeFilter.isPresent()) {
-                doubleClickOnElement(driver, currentJob.getHideButton());
+                doubleClickOnElement(driver, job.getHideButton());
                 return new ExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
             }
         }
@@ -423,7 +475,16 @@ public class LinkedInExtractor extends Extractor {
         int scrolls = 5;
         //we were not loading all of the elements fully but scrolling them into view fixes it
         for (int i = 1; i < scrolls * 25; i++) {
-            ((JavascriptExecutor) driver).executeScript("document.getElementsByClassName('jobs-search-results-list')[0].scrollTop=" + i * 75);
+            try {
+                ((JavascriptExecutor) driver).executeScript("document.getElementsByClassName('jobs-search-results-list')[0].scrollTop=" + i * 75);
+            }catch (Exception ex){//may get runtimes we can't catch specifically
+                try {
+                    Thread.sleep(5_0000);
+                    ((JavascriptExecutor) driver).executeScript("document.getElementsByClassName('jobs-search-results-list')[0].scrollTop=" + i * 75);
+                } catch (Exception ex1) {
+
+                }
+            }
             try {
                 Thread.sleep(100);
             } catch (Exception ex) {
@@ -442,6 +503,9 @@ public class LinkedInExtractor extends Extractor {
         wait.withTimeout(Duration.ofSeconds(30));
         wait.pollingEvery(Duration.ofMillis(500));
         wait.ignoring(NoSuchElementException.class);
+        if(notOnJobsPage(driver)){
+            return null;
+        }
         try {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".jobs-search-results-list__subtitle,.jobs-search-no-results-banner")));
             try {

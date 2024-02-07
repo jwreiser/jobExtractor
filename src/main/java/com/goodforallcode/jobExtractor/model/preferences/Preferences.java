@@ -85,6 +85,8 @@ public interface Preferences {
      Integer getMinJobAgeInDays();
      void setMinJobAgeInDays(Integer minJobAgeInDays);
      List<String> getProgrammingLanguages();
+     List<String> getSkills();
+     void setSkills(List<String> skills);
      List<String>  getProgrammingFrameworks();
      void setProgrammingLanguages(List<String> languages);
      void setProgrammingFrameworks(List<String> languages);

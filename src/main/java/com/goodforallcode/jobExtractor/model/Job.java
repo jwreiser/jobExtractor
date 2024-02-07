@@ -12,6 +12,10 @@ import java.util.List;
 
 @Data
 public class Job {
+    public Job() {
+
+
+    }
 
     public Job(String title) {
         this.title = title;
@@ -61,6 +65,8 @@ public class Job {
     Long jobAgeInDays=null;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     LocalDate postingDate=null;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    LocalDate searchDate=null;
 
     @JsonIgnore
     boolean sourcedFromJobBoard=false;

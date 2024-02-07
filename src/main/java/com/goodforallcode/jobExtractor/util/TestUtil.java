@@ -38,6 +38,8 @@ public class TestUtil {
 
         preferences.setLocationPhrases(List.of("NY","New York","Babylon","Melville","Hauppauge","Ronkonkoma","Islandia"
                 ,"Plainview","Stony Brook"));
+
+        preferences.setSkills(List.of("Microservices","Java","REST APIs","Git", "Hibernate","Representational State Transfer (REST)", "Maven"));
         return preferences;
     }
 }

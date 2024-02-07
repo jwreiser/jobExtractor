@@ -13,7 +13,7 @@ public class CloudTitleFilter implements JobFilter {
             "cloud-native","cloud native","Matillion", " aws "," Epic Client "," Epic ancillary "," Epic system "
             ," Epic environment","Hyperspace","Interconnect");
 
-    List<String> bothKeywords = List.of("SailPoint","Apigee",
+    List<String> bothKeywords = List.of("SailPoint","Apigee","Sail point",
             "Informatica","azure ","gcp","cloud","Lambda", "Snowflake",
             "Matillion","Apigee","FlashStack","SFCC","PCF","Flashstack","ECSA ");
 

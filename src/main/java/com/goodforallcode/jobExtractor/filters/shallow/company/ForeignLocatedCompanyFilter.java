@@ -7,19 +7,20 @@ import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
-public class BadManagementFilter implements JobFilter {
-
-    List<String> companyNames =List.of( "LaunchDarkly","TIDAL","DXC Technology");
+/**
+ * This should be only used for companies who mostly have physical locations abroad
+ */
+public class ForeignLocatedCompanyFilter implements JobFilter {
+    List<String> companyNames =List.of( "Redcare Pharmacy");
 
     @Override
     public boolean include(Preferences preferences, Job job) {
 
-        if(companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
-            System.err.println("bad management company name ->reject: "+job);
+
+        if(companyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job))){
+            System.err.println("Foreign Located Employer ->reject: "+job);
             return false;
         }
-
-
         return true;
     }
 }

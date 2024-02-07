@@ -21,7 +21,7 @@ public class WorkLifeBalanceFilter implements JobFilter {
         pressure: work well under pressure does not mean bad balance. Seems like trope not sure if it would mean lack of balance
          */
     List<String> phrases =List.of("on call","on-call","go-live support",
-            "fast-moving","fast-paced", "fast paced","24/7","aggressive timelines"," 24-7 ",
+            "fast-moving","fast-paced", "fast paced","24/7","aggressive timelines"," 24-7 ","aggressive timelines",
            "24x7","rotation","After business hours","After hours","aggressive delivery schedule",
             "nights","weekends","outside of normal business","outside normal business");
     List<String> goodCompanies =List.of("Ebay","Guidehouse","Trimble"

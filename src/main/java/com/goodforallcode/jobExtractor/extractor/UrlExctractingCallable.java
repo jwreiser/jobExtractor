@@ -32,21 +32,27 @@ public class UrlExctractingCallable implements Callable<JobResult> {
 
     @Override
     public JobResult call() throws Exception {
-        List<JobResult> jobResults= urls.stream().map(url ->
-                extractor.getJobs(cookies, preferences, url, cache,mongoClient)).collect(Collectors.toList());
+
+        List<JobResult> jobResults=new ArrayList<>();
+        for(String url:urls) {
+            jobResults.add(extractor.getJobs(cookies, preferences, url, cache, mongoClient));
+        }
         List<Job> acceptedJobs=new ArrayList<>();
         List<Job> rejectedJobs=new ArrayList<>();
+        List<Job> shallowCachedJobs=new ArrayList<>();
+        List<Job> deepCachedJobs=new ArrayList<>();
         int totalJobs=0,totalHidden=0,totalSkipped=0,totalCached=0,totalPages=0;
         for(JobResult result:jobResults){
             totalJobs+= result.totalJobs();
             totalHidden+= result.hiddenJobs();
             totalSkipped+= result.skippedJobs();
-            totalCached+= result.cachedJobs();
             totalPages+= result.numPages();
             acceptedJobs.addAll(result.acceptedJobs());
             rejectedJobs.addAll(result.rejectedJobs());
+            shallowCachedJobs.addAll(result.shallowCachedJobs());
+            deepCachedJobs.addAll(result.deepCachedJobs());
         }
-        return new JobResult(acceptedJobs,rejectedJobs,totalJobs,totalHidden,totalSkipped,totalCached,totalPages);
+        return new JobResult(acceptedJobs,rejectedJobs,shallowCachedJobs,deepCachedJobs,totalJobs,totalHidden,totalSkipped,totalPages);
     }
 
 }

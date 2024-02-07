@@ -119,6 +119,7 @@ public class FilterFactory {
         filters.add(new SalesTitleFilter());
         filters.add(new ScientificProgrammerTitleFilter());
         filters.add(new SoftwareDevelopmentProjectManagementTitleFilter());
+        filters.add(new SpecializedSoftwareEngineerFilter());
         filters.add(new SupportTitleFilter());
 
         //company
@@ -126,6 +127,7 @@ public class FilterFactory {
         filters.add(new BettingCompanyFilter());
         filters.add(new CyberSecurityCompanyFilter());
         filters.add(new DefenseCompanyFilter());
+        filters.add(new ForeignLocatedCompanyFilter());
         filters.add(new InsuranceCompanyNameFilter());
         filters.add(new OperatingSystemCompanyFilter());
         return filters;
@@ -217,7 +219,6 @@ public class FilterFactory {
 
     public static List<JobFilter> getDeepFiltersAlwaysExclude() {
         List<JobFilter> filters = new ArrayList<>();
-        filters.add(new LocalFilter());
         filters.add(new ProgrammingFrameworkFilter());
         return filters;
     }
@@ -262,7 +263,7 @@ public class FilterFactory {
         filters.add(new InternetTelevisionAndMobileCompanyFilter());
         filters.add(new JobSecurityFilter(false));
 
-//        filters.add(new LocalFilter());
+        filters.add(new LocalFilter());
         filters.add(new MainframeFilter());
         filters.add(new ManufacturingFilter());
         filters.add(new MarketingFilter());
@@ -285,6 +286,7 @@ public class FilterFactory {
         filters.add(new RemoteFilter());
         filters.add(new RetailFilter());
         filters.add(new SeniorFilter());
+        filters.add(new SkillsDeepFilter());
         filters.add(new StartupFilter());
         filters.add(new SupplyChainFilter());
         filters.add(new TelecomFilter());

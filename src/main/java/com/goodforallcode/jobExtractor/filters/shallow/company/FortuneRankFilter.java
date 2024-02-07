@@ -22,6 +22,7 @@ public class FortuneRankFilter implements JobFilter {
         ranks.put("McKesson",9);
         ranks.put("McDonald’s",152);
         ranks.put("Wipro",2);
+        ranks.put("Fedex",41);
         ranks.put("Infosys",3);
         ranks.put("Oracle",91);
     }

@@ -26,6 +26,7 @@ public class PreferencesWithDefaults implements Preferences {
     public int maxYearsOfExperience=6;
     public int maxYearsOfExperienceForUnlistedSkill=2;
 
+    public List<String>skills= new ArrayList<>();
      boolean excludeMilitary=true;
     int minContractRate=50;
     int maxContractRate=80;

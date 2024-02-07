@@ -25,19 +25,27 @@ public class JobExtractorApplication {
  			MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
 
 			 //			collection.dropIndex("hashedDescription_1");
-			/*collection.dropIndexes();
+/*
+			collection.dropIndexes();
 
 
 			IndexOptions options=new IndexOptions();
-			IndexOptions expireOptions = options.expireAfter(30L, TimeUnit.DAYS);
-			collection.createIndex(Indexes.descending("postingDate"), expireOptions);
+			IndexOptions expireOptions = options.expireAfter(14L, TimeUnit.DAYS);
+			collection.createIndex(Indexes.descending("searchDate"), expireOptions);
 
 			collection.createIndex(Indexes.compoundIndex(
 					Indexes.text("description"),Indexes.text("industry"),
-					Indexes.text("title"),Indexes.text("companyName"),Indexes.text("skills")
-			));
+					Indexes.text("title"),Indexes.text("companyName"),
+					Indexes.text("skills"))
+			);
 
-			collection.createIndex(Indexes.ascending("description"));
+			//should be unique and sparse
+			IndexOptions uniqueSparseOptions=new IndexOptions().unique(true).sparse(true);
+			collection.createIndex(Indexes.ascending("description"),uniqueSparseOptions);
+
+			collection.createIndex(Indexes.ascending("url"),uniqueSparseOptions);
+
+
 			collection.createIndex(Indexes.compoundIndex(
 					Indexes.ascending("industry"),
 					Indexes.ascending("title"),Indexes.ascending("minSalary")

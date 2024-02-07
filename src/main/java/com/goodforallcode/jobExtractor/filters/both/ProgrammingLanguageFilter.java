@@ -22,13 +22,13 @@ public class ProgrammingLanguageFilter implements JobFilter {
      * can't end in RoR as lowercased that is in words like error
      * scala: scalable perl: properly
      */
-    private static List<String> languages = List.of(
+    public static List<String> languages = List.of(
             "Ruby", "Rust", "Golang", "Net ", "DotNet", ".Net", "iOS ", "React ",
             "Angular", "Typescript", "Javascript", "CNO", "C#", "C++", "Visual C", "Scala ",
             "Swift ", "Fortran","Delphi","Ignition",
             "Dart", " C ", " R ", "PHP", "Apex", "React Native",
             "VB.NET", "perl ", "MATLAB", "SAS", "COBOL", "ABAP", "Tcl", "Elixir", "Erlang",
-            "F#",
+            "F#","Vue.js","jQuery","React.js",
             "GO Lang", "ColdFusion", "verilog",
             "GraphQL", "R Shiny", "Node", "NodeJS", "Django", " RoR", "Haskell", "PL/SQL",
             "Node Js", "Node.js", "Ruby on Rails", "BBj", "BBx", "Business Basic");
@@ -38,7 +38,7 @@ public class ProgrammingLanguageFilter implements JobFilter {
     the appropriate spaces are added when these are used
     adding a space to Go here will make it Go  Developer which won't match
      */
-    private static List<String> titleOnlyLanguages = List.of(
+    public static List<String> titleOnlyLanguages = List.of(
             "Natural", "Spark", "MUMPS", "Genie", "Go", "Scala", "Perl");
     static List<String> sharedLanguages = List.of("Python");
     boolean include;

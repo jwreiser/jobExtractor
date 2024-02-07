@@ -13,7 +13,7 @@ public class ConsultantFilter implements JobFilter {
     static List<String>consultantCompanyNames=List.of("Curate Partners","Modis","Akkodis"
     ,"Ricardo plc","FullStack Labs","Sierra7","Sierra7, Inc.","Vaco","QuantumBricks",
             "Lorven Technologies Inc.","ZETTALOGIX INC","Sierra Solutions","CGI",
-            "Daugherty Business Solutions","World Wide Technology","Qualitest",
+            "Daugherty Business Solutions","World Wide Technology","Qualitest","Cognizant",
             "Solü Technology Partners","Nakupuna Companies","SDI Presence",
             "DMI (Digital Management, LLC)","Next Level Business Services, Inc.",
             "NLB Services");
