@@ -3,7 +3,7 @@ package com.goodforallcode.jobExtractor.filters.shallow.company;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
+import com.goodforallcode.jobExtractor.util.CompanyUtil;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ public class FossilFuelsFilter implements JobFilter {
 
     @Override
     public boolean include(Preferences preferences, Job job) {
-        if(job.getIndustry()!=null && job.getDescription()!=null && industries.stream().anyMatch(i->job.getIndustry().equals(i))){
+        if(job.getIndustries()!=null && job.getDescription()!=null && industries.stream().anyMatch(i->job.getIndustries(). contains(i))){
             final String description=job.getDescription().toLowerCase();
             if(notFossilFuelPhrases.stream().noneMatch(p->description.contains(p))) {
                 System.err.println("Fossil Fuel company industry ->reject: " + job);
@@ -27,7 +27,7 @@ public class FossilFuelsFilter implements JobFilter {
         }
 
 
-        if(companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
+        if(companyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
             System.err.println("Finance company name ->reject: "+job);
             return false;
         }

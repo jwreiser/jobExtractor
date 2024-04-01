@@ -1,20 +1,13 @@
 package com.goodforallcode.jobExtractor.controller;
 
-import com.goodforallcode.jobExtractor.extractor.Extractor;
-import com.goodforallcode.jobExtractor.extractor.ExtractorFactory;
-import com.goodforallcode.jobExtractor.extractor.JobResult;
 import com.goodforallcode.jobExtractor.model.Job;
-import com.goodforallcode.jobExtractor.model.QueryInput;
 import com.goodforallcode.jobExtractor.util.StringUtil;
 import com.mongodb.MongoTimeoutException;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.TextSearchOptions;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.WebDriver;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,9 +17,8 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-import static com.goodforallcode.jobExtractor.cache.MongoDbJobCache.*;
+import static com.goodforallcode.jobExtractor.cache.MongoDbCache.*;
 import static com.mongodb.client.model.Filters.*;
 
 @RestController()
@@ -37,7 +29,7 @@ public class SearchController {
         try (MongoClient mongoClient = MongoClients.create(uri)) {
 
             MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
-            MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
+            MongoCollection<Document> collection = database.getCollection(JOBS_COLLECTION_NAME);
 
             LocalDate now=LocalDate.now();
             LocalDate daysAgo=now.minusDays(1);
@@ -60,7 +52,7 @@ public class SearchController {
                 if(!urls.contains(StringUtil.trimUrl(job.getUrl()))) {
                     urls.add(StringUtil.trimUrl(job.getUrl()));
                     if (doc.get("industry") != null) {
-                        job.setIndustry(String.valueOf(doc.get("industry")));
+                        job.getIndustries().add(String.valueOf(doc.get("industry")));
                     }
 
                     if (doc.get("skills") != null && doc.get("skills") instanceof List) {

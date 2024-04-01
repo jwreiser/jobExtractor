@@ -7,11 +7,11 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 public class RetailFilter implements JobFilter {
-    String industry ="Retail";
+    List<String> industries =List.of("Retail","Apparel, Accessories & Footwear");
     final List<String> companyNames= List.of("Abercrombie & Fitch Co.");
     @Override
     public boolean include(Preferences preferences, Job job) {
-        if(job.getIndustry()!=null && job.getIndustry().equals(industry)){
+        if(job.getIndustries()!=null && industries.stream().anyMatch(i->job.getIndustries(). contains(i))){
             System.err.println("retail ->reject: " + job);
             return false;
         }

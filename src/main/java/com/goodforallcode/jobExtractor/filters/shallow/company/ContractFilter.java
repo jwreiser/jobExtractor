@@ -3,7 +3,7 @@ package com.goodforallcode.jobExtractor.filters.shallow.company;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
+import com.goodforallcode.jobExtractor.util.CompanyUtil;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class ContractFilter implements JobFilter {
             "Kforce Inc","Kforce Com","Oktobor Animation","Groundswell","Raft",
             "NTT DATA Services","Spatial Front, Inc","Tential Solutions",
             "IT Crowd","Koniag Government Services","SCIGON","Latitude Inc","IT Labs",
-            "AgileEngine","Bitsoft International, Inc.","Revature","Gridiron IT",
+            "AgileEngine","Bitsoft International, Inc.","Revature","Gridiron IT","mphasis",
             "Brillio","GE","SBS Creatix","Compunnel Inc.");
 
     List<String> bothPhrases =List.of( "contract");
@@ -37,7 +37,7 @@ public class ContractFilter implements JobFilter {
             return false;
         }
 
-        if(companyNames.stream().anyMatch(c->CompanyNameUtil.containsCompanyName(c,job))){
+        if(companyNames.stream().anyMatch(c-> CompanyUtil.containsCompanyName(c,job))){
             System.err.println("Contract Based Employer ->reject: "+job);
             return false;
         }
@@ -55,6 +55,11 @@ public class ContractFilter implements JobFilter {
                 System.err.println("Contract Based on description ->reject: "+job);
                 return false;
             }
+        }
+
+        if(job.getCompany()!=null && job.getCompany().getContractor()!=null && job.getCompany().getContractor()){
+            System.err.println("Contract based on company summary ->reject: " + job);
+            return false;
         }
         return true;
     }

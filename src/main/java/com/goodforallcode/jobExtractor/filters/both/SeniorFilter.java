@@ -34,21 +34,25 @@ public class SeniorFilter implements JobFilter {
         if(!preferences.isExcludeSenior()){
             return true;
         }
-        String title =job.getTitle().toLowerCase();
+        return isNotSenior(job);
+    }
+
+    public boolean isNotSenior(Job job) {
+        String title = job.getTitle().toLowerCase();
 
         if(titleOnlyPhrases.stream().anyMatch(k->title.contains(k.toLowerCase()))){
-            System.err.println("Senior title only ->reject: "+job);
+            System.err.println("Senior title only ->reject: "+ job);
             return false;
         }
 
         if(job.getDescription()!=null) {
-            String description =job.getDescription().toLowerCase();
+            String description = job.getDescription().toLowerCase();
 
             if(notDescriptionPhrases.stream().anyMatch(k->description.contains(k.toLowerCase()))){
                 return true;
             }
             if(descriptionPhrases.stream().anyMatch(k->description.contains(k.toLowerCase()))){
-                System.err.println("Senior description ->reject: "+job);
+                System.err.println("Senior description ->reject: "+ job);
                 return false;
             }
 

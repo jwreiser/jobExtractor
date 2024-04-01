@@ -3,7 +3,6 @@ package com.goodforallcode.jobExtractor.filters.both;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
@@ -17,10 +16,12 @@ public class DefenseFilter implements JobFilter {
             ,"army","navy","air force","Lockheed Martin","Marine Corps","missile");
     @Override
     public boolean include(Preferences preferences, Job job) {
-        if(job.getIndustry()!=null){
-            if(job.getIndustry().startsWith("Defense ")){
-                System.err.println("military industry ->reject: " + job);
-                return false;
+        if(job.getIndustries()!=null){
+            for(String industry:job.getIndustries()) {
+                if (industry.startsWith("Defense ")) {
+                    System.err.println("military industry ->reject: " + job);
+                    return false;
+                }
             }
         }
 
@@ -36,6 +37,11 @@ public class DefenseFilter implements JobFilter {
                 System.err.println("defense (intelligence) ->reject: " + job);
                 return false;
             }
+        }
+
+        if(job.getCompany()!=null && job.getCompany().getDefense()!=null && job.getCompany().getDefense()){
+            System.err.println("defense based on company summary ->reject: " + job);
+            return false;
         }
         return true;
     }

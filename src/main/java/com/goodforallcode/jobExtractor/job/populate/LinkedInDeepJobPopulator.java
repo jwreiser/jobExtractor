@@ -1,7 +1,7 @@
 package com.goodforallcode.jobExtractor.job.populate;
 
-import com.goodforallcode.jobExtractor.extractor.Extractor;
 import com.goodforallcode.jobExtractor.model.Job;
+import com.goodforallcode.jobExtractor.util.CompanyUtil;
 import com.goodforallcode.jobExtractor.util.RegexUtil;
 import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -86,12 +86,31 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
             if (elements.size() == 2) {
                 job.setSaveButton(elements.get(1));
             }
-
+            addRecruitingClient(job);
         } catch (Exception ex) {
             throw ex;//catching as a way to allow for inserting a breakpoint
         }
 
         return success;
+    }
+
+    public String addRecruitingClient(Job job) {
+        String client=null;
+        if(CompanyUtil.isRecruiting(job.getCompanyName(),job.getIndustries())){
+            String descriptionLower=job.getDescription().toLowerCase();
+//            client names can have periods in them
+            List<String> patterns = List.of("our client,([^\\,\\;]*)[\\,\\;]*");
+
+            if (descriptionLower.contains("our client")) {
+                client = RegexUtil.getValue(descriptionLower, patterns);
+                if(client!=null && !CompanyUtil.isRecruiting(client,null)){
+                    job.setRecruiterClient(client);
+                }else{
+                    System.err.println("Could not get client from!!!!!!!!!!!"+descriptionLower);
+                }
+            }
+        }
+        return client;
     }
 
     private static void addPremiumComparisonInformation(Job job, Document detailsDoc) {
@@ -118,6 +137,19 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
         int start;
         String text;
         int foundInsights = 0, knownInsights = 3;
+        Elements divUnderTheHeaderStartingWithCompanyList = detailsDoc.getElementsByClass("job-details-jobs-unified-top-card__primary-description-without-tagline");
+        if(divUnderTheHeaderStartingWithCompanyList!=null&&divUnderTheHeaderStartingWithCompanyList.size()>0){
+            Element divUnderTheHeaderStartingWithCompany=divUnderTheHeaderStartingWithCompanyList.get(0);
+            String totalText=divUnderTheHeaderStartingWithCompany.text();
+            int startLoc=totalText.indexOf("·");
+            if(startLoc>0) {
+                int endLoc = totalText.indexOf("·", startLoc + 1);
+                if(endLoc>0) {
+                    String location = totalText.substring(startLoc+1, endLoc).trim();
+                    job.setLocation(location);
+                }
+            }
+        }
         Elements insightElements = detailsDoc.getElementsByClass("job-details-jobs-unified-top-card__job-insight");
         for (Element element : insightElements) {
 
@@ -125,11 +157,13 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
             for (Element span : element.getElementsByTag("span")) {
                 text = span.text();
                 if (text.contains("employees")) {
-                    job.setNumEmployees(getValueFromTwoWordText(text, 2).intValue());
+                    job.setMinimumNumEmployees(getValueFromTwoWordText(text, 1).intValue());
+                    job.setMaximumNumEmployees(getValueFromTwoWordText(text, 2).intValue());
                     start = text.indexOf("·");
                     if (start > 0) {
                         String industry = text.substring(start + 2);
-                        job.setIndustry(industry);
+                        job.getIndustries().add(industry);
+                        job.setJobIndustry(industry);
                         foundInsights++;
                     }
                 }
@@ -225,7 +259,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
         Integer percent = null;
 
         if (descriptionLower.contains("travel")) {
-            percent = RegexUtil.getValue(descriptionLower, patterns);
+            percent = RegexUtil.getIntegerValue(descriptionLower, patterns);
         }
         return percent;
     }

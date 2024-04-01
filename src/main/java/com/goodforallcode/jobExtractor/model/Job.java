@@ -43,6 +43,8 @@ public class Job {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String url;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String location;
     /*
     this is used to click to a job while crawling.
@@ -51,6 +53,9 @@ public class Job {
     @JsonIgnore
     String internalUrl;
     String sourceUrl;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+
+    String recruiterClient;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Integer minYearlySalary;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -95,8 +100,10 @@ public class Job {
     Integer contractMonths=null;
     @JsonIgnore
     Integer maxExperienceRequired=null;
-    @JsonIgnore
-    int numEmployees;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Integer minimumNumEmployees;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Integer maximumNumEmployees;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Integer numApplicants=null;
     @JsonIgnore
@@ -111,13 +118,15 @@ public class Job {
     String title;
     String companyName;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    String industry;
+    List<String> industries=new ArrayList<>();
+    //this is a subset of industries seperated so that we can differentiate it from the sector from company summaries when we search the cache
+    String jobIndustry;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Integer travelPercent;
-    @JsonIgnore
-    Company company;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    JobFilter includeFilter;
+    CompanySummary company;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    List<JobFilter> includeFilters;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     JobFilter excludeFilter;

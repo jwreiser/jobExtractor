@@ -7,11 +7,11 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 public class TransportationFilter implements JobFilter {
-    List<String> industries =List.of("Truck Transportation");
+    List<String> industries =List.of("Truck Transportation","Transportation");
     final List<String> companyNames= List.of("Cambridge Systematics, Inc.");
     @Override
     public boolean include(Preferences preferences, Job job) {
-        if(job.getIndustry()!=null && industries.stream().anyMatch(i->i.equals(job.getIndustry()))){
+        if(job.getIndustries()!=null && industries.stream().anyMatch(i->job.getIndustries().contains(i))){
             System.err.println("Transportation ->reject: " + job);
             return false;
         }

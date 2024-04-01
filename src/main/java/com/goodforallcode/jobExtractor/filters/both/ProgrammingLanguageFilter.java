@@ -54,6 +54,12 @@ public class ProgrammingLanguageFilter implements JobFilter {
 
         if (preferences.getProgrammingLanguages().stream().anyMatch(l ->
                 title.contains(l.toLowerCase()))) {
+            System.err.println("title Language ->include: " + job);
+            return true;
+        }
+        if (preferences.getProgrammingLanguages().stream().anyMatch(l ->
+                job.getSkills().contains(l))) {
+            System.err.println("Skill Language ->include: " + job);
             return true;
         }
         if (!include) {
@@ -202,15 +208,15 @@ public class ProgrammingLanguageFilter implements JobFilter {
                 , "(\\d+)[\\+]* years[^\\d\\)\\.\\;]*experience[^\\d\\)\\.\\;]*");
         Integer experience;
         for (String patternText : patterns) {
-            if (preferences.getProgrammingLanguages().stream().anyMatch(l -> RegexUtil.getValue(descriptionLower, patternText + l.toLowerCase()) != null)) {
+            if (preferences.getProgrammingLanguages().stream().anyMatch(l -> RegexUtil.getIntegerValue(descriptionLower, patternText + l.toLowerCase()) != null)) {
                 continue;
             }
-            if (languages.stream().anyMatch(l -> RegexUtil.getValue(descriptionLower,
+            if (languages.stream().anyMatch(l -> RegexUtil.getIntegerValue(descriptionLower,
                     patternText + prepareLanguageForRegularExpression(l), 0) > preferences.getMaxYearsOfExperienceForUnlistedSkill())) {
                 notEnoughExperience = true;
                 break;
             }
-            if (sharedLanguages.stream().anyMatch(l -> RegexUtil.getValue(descriptionLower, patternText + l.toLowerCase(), 0) > preferences.getMaxYearsOfExperienceForUnlistedSkill())) {
+            if (sharedLanguages.stream().anyMatch(l -> RegexUtil.getIntegerValue(descriptionLower, patternText + l.toLowerCase(), 0) > preferences.getMaxYearsOfExperienceForUnlistedSkill())) {
                 notEnoughExperience = true;
                 break;
             }

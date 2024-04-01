@@ -109,7 +109,6 @@ public class ExampleController {
         preferences.setMaxJobAgeInDays(7);
         preferences.setMaxApplicants(400);
         preferences.setExcludeFresher(true);
-        preferences.setExcludeSenior(true);
         preferences.setExcludeBigData(true);
         preferences.setExcludeBlockchain(true);
         preferences.setExcludeCloudHeavy(true);
@@ -174,7 +173,6 @@ public class ExampleController {
         preferences.setMaxJobAgeInDays(23);
         preferences.setMaxApplicants(400);
         preferences.setExcludeFresher(true);
-        preferences.setExcludeSenior(true);
         preferences.setExcludeBigData(true);
         preferences.setExcludeBlockchain(true);
         preferences.setExcludeCloudHeavy(true);
@@ -422,7 +420,7 @@ public class ExampleController {
                 //senior(1k) - base level filtering
                 "https://www.linkedin.com/jobs/search/?currentJobId=3788201224&f_E=4&f_JT=F%2CP%2CT%2CO&f_T=9%2C10738%2C25194%2C266%2C14642%2C24&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20-bootstrap%20-typescript%20-android%20-%22full%20stack%22%20%20%20-php%20-ruby%20-scala%20-.net%20-principal%20-lead%20-staff%20-startup%20-sdet%20-instructor%20-tutor%20-%22systems%20engineer%22%20-field%20-mainframe%20-salesforce%20-pega%20-servicenow%20-embedded&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD",
                 //senior good benefits (pension covered elsewhere) (700)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3706349129&f_BE=1%2C2%2C3%2C4%2C7%2C8%2C9%2C10%2C11%2C12&f_E=2%2C3%2C4&f_JT=F&f_T=9%2C25194%2C266%2C10738%2C14642&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20%20&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
+                "https://www.linkedin.com/jobs/search/?currentJobId=3846957893&f_BE=1%2C2%2C3%2C4%2C7%2C8%2C9%2C10%2C11%2C12&f_E=2%2C3%2C4&f_JT=F&f_T=9%2C25194%2C266%2C10738%2C14642&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java%20%20-php%20-ruby%20-scala%20-.net%20-django%20-%22Solutions%20Engineer%22%20-%22Senior%20Full%20Stack%20Engineer%22%20-%22Principal%20Software%20Engineer%22%20-%22Full%20Stack%20Developer%22%20%20-%22Systems%20Engineer%22%20-%22Staff%20Software%20Engineer%22%20&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD",
 
                 //PAST WEEK no java word, just java titles (100):java software engineer, senior java software engineer,java specialist
                 "https://www.linkedin.com/jobs/search/?currentJobId=3727208945&f_E=2%2C3%2C4&f_JT=F&f_T=23347%2C1660%2C10738&f_TPR=r604800&f_WT=2&keywords=java&origin=JOB_SEARCH_PAGE_JOB_FILTER&sortBy=R",
@@ -437,8 +435,8 @@ public class ExampleController {
                 //software development
                 //e/a(750)
                 "https://www.linkedin.com/jobs/search/?currentJobId=3764141752&f_E=2%2C3&f_JT=F%2CP%2CT&f_T=9%2C23347%2C10738%2C1660%2C25194&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=Software%20Development%20-%22Senior%20Software%20Engineer%22%20%20-%22Senior%20Software%20Developer%22%20-%22Full%20Stack%20Developer%22%20-%22Sr.%20Software%20Developer%22%20-%22Sr.%20Software%20Engineer%22%20-%22Systems%20Engineer%22%20-%22Staff%20Software%20Engineer%22%20-%22Solutions%20Engineer%22%20-%22Senior%20Full%20Stack%20Engineer%22%20-%22Principal%20Software%20Engineer%22%20-php%20-ruby%20-scala%20-.net%20-django%20&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
-                //s(1200)
-                "https://www.linkedin.com/jobs/search/?currentJobId=3766153661&f_E=4&f_JT=F%2CP%2CT&f_T=9%2C23347%2C10738%2C1660%2C25194&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=Software%20Development%20-%22Senior%20Software%20Engineer%22%20%20-%22Senior%20Software%20Developer%22%20-%22Full%20Stack%20Developer%22%20-%22Sr.%20Software%20Developer%22%20-%22Sr.%20Software%20Engineer%22%20-%22Systems%20Engineer%22%20-%22Staff%20Software%20Engineer%22%20-%22Solutions%20Engineer%22%20-%22Senior%20Full%20Stack%20Engineer%22%20-%22Principal%20Software%20Engineer%22%20-php%20-ruby%20-scala%20-.net%20-django%20&location=United%20States&origin=JOB_SEARCH_PAGE_SEARCH_BUTTON&refresh=true&sortBy=DD",
+                //s(400) 24 hours
+                "https://www.linkedin.com/jobs/search/?currentJobId=3831103764&f_E=4&f_JT=F%2CP%2CT&f_T=9%2C23347%2C25194%2C10738%2C1660&f_TPR=r86400&f_WT=2&geoId=103644278&keywords=Software%20Development%20%20%20-php%20-ruby%20-scala%20-.net%20-django%20-%22Solutions%20Engineer%22%20-%22Senior%20Full%20Stack%20Engineer%22%20-%22Principal%20Software%20Engineer%22%20-%22Full%20Stack%20Developer%22%20%20-%22Systems%20Engineer%22%20-%22Staff%20Software%20Engineer%22%20&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=D",
                 //past week under 10 (1k)
                 "https://www.linkedin.com/jobs/search/?currentJobId=3777299782&f_E=2%2C3%2C4&f_EA=true&f_JT=F&f_T=9%2C25194%2C10738%2C266%2C14642&f_TPR=r604800&f_WT=2&geoId=103644278&keywords=java&location=United%20States&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true&sortBy=DD",
 

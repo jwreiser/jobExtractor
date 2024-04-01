@@ -3,7 +3,7 @@ package com.goodforallcode.jobExtractor.filters.both;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
+import com.goodforallcode.jobExtractor.util.CompanyUtil;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class GamingFilter implements JobFilter {
 
     @Override
     public boolean include(Preferences preferences, Job job) {
-        if(job.getCompanyName()!=null && companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
+        if(job.getCompanyName()!=null && companyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
             System.err.println("game company name ->reject: " + job);
             return false;
         }
@@ -32,7 +32,7 @@ public class GamingFilter implements JobFilter {
             System.err.println("game title  ->reject: " + job);
             return false;
         }
-        if (job.getIndustry()!=null && job.getIndustry().equals("Computer Games")) {
+        if (job.getIndustries()!=null && job.getIndustries().contains("Computer Games")) {
             System.err.println("game industry ->reject: " + job);
             return false;
         }
@@ -43,7 +43,7 @@ public class GamingFilter implements JobFilter {
                 System.err.println("game description ->reject: " + job);
                 return false;
             }
-            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.descriptionContainsCompanyName(c,job.getDescription()))){
+            if(companyNames.stream().anyMatch(c-> CompanyUtil.descriptionContainsCompanyName(c,job.getDescription()))){
                 System.err.println("gaming based on company description ->reject: " + job);
                 return false;
             }

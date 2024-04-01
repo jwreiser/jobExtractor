@@ -31,20 +31,25 @@ public class FortuneRankFilter implements JobFilter {
     @Override
     public boolean include(Preferences preferences, Job job) {
         boolean include=true;
-        if(preferences!=null&&preferences.getMinFortuneRank()!=null) {
-            for (Map.Entry<String, Integer> entry : ranks.entrySet()) {
-                if(entry.getKey().equals(job.getCompanyName())){
-                    if(entry.getValue()<preferences.getMinFortuneRank()){
-                        System.err.println("rank "+entry.getValue()+" ->reject: " + job);
-                        include=false;
-                    }
-                    break;
+        if(preferences==null || preferences.getMinFortuneRank()==null) {
+            return include;
+        }
+        for (Map.Entry<String, Integer> entry : ranks.entrySet()) {
+            if(entry.getKey().equals(job.getCompanyName())){
+                if(entry.getValue()<preferences.getMinFortuneRank()){
+                    System.err.println("rank "+entry.getValue()+" ->reject: " + job);
+                    include=false;
                 }
+                break;
             }
         }
         if(job.getDescription()!=null){
             final String descriptionLower= job.getDescription().toLowerCase();
             include = includeDescription(descriptionLower,preferences);
+        }
+        if(job.getCompany()!=null && job.getCompany().getFortuneRanking()!=null && job.getCompany().getFortuneRanking()<preferences.getMinFortuneRank()){
+            System.err.println("summary rank "+job.getCompany().getFortuneRanking()+" ->reject: " + job);
+            include=false;
         }
         return  include;
     }
@@ -55,7 +60,7 @@ public class FortuneRankFilter implements JobFilter {
         if(ranks.keySet().stream().anyMatch(company->containsUnsafeCompany(descriptionLower,company,companiesThatCanBeInDescription))){
             include =false;
         }
-        Integer rank=RegexUtil.getValue(descriptionLower,"fortune[^\\d]*(\\d*)[^\\d]*client");
+        Integer rank=RegexUtil.getIntegerValue(descriptionLower,"fortune[^\\d]*(\\d*)[^\\d]*client");
         if(rank!=null && preferences!=null&&preferences.getMinFortuneRank()!=null && rank<preferences.getMinFortuneRank()){
             return false;
         }

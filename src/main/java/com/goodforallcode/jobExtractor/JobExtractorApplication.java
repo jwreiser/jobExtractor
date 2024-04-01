@@ -2,15 +2,11 @@ package com.goodforallcode.jobExtractor;
 
 import com.mongodb.MongoTimeoutException;
 import com.mongodb.client.*;
-import com.mongodb.client.model.IndexOptions;
-import com.mongodb.client.model.Indexes;
 import org.bson.Document;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.util.concurrent.TimeUnit;
-
-import static com.goodforallcode.jobExtractor.cache.MongoDbJobCache.*;
+import static com.goodforallcode.jobExtractor.cache.MongoDbCache.*;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
@@ -22,7 +18,7 @@ public class JobExtractorApplication {
 		try (MongoClient mongoClient = MongoClients.create(uri)) {
 
 			MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
- 			MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
+ 			MongoCollection<Document> collection = database.getCollection(JOBS_COLLECTION_NAME);
 
 			 //			collection.dropIndex("hashedDescription_1");
 /*

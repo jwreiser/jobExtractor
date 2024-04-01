@@ -1,27 +1,25 @@
 package com.goodforallcode.jobExtractor.extractor;
 
-import com.goodforallcode.jobExtractor.cache.JobCache;
+import com.goodforallcode.jobExtractor.cache.Cache;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 import org.openqa.selenium.Cookie;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 public class UrlExctractingCallable implements Callable<JobResult> {
     Extractor extractor;
     List<String> urls;
     Set<Cookie> cookies;
     Preferences preferences;
-    JobCache cache;
+    Cache cache;
     MongoClient mongoClient;
 
-    public UrlExctractingCallable(Extractor extractor, List<String> urls, Set<Cookie> cookies, Preferences preferences, JobCache cache,MongoClient mongoClient) {
+    public UrlExctractingCallable(Extractor extractor, List<String> urls, Set<Cookie> cookies, Preferences preferences, Cache cache, MongoClient mongoClient) {
         this.urls = urls;
         this.cookies = cookies;
         this.preferences = preferences;

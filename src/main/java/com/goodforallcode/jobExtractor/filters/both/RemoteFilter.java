@@ -18,7 +18,7 @@ public class RemoteFilter implements JobFilter {
             "Must be able to relocate","one day of remote work","Partial WFH",
     "Remote till pandemic","Remote til pandemic","able to travel","Future onsite work is required",
 "week onsite","a hybrid position","(Hybrid)","(Hybrid role)","in office days per ",
-    "(Onsite / Hybrid)","is not remote,","is not remote ","is not remote.",
+    "(Onsite / Hybrid)","is not remote,","is not remote ","is not remote.","week onsite","onsite in",
             "is based in ");
     List<String> notRemoteEndsWith =List.of("- Hybrid","-Hybrid","- Onsite","-Onsite",
             ": Hybrid",":Hybrid",": Onsite",":Onsite","- Onsite/Hybrid","-Onsite/Hybrid",":Onsite/Hybrid",

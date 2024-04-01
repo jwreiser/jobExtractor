@@ -1,9 +1,9 @@
 package com.goodforallcode.jobExtractor.filters.both;
 
 import com.goodforallcode.jobExtractor.filters.JobFilter;
+import com.goodforallcode.jobExtractor.model.CompanySummary;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
@@ -23,6 +23,13 @@ public class NightShiftFilter implements JobFilter {
                 return false;
             }
 
+        }
+        if(job.getCompany()!=null){
+            CompanySummary sum = job.getCompany();
+            if(sum.getSoftwareEngineerNightOrWeekendHours()!=null && sum.getSoftwareEngineerNightOrWeekendHours()) {
+                System.err.println("summary night or weekend ->reject: " + job);
+                return false;
+            }
         }
         return true;
     }

@@ -3,17 +3,17 @@ package com.goodforallcode.jobExtractor.filters.both;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
+import com.goodforallcode.jobExtractor.util.CompanyUtil;
 
 import java.util.List;
 
 public class AdvertisingFilter implements JobFilter {
-    String industry ="Advertising Services";
+    List<String> industries =List.of("Advertising Services","Advertising");
     final List<String> companyNames=List.of("SocialVenu");
     final List<String> descriptionPhrases=List.of("advertising");
     @Override
     public boolean include(Preferences preferences, Job job) {
-        if(companyNames.stream().anyMatch(c-> CompanyNameUtil.containsCompanyName(c,job))){
+        if(companyNames.stream().anyMatch(c-> CompanyUtil.containsCompanyName(c,job))){
             System.err.println("Advertising company name->reject: " + job);
             return false;
         }
@@ -21,7 +21,7 @@ public class AdvertisingFilter implements JobFilter {
             System.err.println("Advertising in company name->reject: " + job);
             return false;
         }
-        if(job.getIndustry()!=null && job.getIndustry().equals(industry)){
+        if(job.getIndustries()!=null && industries.stream().anyMatch(i->job.getIndustries().contains(i))){
             System.err.println("Advertising ->reject: " + job);
             return false;
         }

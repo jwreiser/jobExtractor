@@ -3,7 +3,7 @@ package com.goodforallcode.jobExtractor.filters.both;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
+import com.goodforallcode.jobExtractor.util.CompanyUtil;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class OutsourcingAndOffshoreFilter implements JobFilter {
     public boolean include(Preferences preferences, Job job) {
 
 
-        if(companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
+        if(companyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
             System.err.println("offshore ->reject: "+job);
             return false;
         }
@@ -27,10 +27,14 @@ public class OutsourcingAndOffshoreFilter implements JobFilter {
                 System.err.println("Job offshore->reject: " + job);
                 return false;
             }
-            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.descriptionContainsCompanyName(c,job.getDescription()))){
+            if(companyNames.stream().anyMatch(c-> CompanyUtil.descriptionContainsCompanyName(c,job.getDescription()))){
                 System.err.println("offshore based on company description ->reject: " + job);
                 return false;
             }
+        }
+        if(job.getCompany()!=null && job.getCompany().getOffshores()!=null && job.getCompany().getOffshores()){
+            System.err.println("offshore based on company summary ->reject: " + job);
+            return false;
         }
         return true;
     }

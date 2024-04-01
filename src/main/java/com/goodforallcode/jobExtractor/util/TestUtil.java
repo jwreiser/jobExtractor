@@ -17,7 +17,7 @@ public class TestUtil {
         preferences.setMaxEmployees(9000);
         preferences.setExcludeConsultant(true);
         preferences.setAmountOfTotalExperience(6);
-        preferences.setMaxJobAgeInDays(4);
+        preferences.setMaxJobAgeInDays(7);
 
         preferences.setExcludeAboveSenior(true);
         preferences.setExcludeBigData(true);
@@ -30,7 +30,7 @@ public class TestUtil {
         preferences.setExcludeFullStack(true);
         preferences.setExcludePromoted(false);
         preferences.setExcludeRealEstate(true);
-        preferences.setExcludeSenior(true);
+        preferences.setExcludeSenior(false);
 
         preferences.setSkipTooManyApplicants(false);
         preferences.setSkipUnknownNumberOfApplicants(false);

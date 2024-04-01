@@ -3,7 +3,7 @@ package com.goodforallcode.jobExtractor.filters.shallow.company;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
+import com.goodforallcode.jobExtractor.util.CompanyUtil;
 
 import java.util.List;
 
@@ -19,11 +19,11 @@ final String title=job.getTitle().toLowerCase();
             System.err.println("Marketing title->reject: "+job);
             return false;
         }
-        if(companyName.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
+        if(companyName.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
             System.err.println("Marketing company->reject: "+job);
             return false;
         }
-        if(job.getIndustry()!=null && industries.stream().anyMatch(i->i.equals(job.getIndustry()))){
+        if(job.getIndustries()!=null && industries.stream().anyMatch(i->job.getIndustries().contains(i))){
             System.err.println("Marketing industry->reject: "+job);
             return false;
         }

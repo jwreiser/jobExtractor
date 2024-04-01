@@ -3,7 +3,7 @@ package com.goodforallcode.jobExtractor.filters.shallow.company;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
+import com.goodforallcode.jobExtractor.util.CompanyUtil;
 
 import java.util.List;
 
@@ -17,11 +17,11 @@ public class RealEstateFilter implements JobFilter {
         if(!preferences.isExcludeRealEstate()){
             return true;
         }
-        if(job.getIndustry()!=null && job.getIndustry().equals("Real Estate")){
+        if(job.getIndustries()!=null && job.getIndustries(). contains("Real Estate")){
             System.err.println("Real Estate Industry ->reject: "+job);
             return false;
         }
-        if(companyName.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
+        if(companyName.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
             System.err.println("Real Estate name ->reject: "+job);
             return false;
         }

@@ -62,7 +62,7 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
                 text = metadataItem.text().replaceAll("<!---->", "");
                 if (text.contains("Remote")) {
                     job.setRemote(true);
-                    job.setLocation(text.replaceAll("\\(Remote\\)", ""));
+                    job.setLocation(text.replaceAll("\\(Remote\\)", "").trim());
                 } else if (text.contains("/yr") || text.contains("/hr")) {
                     addSalaryInformation(text, job);
                 }

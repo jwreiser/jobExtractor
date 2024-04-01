@@ -3,7 +3,7 @@ package com.goodforallcode.jobExtractor.filters.shallow;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
+import com.goodforallcode.jobExtractor.util.CompanyUtil;
 
 import java.util.List;
 
@@ -18,18 +18,18 @@ public class ConsultantFilter implements JobFilter {
             "DMI (Digital Management, LLC)","Next Level Business Services, Inc.",
             "NLB Services");
 
-    static final List<String> industries=List.of("Business Consulting and Services");
+    static final List<String> industries=List.of("Business Consulting and Services","Consulting");
     @Override
     public boolean include(Preferences preferences, Job job) {
         if(!preferences.isExcludeConsultant()){
             return true;
         }
-        if(consultantCompanyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
+        if(consultantCompanyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
             System.err.println("Consultant company->reject: "+job);
             return false;
         }
 
-        if(job.getIndustry()!=null &&  industries.stream().anyMatch(in->in.equals(job.getIndustry()))){
+        if(job.getIndustries()!=null &&  industries.stream().anyMatch(in->job.getIndustries().contains(in))){
             System.err.println("Consultant industry ->reject: "+job);
             return false;
         }
@@ -58,10 +58,15 @@ public class ConsultantFilter implements JobFilter {
                 System.err.println("Consultant description ->reject: "+job);
                 return false;
             }
-            if(consultantCompanyNames.stream().anyMatch(c-> CompanyNameUtil.descriptionContainsCompanyName(c,job.getDescription()))){
+            if(consultantCompanyNames.stream().anyMatch(c-> CompanyUtil.descriptionContainsCompanyName(c,job.getDescription()))){
                 System.err.println("consultant based on company description ->reject: " + job);
                 return false;
             }
+        }
+
+        if(job.getCompany()!=null && job.getCompany().getConsulting()!=null && job.getCompany().getConsulting()){
+            System.err.println("consultant based on company summary ->reject: " + job);
+            return false;
         }
         return true;
     }

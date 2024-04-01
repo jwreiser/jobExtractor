@@ -3,8 +3,9 @@ package com.goodforallcode.jobExtractor.filters.deep.always;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
+import com.goodforallcode.jobExtractor.util.CompanyUtil;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class StartupFilter implements JobFilter {
@@ -26,7 +27,8 @@ public class StartupFilter implements JobFilter {
     List<String> bothPhrases =List.of("startup","start-up"," start up "
             ,"B corp","Series A","Series B","foundational","scale-up");
     List<String> notPhrases =List.of("public benefit corporation","PBC");
-    List<String> companyNames =List.of("Patterned Learning AI","minware","Included Health",
+    List<String> companyNames =List.of("Patterned Learning AI","Patterned Learning AI",
+            "Patterned Learning Career","minware","Included Health",
             "Storm 3","Storm 4","Storm 5","Storm 6",
             "Nira Energy","Apploi","Convictional","Bramkas",
             "Ascendion","WellSaid Labs","Alma","Maven Clinic","hims & hers","Amberflo.io",
@@ -40,12 +42,12 @@ public class StartupFilter implements JobFilter {
     List<String> titlePhrases =List.of("founding","Founder","Entrepreneur");
 
     public boolean include(Preferences preferences, Job job){
-        if(companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
+        if(companyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
             System.err.println("startup based on company name ->reject: " + job);
             return false;
         }
 
-        if(investorBackedCompanyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
+        if(investorBackedCompanyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
             System.err.println("startup based on company name  investor ->reject: " + job);
             return false;
         }
@@ -73,6 +75,15 @@ public class StartupFilter implements JobFilter {
 
             if (descriptionPhrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
                 System.err.println("startup description ->reject: " + job);
+                return false;
+            }
+        }
+        if(job.getCompany()!=null && job.getCompany().getFoundingYear()!=null){
+            LocalDate now=LocalDate.now();
+            int yearsPassed=job.getCompany().getFoundingYear()-now.getYear();
+            //rignt now data is a year old and it is accounted for here with some wiggle room for the data getting more out of date but at some point this will be wrong
+            if (yearsPassed<=2){
+                System.err.println("startup company founding ->reject: " + job);
                 return false;
             }
         }

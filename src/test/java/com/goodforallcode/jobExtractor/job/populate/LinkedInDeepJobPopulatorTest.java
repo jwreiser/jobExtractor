@@ -1,9 +1,11 @@
 package com.goodforallcode.jobExtractor.job.populate;
 
+import com.goodforallcode.jobExtractor.model.Job;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class LinkedInDeepJobPopulatorTest {
     LinkedInDeepJobPopulator populator =new LinkedInDeepJobPopulator();
@@ -16,7 +18,20 @@ public class LinkedInDeepJobPopulatorTest {
         assertEquals(100,LinkedInDeepJobPopulator.getTravelPercentage("travel up to 100%"));
 
     }
+    @Test
+    void testAddRecruitingClient(){
+        Job test=new Job();
+        test.setCompanyName("Not Useful Name");
+        test.setDescription("Introduction stuff our client, an education learning model company creating complex, scalable solutions for students and teachers that recognize the fact that each student has unique strengths and needs. they develop digital products and innovative learning models that meet students where they are and connect them to where they need to be.");
+        test.setIndustries(List.of("Staffing services"));
+        assertNull(populator.addRecruitingClient(test));
+        test.setDescription("Introduction stuff our client, short but sweet text spaces, scalable solutions for students and teachers that recognize the fact that each student has unique strengths and needs. they develop digital products and innovative learning models that meet students where they are and connect them to where they need to be.");
+        assertNull(populator.addRecruitingClient(test));
+        test.setDescription("Introduction stuff Our client, Beacon Hill Staffing Group, is seeking the following");
 
+        assertEquals("beacon hill staffing group",populator.addRecruitingClient(test));
+
+    }
     @Test
     void testPercentTravel(){
         assertEquals(30,LinkedInDeepJobPopulator.getTravelPercentage("30% travel"));

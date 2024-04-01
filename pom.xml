@@ -14,7 +14,7 @@
 	<name>jobExtractor</name>
 	<description>Extracts attributes from job postings and uses this information to filter jobs</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -124,7 +124,86 @@
 			<artifactId>selenium-support</artifactId>
 			<version>4.1.4</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.graalvm.polyglot/polyglot -->
+		<dependency> <!-- We also move from graal-sdk => polyglot -->
+			<groupId>org.graalvm.polyglot</groupId>
+			<artifactId>polyglot</artifactId>
+			<version>23.1.2</version>
+		</dependency>
+		<dependency> <!-- you can also depend on org.graalvm.polyglot:languages for all languages -->
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js-language</artifactId>
+			<version>23.1.2</version>
+			<type>pom</type>
+		</dependency>
+		<dependency> <!-- you can also depend on org.graalvm.polyglot:languages for all languages -->
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js-isolate</artifactId>
+			<version>23.1.2</version>
+			<type>pom</type>
+		</dependency>
+		<dependency> <!-- you can also depend on org.graalvm.polyglot:languages for all languages -->
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js-launcher</artifactId>
+			<version>23.1.2</version>
+			<type>pom</type>
+		</dependency>
+		<dependency> <!-- you can also depend on org.graalvm.polyglot:languages for all languages -->
+			<groupId>org.graalvm.js</groupId>
+			<artifactId>js-scriptengine</artifactId>
+			<version>23.1.2</version>
+			<type>pom</type>
+		</dependency>
+		<dependency> <!-- you can also depend on org.graalvm.polyglot:languages for all languages -->
+			<groupId>org.graalvm.python</groupId>
+			<artifactId>python-language</artifactId>
+			<version>23.1.2</version>
+			<type>pom</type>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/black.ninia/jep -->
+		<dependency>
+			<groupId>black.ninia</groupId>
+			<artifactId>jep</artifactId>
+			<version>4.2.0</version>
+		</dependency>
 
+		<dependency> <!-- you can also depend on org.graalvm.polyglot:languages for all languages -->
+			<groupId>org.graalvm.python</groupId>
+			<artifactId>python-resources</artifactId>
+			<version>23.1.2</version>
+			<type>pom</type>
+		</dependency>
+		<dependency> <!-- all tools we include in Oracle GraalVM -->
+			<groupId>org.graalvm.polyglot</groupId>
+			<artifactId>tools</artifactId>
+			<version>23.1.2</version>
+			<type>pom</type>
+		</dependency>
+		<dependency> <!-- all tools we include in Oracle GraalVM -->
+			<groupId>org.graalvm.polyglot</groupId>
+			<artifactId>js</artifactId>
+			<version>23.1.2</version>
+			<type>pom</type>
+		</dependency>
+		<dependency> <!-- all tools we include in Oracle GraalVM -->
+			<groupId>org.graalvm.polyglot</groupId>
+			<artifactId>polyglot</artifactId>
+			<version>23.1.2</version>
+			<type>pom</type>
+		</dependency>
+
+		<dependency> <!-- all tools we include in Oracle GraalVM -->
+			<groupId>org.graalvm.polyglot</groupId>
+			<artifactId>python</artifactId>
+			<version>23.1.2</version>
+			<type>pom</type>
+		</dependency>
+		<dependency> <!-- all tools we include in Oracle GraalVM -->
+			<groupId>org.graalvm.polyglot</groupId>
+			<artifactId>languages</artifactId>
+			<version>23.1.2</version>
+			<type>pom</type>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -141,6 +220,7 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
 		</plugins>
 	</build>
 

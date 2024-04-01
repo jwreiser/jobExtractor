@@ -15,7 +15,7 @@ public class TelecomFilter implements JobFilter {
 
     public boolean include(Preferences preferences, Job job){
         String title =job.getTitle().toLowerCase();
-        if(job.getIndustry()!=null&&job.getIndustry().equals("Telecommunications")) {
+        if(job.getIndustries()!=null&&job.getIndustries(). contains("Telecommunications")) {
             System.err.println("Telecom industry ->reject: " + job);
             return false;
         }

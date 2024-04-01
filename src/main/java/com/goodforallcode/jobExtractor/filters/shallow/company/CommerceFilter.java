@@ -3,21 +3,21 @@ package com.goodforallcode.jobExtractor.filters.shallow.company;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
+import com.goodforallcode.jobExtractor.util.CompanyUtil;
 
 import java.util.List;
 
 public class CommerceFilter implements JobFilter {
     List<String> companyNames = List.of("Whatnot","Nisum");
     List<String> titles = List.of("OMS ","Magento");
-    List<String> industries = List.of("Retail");
+    List<String> industries = List.of("Retail","E-commerce");
 
     List<String> bothPhrases = List.of("Hybris", " OMS ", "Vericent","Varicent", "Shopify");
 
     @Override
     public boolean include(Preferences preferences, Job job) {
-        if (job.getIndustry() != null) {
-            if (industries.stream().anyMatch(k -> job.getIndustry().equals(k))) {
+        if (job.getIndustries() != null) {
+            if (industries.stream().anyMatch(k -> job.getIndustries(). contains(k))) {
                 System.err.println("commerce industry ->reject: " + job);
                 return false;
             }
@@ -33,7 +33,7 @@ public class CommerceFilter implements JobFilter {
             System.err.println("commerce title both ->reject: " + job);
             return false;
         }
-        if (companyNames.stream().anyMatch(cn-> CompanyNameUtil.containsCompanyName(cn,job))){
+        if (companyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
             System.err.println("ecommerce ->reject: " + job);
             return false;
         }
@@ -44,7 +44,7 @@ public class CommerceFilter implements JobFilter {
                 System.err.println("Commerce->reject: " + job);
                 return false;
             }
-            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.descriptionContainsCompanyName(c,job.getDescription()))){
+            if(companyNames.stream().anyMatch(c-> CompanyUtil.descriptionContainsCompanyName(c,job.getDescription()))){
                 System.err.println("commerce based on company description ->reject: " + job);
                 return false;
             }

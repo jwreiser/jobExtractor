@@ -27,7 +27,6 @@ public class FilterFactory {
         filters.add(new AdvertisingFilter());
         filters.add(new BadManagementFilter());
         filters.add(new BlockChainFilter());
-        filters.add(new BettingCompanyFilter());
         filters.add(new BigDataFilter());
         filters.add(new BusinessIntelligenceFilter());
         filters.add(new BusinessProcessManagementFilter());
@@ -71,7 +70,6 @@ public class FilterFactory {
         filters.add(new OutsourcingAndOffshoreFilter());
         filters.add(new OldAgeFilter());
         filters.add(new PeopleFocusedFilter(false));
-        filters.add(new PoorManagementFilter());
         filters.add(new ProgrammingLanguageFilter(false));
         filters.add(new OperatingSystemCompanyFilter());
         filters.add(new PharmacyFilter());
@@ -145,18 +143,14 @@ public class FilterFactory {
         filters.add(new ApplicationEngineerFilter());
         filters.add(new BigDataFilter());
         filters.add(new CachingFilter());
-        filters.add(new CaseManagementFilter());
-        filters.add(new ComplexFilter());
         filters.add(new ContentManagementFilter());
         filters.add(new HumanAndCustomerManagementAndSalesTechnologyFilter());
         filters.add(new EnterpriseApplicationsFilter());
-        filters.add(new IdentityManagementFilter());
         filters.add(new InfrastructureSoftwareFilter());
         filters.add(new InsuranceFilter());
         filters.add(new IntegrationFilter());
         filters.add(new JeeFilter());
         filters.add(new ResearcherFilter());
-        filters.add(new SearchFilter());
         filters.add(new SupportFilter());
         return filters;
     }
@@ -169,10 +163,10 @@ public class FilterFactory {
         filters.add(new BusinessIntelligenceFilter());
         filters.add(new BusinessProcessManagementFilter());
 //        filters.add(new CachingFilter());
-//        filters.add(new CaseManagementFilter());
-      filters.add(new CloudFilter());
+        filters.add(new CaseManagementFilter());
+        filters.add(new CloudFilter());
         filters.add(new CommerceFilter());
-//        filters.add(new ComplexFilter());
+        filters.add(new ComplexFilter());
         filters.add(new ComputerVisionFilter());
         //        filters.add(new ContentManagementFilter());
         filters.add(new CustomerExperienceManagementFilter());
@@ -187,7 +181,7 @@ public class FilterFactory {
         filters.add(new GeospatialFilter());
         filters.add(new HumanAndCustomerManagementAndSalesTechnologyFilter());
 
-//        filters.add(new IdentityManagementFilter());
+        filters.add(new IdentityManagementFilter());
 //        filters.add(new InfrastructureSoftwareFilter());
 //        filters.add(new InsuranceFilter());
 //        filters.add(new IntegrationFilter());
@@ -198,13 +192,12 @@ public class FilterFactory {
         filters.add(new NumEmployeesFilter());
         filters.add(new OracleTechFilter());
 
-        filters.add(new OracleTechFilter());
         filters.add(new OutsourcingAndOffshoreFilter());
         filters.add(new PerformanceFilter());
         filters.add(new PLMFilter());
 
 //        filters.add(new ResearcherFilter());
-//        filters.add(new SearchFilter());
+        filters.add(new SearchFilter());
 //        filters.add(new SupportFilter());
         filters.add(new UnixFilter());
         filters.add(new YearsExperienceFilter());
@@ -222,7 +215,43 @@ public class FilterFactory {
         filters.add(new ProgrammingFrameworkFilter());
         return filters;
     }
+    public static List<JobFilter> getCompanySummaryAlwaysIncludeFilters() {
+        List<JobFilter> filters = new ArrayList<>();
+        filters.add(new PeopleFocusedFilter(true));
+        filters.add(new PublicGoodFilter());
+        
+        return filters;
+    }
+    public static List<JobFilter> getCompanySummaryExcludeFilters() {
+        List<JobFilter> filters = new ArrayList<>();
 
+        filters.add(new AcquisitionsFilter());
+        filters.add(new AdvertisingFilter());
+        filters.add(new BadManagementFilter());
+        filters.add(new CommerceFilter());
+        filters.add(new ConstructionFilter());
+        filters.add(new ConsultantFilter());
+        filters.add(new ContractFilter());
+        filters.add(new DefenseFilter());
+        filters.add(new EntertainmentFilter());
+        filters.add(new ExternalContractorFilter());
+        filters.add(new FinanceFilter());
+        filters.add(new FortuneRankFilter());
+        filters.add(new JobSecurityFilter(false));
+        filters.add(new ManufacturingFilter());
+        filters.add(new MarketingFilter());
+        filters.add(new NightShiftFilter());
+        filters.add(new NumEmployeesFilter());
+        filters.add(new OutsourcingAndOffshoreFilter());
+        filters.add(new PharmaceuticalFilter());
+        filters.add(new RetailFilter());
+        filters.add(new StartupFilter());
+        filters.add(new StressFilter());
+        filters.add(new TransportationFilter());
+        filters.add(new WorkLifeBalanceFilter(false));
+
+        return filters;
+    }
 
     public static List<JobFilter> getDeepFiltersAlwaysExcludeTrusted() {
         List<JobFilter> filters = new ArrayList<>();
@@ -268,7 +297,6 @@ public class FilterFactory {
         filters.add(new ManufacturingFilter());
         filters.add(new MarketingFilter());
         filters.add(new MegaBrandFilter());
-        filters.add(new PoorManagementFilter());
         filters.add(new MSTFilter());
         filters.add(new NightShiftFilter());
         filters.add(new NotEnglishFilter());
@@ -308,8 +336,9 @@ public class FilterFactory {
         filters.add(new PeopleFocusedFilter(true));
         filters.add(new PublicGoodFilter());
         filters.add(new SpringFilter());
-        filters.add(new TenureFilter());
         filters.add(new Year2ToMidFilter());
+
+        
         return filters;
     }
 
@@ -319,13 +348,26 @@ public class FilterFactory {
      */
     public static List<JobFilter> getAlwaysIncludeShallowFilters() {
         List<JobFilter> filters = new ArrayList<>();
-        filters.add(new BackendTitleFilter());
         filters.add(new FavoringCitizenFilter());
-        filters.add(new JobSecurityFilter(true));
         filters.add(new PublicGoodFilter());
+        return filters;
+    }
+
+    /**
+     * These will not always include but will be used when we were going to include anyway due to no excludes. This 
+     * will help us manually approve
+     * @return
+     */
+    public static List<JobFilter> getIncludeFilters() {
+        List<JobFilter> filters = new ArrayList<>();
+    
+            filters.add(new TenureFilter());
+        filters.add(new BackendTitleFilter());
+        filters.add(new JobSecurityFilter(true));
         filters.add(new RelaxedEnvironmentFilter());
         filters.add(new ProgrammingLanguageFilter(true));
         filters.add(new WorkLifeBalanceFilter(true));
         return filters;
     }
+
 }

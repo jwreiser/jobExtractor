@@ -3,7 +3,6 @@ package com.goodforallcode.jobExtractor.filters.both;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ public class ResearcherFilter implements JobFilter {
      */
     List<String> descriptionPhrases =List.of(" patent","AAAI", "IAAI",
             "IJCAI", " HRI ", " ICAPS", "AAMAS", "ICRA", "IROS", "ICLR", "ICML",
-            "NeurIPs", "CORL", " ITSC","publications ","journals ");
+            "NeurIPs", "CORL", " ITSC","journals ");
     List<String> bothPhrases =List.of("researcher");
     List<String> titlePhrases =List.of("research","R&D ");
     @Override
@@ -36,6 +35,10 @@ public class ResearcherFilter implements JobFilter {
             }
             if (descriptionPhrases.stream().anyMatch(k -> description.contains(k.toLowerCase()))) {
                 System.err.println("researcher description ->reject: " + job);
+                return false;
+            }
+            if(description.contains("publications") && !description.contains("reading industry publications")&& !description.contains("reading publications")){
+                System.err.println("researcher description publications ->reject: " + job);
                 return false;
             }
         }

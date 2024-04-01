@@ -3,7 +3,7 @@ package com.goodforallcode.jobExtractor.filters.deep;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyNameUtil;
+import com.goodforallcode.jobExtractor.util.CompanyUtil;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class CyberSecurityFilter implements JobFilter {
 
     @Override
     public boolean include(Preferences preferences, Job job) {
-        if(job.getIndustry()!=null && job.getIndustry().equals(" Computer and Network Security")){
+        if(job.getIndustries()!=null && job.getIndustries(). contains(" Computer and Network Security")){
             System.err.println("Cybersecurity industry ->reject: "+job);
             return false;
         }
@@ -27,7 +27,7 @@ public class CyberSecurityFilter implements JobFilter {
                 System.err.println("Cybersecurity description ->reject: "+job);
                 return false;
             }
-            if(companyNames.stream().anyMatch(c-> CompanyNameUtil.descriptionContainsCompanyName(c,job.getDescription()))){
+            if(companyNames.stream().anyMatch(c-> CompanyUtil.descriptionContainsCompanyName(c,job.getDescription()))){
                 System.err.println("cybersecurity based on company description ->reject: " + job);
                 return false;
             }

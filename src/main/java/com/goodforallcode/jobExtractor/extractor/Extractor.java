@@ -1,7 +1,7 @@
 package com.goodforallcode.jobExtractor.extractor;
 
-import com.goodforallcode.jobExtractor.cache.JobCache;
-import com.goodforallcode.jobExtractor.cache.MongoDbJobCache;
+import com.goodforallcode.jobExtractor.cache.Cache;
+import com.goodforallcode.jobExtractor.cache.MongoDbCache;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.google.common.collect.Lists;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
 
-import static com.goodforallcode.jobExtractor.cache.MongoDbJobCache.uri;
+import static com.goodforallcode.jobExtractor.cache.MongoDbCache.uri;
 
 public abstract class Extractor {
 
@@ -60,10 +60,10 @@ public abstract class Extractor {
         List<Job> rejectedJobs = new ArrayList<>();
         List<Job> shallowCachedJobs = new ArrayList<>();
         List<Job> deepCachedJobs = new ArrayList<>();
-        JobCache cache = new MongoDbJobCache();
+        Cache cache = new MongoDbCache();
         int totalJobs=0,totalHidden=0,totalSkipped=0,totalPages=0;
 
-        int numThreads = 8;
+        int numThreads = 6;
 
         Collection<List<String>> urlLists = breakListIntoThreadSizeChunks(urls, numThreads);
         ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
@@ -112,6 +112,7 @@ public abstract class Extractor {
                 }
             }
             cache.addRemainingJobs(mongoClient);
+            cache.addRemainingCompanySummaries(mongoClient);
         }
 
         executorService.shutdown();
@@ -128,7 +129,7 @@ public abstract class Extractor {
         return urlLists;
     }
 
-    abstract JobResult getJobs(Set<Cookie> cookies, Preferences preferences, String url, JobCache cache, MongoClient mongoClient);
+    abstract JobResult getJobs(Set<Cookie> cookies, Preferences preferences, String url, Cache cache, MongoClient mongoClient);
 
     public void includeJob(WebDriver driver, List<Job> jobs, Job currentJob) {
         //I had been clicking the save button here but it gives stale element exceptions
