@@ -10,7 +10,7 @@ public class QATitleFilter implements JobFilter {
     List<String> jobTitlePhrases=List.of(
             "Test engineer", "SDET","tester","QA ","Software Developer In Test","Software Developer Engineer in Test",
             "Verification Engineer","Quality Engineer", "Software Engineer In Test","Software Development Engineer in Test",
-            "Test","Quality Assurance"
+            "Test ","Quality Assurance"
             );
     @Override
     public boolean include(Preferences preferences, Job job) {
@@ -18,7 +18,6 @@ public class QATitleFilter implements JobFilter {
 
         //if this is a job title we are not qualified for
         if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
-            System.err.println("QA job title->reject: "+job);
             return false;
         }
         return true;

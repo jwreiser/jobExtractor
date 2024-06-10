@@ -5,10 +5,7 @@ import com.goodforallcode.jobExtractor.util.NumUtil;
 import com.goodforallcode.jobExtractor.model.Job;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 
 import java.util.concurrent.TimeoutException;
 
@@ -32,9 +29,9 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
             jobLinkElement=driver.findElement(By.id(jobLink.id()));
             job.setJobDetailsLink(jobLinkElement);
         }catch (NoSuchElementException nse){
-            System.err.println("Could not find job link if this is the only problem we should be okay to continue, though we won't be able to link to the job in the results");
-        }catch (Exception nse){
-            throw new TimeoutException();
+            //if this is the only problem we should be okay to continue, though we won't be able to link to the job in the results
+        }catch (NoSuchSessionException nse){
+            throw nse;//we handle this in job info populator
         }
         try {
 
@@ -66,6 +63,11 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
                 } else if (text.contains("/yr") || text.contains("/hr")) {
                     addSalaryInformation(text, job);
                 }
+                if (text.contains("Hybrid")) {
+                    job.setRemote(false);
+                } else if (text.contains("On-site")) {
+                    job.setRemote(false);
+                }
             }
 
             Elements highlightedFooterItems = item.select("div.job-card-container__footer-item--highlighted");
@@ -85,7 +87,6 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
                         job.setHideButton(driver.findElement(By.id(hideButton.id())));
                     }catch (NoSuchElementException nse){
                         //continue as hopefully future buttons work
-                        System.err.println("Could not find hide button");
                     }
                 }
             } else {

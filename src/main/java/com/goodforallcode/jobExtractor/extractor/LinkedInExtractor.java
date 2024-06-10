@@ -1,19 +1,11 @@
 package com.goodforallcode.jobExtractor.extractor;
 
-import com.goodforallcode.jobExtractor.cache.Cache;
 import com.goodforallcode.jobExtractor.exception.ContentLoadingException;
-import com.goodforallcode.jobExtractor.filters.FilterFactory;
-import com.goodforallcode.jobExtractor.filters.JobFilter;
-import com.goodforallcode.jobExtractor.filters.both.SeniorFilter;
-import com.goodforallcode.jobExtractor.job.populate.DeepJobPopulator;
-import com.goodforallcode.jobExtractor.job.populate.LinkedInDeepJobPopulator;
-import com.goodforallcode.jobExtractor.job.populate.LinkedInShallowJobPopulator;
-import com.goodforallcode.jobExtractor.job.populate.ShallowJobPopulator;
-import com.goodforallcode.jobExtractor.model.CompanySummary;
+import com.goodforallcode.jobExtractor.job.populate.*;
 import com.goodforallcode.jobExtractor.model.Job;
+import com.goodforallcode.jobExtractor.model.JobInfo;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyUtil;
-import com.goodforallcode.jobExtractor.util.RESTUtil;
+import com.goodforallcode.jobExtractor.util.CacheUtil;
 import com.mongodb.client.MongoClient;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,59 +15,46 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.MoveTargetOutOfBoundsException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import static java.lang.StringTemplate.STR;
+//import static java.lang.StringTemplate.STR;
 
 @Getter
 @Setter
+@Component
 public class LinkedInExtractor extends Extractor {
-    static List<JobFilter> deepSkipFilters = FilterFactory.getDeepFiltersSkip();
 
-    static List<JobFilter> alwaysIncludeDeepFilters = FilterFactory.getAlwaysIncludeDeepFilters();
-    static List<JobFilter> alwaysIncludeShallowFilters = FilterFactory.getAlwaysIncludeShallowFilters();
-    static List<JobFilter> alwaysExcludeDeepFilters = FilterFactory.getDeepFiltersAlwaysExclude();
-    static List<JobFilter> lowPriorityDeepFilters = FilterFactory.getDeepFilters();
-    static List<JobFilter> companySummaryExcludeFilters = FilterFactory.getCompanySummaryExcludeFilters();
-    static List<JobFilter> companySummaryAlwaysIncludeFilters = FilterFactory.getCompanySummaryAlwaysIncludeFilters();
-    static List<JobFilter> lowPriorityDeepFiltersTrusted = FilterFactory.getDeepFiltersTrusted();
 
-    static List<JobFilter> alwaysExcludeDeepFiltersTrusted = FilterFactory.getDeepFiltersAlwaysExcludeTrusted();
-    static List<JobFilter> alwaysExcludeShallowFilters = FilterFactory.getShallowFiltersAlwaysExclude();
-    static List<JobFilter> shallowSkipFilters = FilterFactory.getShallowFiltersSkip();
-    static List<JobFilter> includeFilters = FilterFactory.getIncludeFilters();
+    private JobInfoPopulator jobInfoPopulator = new JobInfoPopulator();
 
-    static DeepJobPopulator deepJobPopulator = new LinkedInDeepJobPopulator();
+    static ShallowJobPopulator shallowJobPopulator = new LinkedInShallowJobPopulator();
     private static int RESULTS_PER_PAGE = 25;
 
     @Override
     public WebDriver login(String userName, String password) {
-        WebDriver driver = getWebDriver();
+        WebDriver driver = getWebDriver("https://www.linkedin.com/");
         driver.get("https://www.linkedin.com/");
         driver.findElement(By.id("session_key")).sendKeys(userName);
         driver.findElement(By.id("session_password")).sendKeys(password);
 
         WebElement sign = driver.findElement(By.className("sign-in-form__submit-btn--full-width"));
-        doubleClickOnElement(driver, sign);
+        doubleClickOnElement(driver, sign,false);
         return driver;
 
     }
 
 
     public void doubleClickOnElement(WebDriver driver, WebElement element) {
-        super.doubleClickOnElement(driver, element);
+        super.doubleClickOnElement(driver, element,false);
 
         if (driver != null && driver.getTitle().equals("Security Verification | LinkedIn")) {
             System.err.println("You need to pass verification to login");
@@ -84,7 +63,7 @@ public class LinkedInExtractor extends Extractor {
 
 
     @Override
-    public JobResult getJobs(Set<Cookie> cookies, Preferences preferences, String url, Cache cache, MongoClient mongoClient) {
+    public JobResult getJobs(Set<Cookie> cookies, Preferences preferences, String url, MongoClient mongoClient) {
         List<Job> acceptedJobs = new ArrayList<>();
         List<Job> rejectedJobs = new ArrayList<>();
         List<Job> deepCachedJobs = new ArrayList<>();
@@ -94,211 +73,168 @@ public class LinkedInExtractor extends Extractor {
         Optional<Integer> numResultsOption = Optional.empty();
 
         try {
-
-            newDriver = getWebDriver();
-        } catch (SessionNotCreatedException e) {
-            newDriver = getWebDriver();
+            newDriver = getWebDriver(url);
+        } catch (SessionNotCreatedException sessionNotCreatedException)
+        {
+            System.err.println("SessionNotCreatedException for " + url);
         }
-        try {
-            //if we don't get the url first we can't add the cookies
-            newDriver.get(url);
-            for (Cookie cookie : cookies) {
-                newDriver.manage().addCookie(cookie);
-            }
 
-            newDriver.get(url);
-            if (notOnJobsPage(newDriver)) {
-                return new JobResult(acceptedJobs, rejectedJobs, shallowCachedJobs, deepCachedJobs, totalJobs, totalHidden, totalSkipped, actualPageNum);
-            }
-            int hiddenJobs = 0, skippedJobs = 0, cachedJobs = 0;
-            boolean everyJobHiddenCachedOrSkipped = false;
-            WebElement nextPageButton = null;
-            List<Integer> pageValues;
-            Integer lastPageNumber = 1;
-            do {
-                currentPageNum++;
+        if(newDriver!=null) {
+            try {
+
+                //if we don't get the url first we can't add the cookies
+                newDriver.get(url);
+                for (Cookie cookie : cookies) {
+                    newDriver.manage().addCookie(cookie);
+                }
+
+                newDriver.get(url);
+                if (notOnJobsPage(newDriver)) {
+                    return new JobResult(acceptedJobs, rejectedJobs, shallowCachedJobs, deepCachedJobs, totalJobs, totalHidden, totalSkipped, actualPageNum);
+                }
+                int hiddenJobs = 0, skippedJobs = 0, cachedJobs = 0;
+                boolean everyJobHiddenCachedOrSkipped = false, skipRemainingJobs = false;
+                WebElement nextPageButton = null;
+                List<Integer> pageValues;
+                Integer lastPageNumber = 1;
+                int currNumJobs = 1;
+                do {
+                    currentPageNum++;
                 /*
                 the current number of results can change as the page loads so we
                 don't want to JUST read it right away as it may get lowered
                  */
-                try {
-                    Thread.sleep(5_000);
-                } catch (InterruptedException ex) {
-
-                }
-                if (noMatchingJobs(newDriver)) {
-                    break;
-                }
-
-                waitForPageToLoad(newDriver);
-                if (noMatchingJobs(newDriver)) {
-                    numResultsOption = Optional.of(0);
-                } else {
-                    numResultsOption = getCurrentNumberOfResults(newDriver);
-                }
-
-                if (notOnJobsPage(newDriver)) {
-                    return new JobResult(acceptedJobs, rejectedJobs, shallowCachedJobs, deepCachedJobs, totalJobs, totalHidden, totalSkipped, actualPageNum);
-                }
-
-                if (numResultsOption.isPresent() && numResultsOption.get() <= RESULTS_PER_PAGE) {
-                    if (numResultsOption.get() == 0) {
-                        break;
-                    } else {
-                        actualPageNum = 1;
-                        lastPageNumber = 1;
-                    }
-                } else {
-                    pageValues = getCurrentAndMaxPage(newDriver);
-                    if (pageValues != null) {
-                        actualPageNum = pageValues.get(0);
-                        lastPageNumber = pageValues.get(1);
-                    }
-                }
-
-                //TODO return something more complex that will return at least a no more results flag
-                WebElement resultsDiv = null;
-                try {
-
-                    resultsDiv = loadMainElement(newDriver, actualPageNum, lastPageNumber, numResultsOption);
-                } catch (ContentLoadingException cle) {
                     try {
-                        Thread.sleep(1_000);
-                    } catch (Exception ex) {
+                        Thread.sleep(5_000);
+                    } catch (InterruptedException ex) {
 
                     }
-                    newDriver.get(url);
-                    resultsDiv = loadMainElement(newDriver, actualPageNum, lastPageNumber, numResultsOption);
-                }
-                if (resultsDiv == null) {
+                    if (noMatchingJobs(newDriver)) {
+                        break;
+                    }
+
+                    waitForPageToLoad(newDriver);
+                    if (noMatchingJobs(newDriver)) {
+                        numResultsOption = Optional.of(0);
+                    } else {
+                        numResultsOption = getCurrentNumberOfResults(newDriver);
+                    }
+
+                    if (notOnJobsPage(newDriver)) {
+                        return new JobResult(acceptedJobs, rejectedJobs, shallowCachedJobs, deepCachedJobs, totalJobs, totalHidden, totalSkipped, actualPageNum);
+                    }
+
+                    if (numResultsOption.isPresent() && numResultsOption.get() <= RESULTS_PER_PAGE) {
+                        if (numResultsOption.get() == 0) {
+                            break;
+                        } else {
+                            actualPageNum = 1;
+                            lastPageNumber = 1;
+                        }
+                    } else {
+                        pageValues = getCurrentAndMaxPage(newDriver);
+                        if (pageValues != null) {
+                            actualPageNum = pageValues.get(0);
+                            lastPageNumber = pageValues.get(1);
+                        }
+                    }
+                    System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!       Page: " + actualPageNum + " of " + lastPageNumber + "for " + url + "      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    //TODO return something more complex that will return at least a no more results flag
+                    WebElement resultsDiv = null;
+                    try {
+
+                        resultsDiv = loadMainElement(newDriver, actualPageNum, lastPageNumber, numResultsOption);
+                    } catch (ContentLoadingException cle) {
+                        try {
+                            Thread.sleep(1_000);
+                        } catch (Exception ex) {
+
+                        }
+                        newDriver.get(url);
+                        resultsDiv = loadMainElement(newDriver, actualPageNum, lastPageNumber, numResultsOption);
+                    }
+                    if (resultsDiv == null) {
                     /*
                     we could not get the page.
                     Most likely this is because there are no more results
                     stop processing this job and move onto the next
                      */
-                    break;
-                }
+                        break;
+                    }
 
 
-                nextPageButton = getNextPageButton(newDriver, actualPageNum);
-                if (preferences.getSkipFirstPages() != null && preferences.getSkipFirstPages() > currentPageNum) {
-                    doubleClickOnElement(newDriver, nextPageButton);
-                    continue;
-                }
+                    nextPageButton = getNextPageButton(newDriver, actualPageNum);
+                    if (preferences.getSkipFirstPages() != null && preferences.getSkipFirstPages() > currentPageNum) {
+                        doubleClickOnElement(newDriver, nextPageButton,false);
+                        continue;
+                    }
 
 
                 /*
                 if we are already passed the last page count wise; we are spinning and need to get
                 to the final page
                  */
-                if (lastPageNumber < currentPageNum && everyJobHiddenCachedOrSkipped) {
-                    doubleClickOnElement(newDriver, nextPageButton);
-                }
+                    if (lastPageNumber < currentPageNum && everyJobHiddenCachedOrSkipped) {
+                        doubleClickOnElement(newDriver, nextPageButton,false);
+                    }
 
-                scrollResultsIntoView(newDriver, resultsDiv);
+                    scrollResultsIntoView(newDriver, resultsDiv);
 
-                Elements items = getJobItems(newDriver);
+                    Elements items = getJobItems(newDriver);
 
-                ShallowJobPopulator shallowPopulator = getShallowJobPopulator();
-                hiddenJobs = 0;
-                skippedJobs = 0;
-                cachedJobs = 0;
-                everyJobHiddenCachedOrSkipped = false;
-                numJobs = items.size();
+                    hiddenJobs = 0;
+                    skippedJobs = 0;
+                    cachedJobs = 0;
+                    everyJobHiddenCachedOrSkipped = false;
+                    skipRemainingJobs = false;
+                    numJobs = items.size();
 
-                for (Element item : items) {
                     hideMessages(newDriver);
-                    totalJobs++;
-
-                    final Job job = shallowPopulator.populateJob(item, newDriver);
-
-                    if (job == null) {
-                        break;
-                    } else if (job.isHidden()) {
-                        hiddenJobs++;
-                        totalHidden++;
-                        if (hiddenJobs + skippedJobs == numJobs) {
-                            everyJobHiddenCachedOrSkipped = true;
+                    JobInfo currentJobInfo;
+                    currNumJobs = 0;
+                    for (Element item : items) {
+                        currNumJobs++;
+                        if(currNumJobs%5==0){
+                            System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!           " + currNumJobs + ":  of " + numJobs + " for " + url + "      !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                         }
-                        continue;
-                    }
-                    job.setSourceUrl(url);
-                    if (cache.containsJobNoDescription(job, mongoClient)) {
-                        cachedJobs++;
-                        shallowCachedJobs.add(job);
-                        totalCached++;
-                        excludeJob(newDriver, job);
-                        continue;
-                    }
 
+                        currentJobInfo = new JobInfo(hiddenJobs, skippedJobs, cachedJobs, totalHidden, totalCached, totalSkipped
+                                , everyJobHiddenCachedOrSkipped, skipRemainingJobs, false);
+                        totalJobs++;
 
-                    if (shallowSkipFilters.stream().anyMatch(f -> !f.include(preferences, job))) {
-                        /*we don't want to cache acceptedJobs that are too new otherwise we may
-                        not see them again in other future searches
-                         */
-                        skippedJobs++;
-                        totalSkipped++;
-                        if (hiddenJobs + cachedJobs + skippedJobs == numJobs) {
-                            everyJobHiddenCachedOrSkipped = true;
+                        currentJobInfo = jobInfoPopulator.populateJobInfo(acceptedJobs, rejectedJobs, deepCachedJobs, shallowCachedJobs, item, 0, currentJobInfo
+                                , numJobs, url, newDriver, preferences, shallowJobPopulator);
+
+                        hiddenJobs = currentJobInfo.getHiddenJobs();
+                        skippedJobs = currentJobInfo.getSkippedJobs();
+                        cachedJobs = currentJobInfo.getCachedJobs();
+                        totalHidden = currentJobInfo.getTotalHidden();
+                        totalCached = currentJobInfo.getTotalCached();
+                        totalSkipped = currentJobInfo.getTotalSkipped();
+                        everyJobHiddenCachedOrSkipped = currentJobInfo.isEveryJobHiddenCachedOrSkipped();
+
+                        if (currentJobInfo.isSkipRemainingJobs()) {
+                            break;
                         }
-                        continue;
-                    }
-
-                    Optional<JobFilter> firstShallowExcludeFilter = alwaysExcludeShallowFilters.stream().filter(f -> !f.include(preferences, job)).findFirst();
-                    if (firstShallowExcludeFilter.isPresent()) {
-                        job.setExcludeFilter(firstShallowExcludeFilter.get());
-                        job.setShallowExclude(true);
-                        cache.addJob(job, false, mongoClient);
-                        excludeJob(newDriver, job);
-                        rejectedJobs.add(job);
-                        continue;
-                    }
-                    deepLoadJob(job, newDriver);
-                    CompanySummary summary = cache.getCompanySummary(job, mongoClient);
-                    if (summary != null) {
-                        ExcludeJobResults excludeJobResultsFromCompany = getExcludeJobResultsFromCompany(job, preferences, newDriver, cache, mongoClient, summary, true, null);
-                        if (excludeJobResultsFromCompany != null) {
-                            handleNonSkipJobResults(cache, mongoClient, acceptedJobs, rejectedJobs, newDriver, job, excludeJobResultsFromCompany);
-                            //if we are not null we are either including or excluding so we can move on to next job
-                            continue;
+                        if (currentJobInfo.isStaleState()) {
+                            return getJobs(cookies, preferences, url, mongoClient);
                         }
+
                     }
-
-
-                    if (cache.containsJob(job, mongoClient)) {
-                        cachedJobs++;
-                        deepCachedJobs.add(job);
-                        totalCached++;
-                        excludeJob(newDriver, job);
-                        continue;
+                    if (nextPageButton != null && numJobs == 25) {
+                        doubleClickOnElement(newDriver, nextPageButton,false);
                     }
+                } while (nextPageButton != null && numJobs == 25);
 
-                    ExcludeJobResults excludeJobResults = excludeJob(job, preferences,
-                            newDriver, cache, mongoClient);
-                    handleNonSkipJobResults(cache, mongoClient, acceptedJobs, rejectedJobs, newDriver, job, excludeJobResults);
-
-                    if (excludeJobResults.skipRemainingJobs()) {
-                        /*
-                        this should be true when there is an indication that the rest of the acceptedJobs on this page
-                         will have issues
-                         */
-                        break;
-                    }
-
-
-                }
-                if (nextPageButton != null && numJobs == 25) {
-                    doubleClickOnElement(newDriver, nextPageButton);
-                }
-            } while (nextPageButton != null && numJobs == 25);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!   SUCCESSFULLY EXTRACTED FROM " + url + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
         if (newDriver != null) {
             try {
-                newDriver.close();
+                newDriver.quit();
             } catch (Exception ex) {
 
             }
@@ -306,18 +242,6 @@ public class LinkedInExtractor extends Extractor {
         return new JobResult(acceptedJobs, rejectedJobs, shallowCachedJobs, deepCachedJobs, totalJobs, totalHidden, totalSkipped, actualPageNum);
     }
 
-    private void handleNonSkipJobResults(Cache cache, MongoClient mongoClient, List<Job> acceptedJobs, List<Job> rejectedJobs, WebDriver newDriver, Job job, ExcludeJobResults excludeJobResults) {
-        if (excludeJobResults.excludeJob()) {
-            job.setExcludeFilter(excludeJobResults.excludeFilter());
-            cache.addJob(job, false, mongoClient);
-            excludeJob(newDriver, job);
-            rejectedJobs.add(job);
-        } else if (excludeJobResults.includeJob()) {
-            job.setIncludeFilters(excludeJobResults.includeFilters());
-            cache.addJob(job, true, mongoClient);
-            includeJob(newDriver, acceptedJobs, job);
-        }
-    }
 
     private void hideMessages(WebDriver newDriver) {
         try {
@@ -326,8 +250,8 @@ public class LinkedInExtractor extends Extractor {
             if (button != null && button.getTagName().equals("button")) {
                 button.click();
             }
-        } catch (NoSuchElementException nse) {
-            //I don't like how this does not just return false. If the item is there don't click it
+        } catch (NoSuchElementException | StaleElementReferenceException nse) {
+            //I don't like how this does not just return false. If the item is not there don't click it
         }
         try {
             List<WebElement> closeImages = newDriver.findElements(By.cssSelector("svg[data-test-icon='close-small']"));
@@ -342,268 +266,14 @@ public class LinkedInExtractor extends Extractor {
             }
         } catch (NoSuchElementException nse) {
             //I don't like how this does not just return false. If the item is there don't click it
+        } catch (StaleElementReferenceException stale) {
+            //this seems to happen when there is no message div to hide
         }
     }
 
     private static boolean notOnJobsPage(WebDriver newDriver) {
         return newDriver.getCurrentUrl().equals("https://www.linkedin.com/jobs/");
     }
-
-
-    public ExcludeJobResults excludeJob(Job job, Preferences preferences, WebDriver driver, Cache cache, MongoClient client) {
-        String url = buildCompanySummaryURL(job);
-        boolean alreadyInCache = false;
-        List<JobFilter> matchingIncludeFilters = alwaysIncludeShallowFilters.stream().filter(f -> f.include(preferences, job)).collect(Collectors.toList());
-        if (!matchingIncludeFilters.isEmpty()) {
-            //we are doing this so we can see all the reasons for including so we can make a good decision
-            if (job.getCompany() == null && url != null) {
-                CompanySummary summary = cache.getCompanySummary(job, client);
-                if (summary == null) {
-                    summary = RESTUtil.callUrl(url);
-                } else {
-                    alreadyInCache = true;
-                }
-                if (summary != null) {
-                    getExcludeJobResultsFromCompany(job, preferences, driver, cache, client, summary, alreadyInCache, matchingIncludeFilters);
-                } else {
-                    System.err.println("Could not get summary for " + job.getCompanyName());
-                }
-            }
-            return new ExcludeJobResults(true, false, false, matchingIncludeFilters, null);
-        }
-
-        if (deepSkipFilters.stream().anyMatch(f -> !f.include(preferences, job))) {
-            return new ExcludeJobResults(false, false, false, null, null);
-        }
-
-        Optional<JobFilter> firstExcludeFilter = alwaysExcludeDeepFiltersTrusted.stream().filter(f -> !f.include(preferences, job)).findFirst();
-        if (firstExcludeFilter.isPresent()) {
-            return new ExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
-        }
-
-        //TODO MOVE ALL FILTERS TO TRUSTED AND REMOVE THIS BLOCK
-        firstExcludeFilter = alwaysExcludeDeepFilters.stream().filter(f -> !f.include(preferences, job)).findFirst();
-        if (firstExcludeFilter.isPresent()) {
-            return new ExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
-        }
-
-
-        matchingIncludeFilters = alwaysIncludeDeepFilters.stream().filter(f -> f.include(preferences, job)).collect(Collectors.toList());
-        if (!matchingIncludeFilters.isEmpty()) {
-            //we are doing this so we can see all the reasons for including so we can make a good decision
-            if (job.getCompany() == null && url != null) {
-                CompanySummary summary = cache.getCompanySummary(job, client);
-                if (summary == null) {
-                    summary = RESTUtil.callUrl(url);
-                } else {
-                    alreadyInCache = true;
-                }
-                if (summary != null) {
-                    getExcludeJobResultsFromCompany(job, preferences, driver, cache, client, summary, alreadyInCache, matchingIncludeFilters);
-                } else {
-                    System.err.println("Could not get summary for " + job.getCompanyName());
-                }
-            }
-            return new ExcludeJobResults(true, false, false, matchingIncludeFilters, null);
-        }
-
-        firstExcludeFilter = lowPriorityDeepFiltersTrusted.stream().filter(f -> !f.include(preferences, job)).findFirst();
-        if (firstExcludeFilter.isPresent()) {
-            doubleClickOnElement(driver, job.getHideButton());
-            return new ExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
-        } else {
-            firstExcludeFilter = lowPriorityDeepFilters.stream().filter(f -> !f.include(preferences, job)).findFirst();
-            if (firstExcludeFilter.isPresent()) {
-                doubleClickOnElement(driver, job.getHideButton());
-                return new ExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
-            }
-        }
-
-        if (job.getCompany() == null && url != null) {
-            CompanySummary summary = cache.getCompanySummary(job, client);
-            if (summary == null) {
-                summary = RESTUtil.callUrl(url);
-            }
-            if (summary != null) {
-                ExcludeJobResults excludeJobResultsFromCompany = getExcludeJobResultsFromCompany(job, preferences, driver, cache, client, summary, false, null);
-                if (excludeJobResultsFromCompany != null) {
-                    if (excludeJobResultsFromCompany.includeFilters() != null) {
-                        //we want more include filters so that we can make a better decision (since there is only a few filters to look at this should not waste much time)
-                        matchingIncludeFilters = includeFilters.stream().filter(f -> f.include(preferences, job)).collect(Collectors.toList());
-                        if (matchingIncludeFilters != null) {
-                            excludeJobResultsFromCompany.includeFilters().addAll(matchingIncludeFilters);
-                        }
-                    }
-                    return excludeJobResultsFromCompany;
-                }
-            } else {
-                System.err.println("Could not get summary for " + job.getCompanyName());
-            }
-        }
-
-        matchingIncludeFilters = includeFilters.stream().filter(f -> f.include(preferences, job)).collect(Collectors.toList());
-        return new ExcludeJobResults(true, false, false, matchingIncludeFilters, null);
-    }
-
-    private static String buildCompanySummaryURL(Job job) {
-
-        String url =  null ;
-
-            if (CompanyUtil.isRecruiting(job.getCompanyName(),job.getIndustries()) && job.getRecruiterClient() != null) {
-                url="http://localhost:5000/company/summarize/"+addValueToUrl(url,null,job.getRecruiterClient(),true);
-            } else if (!CompanyUtil.isRecruiting(job.getCompanyName(),job.getIndustries())) {
-                url="http://localhost:5000/company/summarize/"+addValueToUrl(url,null,job.getCompanyName(),true);
-            }
-
-        //if this is a recruiter don't use the number of employees, industry as they don't apply to recruiting client
-        if (!CompanyUtil.isRecruiting(job.getCompanyName(),job.getIndustries())) {
-            url=addValueToUrl(url,"industry",job.getJobIndustry(),true);
-            url=addValueToUrl(url,"location",job.getLocation(),true);
-            url=addValueToUrl(url,"minEmployees",job.getMinimumNumEmployees(),false);
-            if(job.getMaximumNumEmployees()!=null && job.getMinimumNumEmployees()!=null && !job.getMaximumNumEmployees().equals(job.getMinimumNumEmployees())) {
-                url = addValueToUrl(url, "maxEmployees", job.getMaximumNumEmployees(), false);
-            }
-        }
-        return url;
-    }
-
-    private static String addValueToUrl(String url,String newValueName,Object newValue,boolean isString){
-        StringBuilder builder=new StringBuilder();
-        if(newValue!=null) {
-            if (newValueName != null) {
-                if (url.contains("?")) {
-                    builder.append("&");
-                } else {
-                    builder.append("?");
-                }
-                builder.append(newValueName + "=");
-            }
-            if (isString) {
-                try {
-                    builder.append(URLEncoder.encode((String) newValue, StandardCharsets.UTF_8.toString()).replaceAll("\\+", "%20"));
-                } catch (UnsupportedEncodingException e) {
-                    builder.append(newValue.toString());
-                }
-            } else {
-                builder.append(newValue.toString());
-            }
-        }
-        if(url==null){
-            url=builder.toString();
-        }else {
-            url += builder.toString();
-        }
-        return url;
-    }
-    private ExcludeJobResults getExcludeJobResultsFromCompany(Job job, Preferences preferences, WebDriver driver, Cache cache, MongoClient client, CompanySummary summary, boolean alreadyInCache
-            , List<JobFilter> externalMatchingIncludeFilters) {
-        Optional<JobFilter> firstExcludeFilter;
-        List<JobFilter> matchingIncludeFilters;
-        incorporateSummary(job, summary);
-        if (!alreadyInCache) {
-            cache.addCompanySummary(summary, job, client);
-
-        }
-        matchingIncludeFilters = companySummaryAlwaysIncludeFilters.stream().filter(f -> f.include(preferences, job)).collect(Collectors.toList());
-        if (!matchingIncludeFilters.isEmpty()) {
-            if (externalMatchingIncludeFilters != null) {
-                externalMatchingIncludeFilters.addAll(matchingIncludeFilters);
-            }
-            return new ExcludeJobResults(true, false, false, matchingIncludeFilters, null);
-        }
-
-        firstExcludeFilter = companySummaryExcludeFilters.stream().filter(f -> !f.include(preferences, job)).findFirst();
-
-        /*
-        if we have include filters already that means we have found a reason to always include and should use the job,company summary,
-        etc. to determine whether to manually accept
-         */
-        if (externalMatchingIncludeFilters == null) {
-            if (firstExcludeFilter.isPresent()) {
-                SeniorFilter seniorFilter=new SeniorFilter();
-                if(seniorFilter.isNotSenior(job)) {//TODO AFTER verify that AI works turn this back on
-                    return new ExcludeJobResults(false, false, false, null, firstExcludeFilter.get());
-                }else{
-                    doubleClickOnElement(driver, job.getHideButton());
-                    return new ExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
-                }
-
-            }
-        }
-
-        return null;
-    }
-
-
-    private void incorporateSummary(Job job, CompanySummary summary) {
-        if (summary.getSector() != null) {
-            job.getIndustries().add(summary.getSector());
-        }
-        if (!CompanyUtil.isRecruiting(job.getCompanyName(),job.getIndustries())){
-            summary.setName(job.getCompanyName());
-        } else if (job.getRecruiterClient() != null) {
-            summary.setName(job.getRecruiterClient());
-        }
-        job.setCompany(summary);
-    }
-
-    public boolean deepLoadJob(Job currentJob, WebDriver driver) {
-        boolean success = false;
-        int numAttempts = 0, maxAttempts = 10;
-        if (currentJob.getJobDetailsLink() != null) {
-            doubleClickOnElement(driver, currentJob.getJobDetailsLink());
-        }
-        /*
-        we need a way to test load pages.
-        doing it this way will bring us to a new page which will mess up loading
-        so this is only for testing.
-         */
-        //TODO do away with this path and make other path work with testing (it should be possible temporarily but the same goes for the URL)
-        else {
-            driver.get(currentJob.getUrl());//TODO move back to main when done
-        }
-        try {
-            if (driver != null) {
-                do {
-                    success = deepJobPopulator.populateJob(currentJob, driver);
-                    numAttempts++;
-                    if (!success && numAttempts < maxAttempts) {
-                        if (currentJob.getJobDetailsLink() != null) {
-                            doubleClickOnElement(driver, currentJob.getJobDetailsLink());
-                            Thread.sleep(5_000);
-                        }
-                    }
-                } while (!success && numAttempts < maxAttempts);
-            }
-
-        } catch (java.util.concurrent.TimeoutException | InterruptedException te) {
-            success = false;
-        }
-        return success;
-    }
-
-    private void excludeJob(WebDriver driver, Job currentJob) {
-        try {
-            doubleClickOnElement(driver, currentJob.getHideButton());
-        } catch (MoveTargetOutOfBoundsException ex) {
-            //swallow this so we continue to remaining work
-            //it is not a big deal if we don't hide one job
-            System.err.println("out of bounds: "+currentJob);
-            /*
-            System.err.println(STR."out of bounds: \{currentJob}");
-            String name = "Duke";
-            String info = STR."My name is \{name}";
-            System.out.println(info);
-
-             */
-        }
-    }
-
-
-    protected ShallowJobPopulator getShallowJobPopulator() {
-        return new LinkedInShallowJobPopulator();
-    }
-
 
     private Elements getJobItems(WebDriver driver) {
         WebElement ul = null;
@@ -719,7 +389,12 @@ public class LinkedInExtractor extends Extractor {
             if (noMatchingJobs(driver)) {
                 return List.of(1, 1);
             } else if (!isPageFullyLoaded(driver)) {
-                driver.navigate().refresh();//TODO at least sometimes we can't get pages when the page is not fully loaded, but we need to scroll to bottom
+                //we are on a jobs page and need to get back to the main jobs listing
+                if (driver.getCurrentUrl().startsWith("https://www.linkedin.com/jobs/view")) {
+                    driver.navigate().back();
+                } else {
+                    driver.navigate().refresh();//TODO at least sometimes we can't get pages when the page is not fully loaded, but we need to scroll to bottom
+                }
                 try {//waiting does not seem to help
                     Thread.sleep(5_000);
                     pageStateDiv = driver.findElement(By.className("artdeco-pagination__page-state"));
@@ -778,7 +453,7 @@ public class LinkedInExtractor extends Extractor {
                 driver.navigate().refresh();
                 try {
                     Thread.sleep(4_000);
-                }catch (Exception ex){
+                } catch (Exception ex) {
 
                 }
             }
@@ -861,12 +536,6 @@ public class LinkedInExtractor extends Extractor {
         return nextPage;
     }
 
-
-    public static void main(String[] args) {
-        LinkedInExtractor e = new LinkedInExtractor();
-
-
-    }
 
 
 }

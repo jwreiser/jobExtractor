@@ -15,13 +15,11 @@ public class LoAndNoCodeFilter implements JobFilter {
     public boolean include(Preferences preferences, Job job){
         String title = job.getTitle().toLowerCase();
         if (phrases.stream().anyMatch(p -> title.contains(p.toLowerCase()))) {
-            System.err.println("Lo Code Title ->reject: " + job);
             return false;
         }
         if(job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
             if (phrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
-                System.err.println("Lo Code description ->reject: " + job);
                 return false;
             }
         }

@@ -25,47 +25,39 @@ public class ConsultantFilter implements JobFilter {
             return true;
         }
         if(consultantCompanyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
-            System.err.println("Consultant company->reject: "+job);
             return false;
         }
 
         if(job.getIndustries()!=null &&  industries.stream().anyMatch(in->job.getIndustries().contains(in))){
-            System.err.println("Consultant industry ->reject: "+job);
             return false;
         }
 
         final String title =job.getTitle().toLowerCase();
         if(consultantKeywords.stream().anyMatch(k -> title.contains(k.toLowerCase()))){
-            System.err.println("Consultant title->reject: "+job);
             return false;
         }
 
         final String companyName=job.getCompanyName().toLowerCase();
         if(consultantKeywords.stream().anyMatch(k -> companyName.contains(k.toLowerCase()))){
-            System.err.println("Consultant company name contains ->reject: "+job);
             return false;
         }
 
 
         if(consultantKeywords.stream().anyMatch(k -> job.getCompanyName().contains(k.toLowerCase()))){
-            System.err.println("Consultant companyName->reject: "+job);
             return false;
         }
 
         if(job.getDescription()!=null){
             final String description=job.getDescription().toLowerCase();
             if(consultantKeywords.stream().anyMatch(k -> description.contains(k.toLowerCase()))){
-                System.err.println("Consultant description ->reject: "+job);
                 return false;
             }
             if(consultantCompanyNames.stream().anyMatch(c-> CompanyUtil.descriptionContainsCompanyName(c,job.getDescription()))){
-                System.err.println("consultant based on company description ->reject: " + job);
                 return false;
             }
         }
 
         if(job.getCompany()!=null && job.getCompany().getConsulting()!=null && job.getCompany().getConsulting()){
-            System.err.println("consultant based on company summary ->reject: " + job);
             return false;
         }
         return true;

@@ -1,0 +1,14 @@
+spring:
+  kafka:
+    bootstrap-servers: broker1:9092,broker2:9092
+
+app:
+  topic:
+    cache:
+      job: job_cache
+      summary: summary_cache
+logging:
+  level:
+    root: WARN
+    org.springframework.web: INFO
+    com.com.goodforallcode: DEBUG

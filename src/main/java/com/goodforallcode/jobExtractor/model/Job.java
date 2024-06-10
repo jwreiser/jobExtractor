@@ -88,8 +88,8 @@ public class Job {
     boolean contract=false;
     @JsonIgnore
     boolean acceptingApplications=true;
-    @JsonIgnore
-    boolean remote=false;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean remote=null;
     @JsonIgnore
     boolean reposted=false;
     @JsonIgnore

@@ -19,20 +19,16 @@ public class CyberSecurityCompanyFilter implements JobFilter {
     public boolean include(Preferences preferences, Job job) {
         final String title=job.getTitle().toLowerCase();
         if(titles.stream().anyMatch(k->title.contains(k.toLowerCase()))){
-            System.err.println("Cybersecurity title ->reject: "+job);
             return false;
         }
 
         if(title.contains("security")&& !title.contains("clearance")){
-            System.err.println("Cybersecurity title security ->reject: "+job);
             return false;
         }
         if(job.getCompanyName().toLowerCase().contains("security")){
-            System.err.println("Cybersecurity in company name->reject: "+job);
             return false;
         }
         if(companyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
-            System.err.println("Cybersecurity ->reject: "+job);
             return false;
         }
 

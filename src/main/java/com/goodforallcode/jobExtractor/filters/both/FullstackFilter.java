@@ -18,13 +18,11 @@ public class FullstackFilter implements JobFilter {
         String title =job.getTitle().toLowerCase();
 
         if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
-            System.err.println("full stack job title->reject: "+job);
             return false;
         }
         if(job.getDescription()!=null){
             final String descripton=job.getDescription().toLowerCase();
             if(descriptionKeywords.stream().anyMatch(k->descripton.contains(k.toLowerCase()))){
-                System.err.println("full stack job description->reject: "+job);
                 return false;
             }
         }

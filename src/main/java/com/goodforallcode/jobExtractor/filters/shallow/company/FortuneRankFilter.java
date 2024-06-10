@@ -37,7 +37,6 @@ public class FortuneRankFilter implements JobFilter {
         for (Map.Entry<String, Integer> entry : ranks.entrySet()) {
             if(entry.getKey().equals(job.getCompanyName())){
                 if(entry.getValue()<preferences.getMinFortuneRank()){
-                    System.err.println("rank "+entry.getValue()+" ->reject: " + job);
                     include=false;
                 }
                 break;

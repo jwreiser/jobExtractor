@@ -14,7 +14,6 @@ public class OpenCallTitleFilter implements JobFilter {
     public boolean include(Preferences preferences, Job job) {
         String title =job.getTitle().toLowerCase();
         if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
-            System.err.println("open call job title->reject: "+job);
             return false;
         }
         return true;

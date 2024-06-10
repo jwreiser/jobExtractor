@@ -15,17 +15,14 @@ public class FavoringCitizenFilter implements JobFilter {
     public boolean include(Preferences preferences, Job job){
         final String title = job.getTitle().toLowerCase();
         if(bothPhrases.stream().anyMatch(p->title.contains(p.toLowerCase()))){
-            System.err.println("citizen both title-> include: " + job);
             return true;
         }
         if (job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
             if (descriptionPhrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
-                System.err.println("citizen -> include: " + job);
                 return true;
             }
             if(bothPhrases.stream().anyMatch(p->description.contains(p.toLowerCase()))){
-                System.err.println("citizen both title-> include: " + job);
                 return true;
             }
         }

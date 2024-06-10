@@ -146,7 +146,6 @@ public class FilterFactory {
         filters.add(new ContentManagementFilter());
         filters.add(new HumanAndCustomerManagementAndSalesTechnologyFilter());
         filters.add(new EnterpriseApplicationsFilter());
-        filters.add(new InfrastructureSoftwareFilter());
         filters.add(new InsuranceFilter());
         filters.add(new IntegrationFilter());
         filters.add(new JeeFilter());
@@ -173,7 +172,6 @@ public class FilterFactory {
         filters.add(new CyberSecurityFilter());
         filters.add(new DataExchangeFilter());
         filters.add(new DefenseFilter());
-//        filters.add(new HumanAndCustomerManagementAndSalesTechnologyFilter());
         filters.add(new EntertainmentFilter());
 //        filters.add(new EnterpriseApplicationsFilter());
         filters.add(new ERPFilter());
@@ -182,7 +180,7 @@ public class FilterFactory {
         filters.add(new HumanAndCustomerManagementAndSalesTechnologyFilter());
 
         filters.add(new IdentityManagementFilter());
-//        filters.add(new InfrastructureSoftwareFilter());
+        filters.add(new InfrastructureSoftwareFilter());
 //        filters.add(new InsuranceFilter());
 //        filters.add(new IntegrationFilter());
 //        filters.add(new JeeFilter());
@@ -256,10 +254,8 @@ public class FilterFactory {
     public static List<JobFilter> getDeepFiltersAlwaysExcludeTrusted() {
         List<JobFilter> filters = new ArrayList<>();
 
-        filters.add(new AcceptingApplicationsFilter());
         filters.add(new AdvertisingFilter());
         filters.add(new ApplicationEngineerFilter());
-        filters.add(new AppliedFilter());
         filters.add(new BadManagementFilter());
         filters.add(new BettingFilter());
         filters.add(new BlockChainFilter());
@@ -272,10 +268,7 @@ public class FilterFactory {
         filters.add(new ConstructionFilter());
         filters.add(new ContractFilter());
         filters.add(new CustomerExperienceManagementFilter());
-        filters.add(new DefenseFilter());
         filters.add(new DevSecOpsDescriptionFilter());
-        filters.add(new DishonestCompanyFilter());
-        filters.add(new EnrollmentRequiredFilter());
         filters.add(new EntertainmentFilter());
         filters.add(new ERPFilter());
         filters.add(new FinanceFilter());
@@ -290,32 +283,18 @@ public class FilterFactory {
         filters.add(new HardwareFilter());
         filters.add(new InsuranceFilter());
         filters.add(new InternetTelevisionAndMobileCompanyFilter());
-        filters.add(new JobSecurityFilter(false));
 
-        filters.add(new LocalFilter());
-        filters.add(new MainframeFilter());
         filters.add(new ManufacturingFilter());
         filters.add(new MarketingFilter());
-        filters.add(new MegaBrandFilter());
-        filters.add(new MSTFilter());
-        filters.add(new NightShiftFilter());
-        filters.add(new NotEnglishFilter());
         filters.add(new NumApplicantsFilter(false,true));
         filters.add(new PharmacyFilter());
         filters.add(new PharmaceuticalFilter());
         filters.add(new PLMFilter());
 
-//        filters.add(new ProgrammingFrameworkFilter());
-        filters.add(new ProgrammingLanguageFilter(false));
-        filters.add(new PSTFilter());
         filters.add(new RealEstateFilter());
-        filters.add(new RegularlyWarringCountryCompanyFilter());
         filters.add(new ReligiousFilter());
         filters.add(new RemoteFilter());
         filters.add(new RetailFilter());
-        filters.add(new SeniorFilter());
-        filters.add(new SkillsDeepFilter());
-        filters.add(new StartupFilter());
         filters.add(new SupplyChainFilter());
         filters.add(new TelecomFilter());
         filters.add(new TransportationFilter());
@@ -323,10 +302,39 @@ public class FilterFactory {
         filters.add(new WorkLifeBalanceFilter(false));
 
         //lang
+        filters.add(new PythonFilter());
+        return filters;
+    }
+
+    public static List<JobFilter> getDeepFiltersExcludeEvenIfAlwaysInclude() {
+        List<JobFilter> filters = new ArrayList<>();
+
+        filters.add(new AcceptingApplicationsFilter());
+        filters.add(new AppliedFilter());
+        filters.add(new DefenseFilter());
+        filters.add(new DishonestCompanyFilter());
+        filters.add(new EnrollmentRequiredFilter());
+        filters.add(new FrontEndFilter());
+        filters.add(new FullstackFilter());
+        filters.add(new JobSecurityFilter(false));
+        filters.add(new LocalFilter());
+        filters.add(new MainframeFilter());
+        filters.add(new MegaBrandFilter());
+        filters.add(new MSTFilter());
+        filters.add(new NightShiftFilter());
+        filters.add(new NotEnglishFilter());
+        filters.add(new NumApplicantsFilter(false,true));
+//        filters.add(new ProgrammingFrameworkFilter());
+        filters.add(new ProgrammingLanguageFilter(false));
+        filters.add(new PSTFilter());
+        filters.add(new RegularlyWarringCountryCompanyFilter());
+        filters.add(new SkillsDeepFilter());
+        filters.add(new StartupFilter());
+
+        //lang
         filters.add(new BasicFilter());
         filters.add(new JavascriptFilter());
         filters.add(new MicrosoftStackFilter());
-        filters.add(new PythonFilter());
         return filters;
     }
     public static List<JobFilter> getAlwaysIncludeDeepFilters() {

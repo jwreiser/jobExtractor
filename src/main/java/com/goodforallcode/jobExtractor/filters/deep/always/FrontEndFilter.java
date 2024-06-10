@@ -34,11 +34,9 @@ public class FrontEndFilter implements JobFilter {
 
         //if this is a job title we are not qualified for
         if(jobTitleStartsWithPhrases.stream().anyMatch(t->title.startsWith(t.toLowerCase()))){
-            System.err.println("Front end job title->reject: "+job);
             return false;
         }
         if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
-            System.err.println("Front end job title->reject: "+job);
             return false;
         }
         if(job.getDescription()!=null) {
@@ -46,12 +44,10 @@ public class FrontEndFilter implements JobFilter {
 
             long mainCount = keywords.stream().filter(k -> text.contains(k.toLowerCase())).count();
             if (mainCount > 3) {
-                System.err.println("front end count " + mainCount + " ->reject: " + job);
                 return false;
             }
             long exclusiveCount = exclusiveKeywords.stream().filter(k -> text.contains(k.toLowerCase())).count();
             if (exclusiveCount > 1 || (exclusiveCount > 0 && mainCount > 1)) {
-                System.err.println("front end exclusive ->reject: " + job);
                 return false;
             }
         }

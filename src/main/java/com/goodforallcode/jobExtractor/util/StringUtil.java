@@ -72,7 +72,7 @@ Must keep
 
 
             "facilitate","features", "firm","first", "fit", "focus", "focused","follow", "following",
-            "for", "founded","forefront","from", "functional", "future",
+            "for", "founded","forefront","from", "fun","functional", "future",
             "gain","gap","get","gets", "global",  "go", "good",
             "great","greetings","grow","growing","growth", "had", "hands",
             "harness","hasn't", "haven't", "hadn't", "has", "have",
@@ -108,7 +108,7 @@ Must keep
 
 
             "package","page", "paid", "parental","part", "participate","partner", "partnering", "path","pdf",
-            "performance", "period","personal","perspectives","phone", "platform","play","plays",
+            "people","performance", "period","personal","perspectives","phone", "platform","play","plays",
             "please",
             "position","positions", "power","prefers","premier","present", "presented","privately",
             "pro","proactive","problem","problems",
@@ -139,12 +139,12 @@ Must keep
 
             "talent", "talented", "team", "teams", "tech", "technical", "technology",
             "technologies", "than", "that",
-            "the", "their", "they", "think","thinking", "this",
+            "the", "their", "they", "they're","think","thinking", "this",
             "then", "these", "those", "thought", "thrive","through","throughout","thru",
             "tier","time","title", "to", "today",
             "too", "tooling", "tools", "top","towards","track",
             "track", "training","transforming",
-            "transferring", "tuition","two","type",
+            "transferring", "truly","tuition","two","type",
 
 
 

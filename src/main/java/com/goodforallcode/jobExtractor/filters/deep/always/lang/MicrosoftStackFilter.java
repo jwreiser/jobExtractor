@@ -27,11 +27,9 @@ public class MicrosoftStackFilter implements JobFilter {
             return false;
         }
         if(singlePointKeywords.stream().anyMatch(k->title.contains(k.toLowerCase()))){
-            System.err.println("Microsoft stack single point title ->reject: " + job);
             return false;
         }
         if(doublePointKeywords.stream().anyMatch(k->title.contains(k.toLowerCase()))){
-            System.err.println("Microsoft stack double point title ->reject: " + job);
             return false;
         }
         if(job.getDescription()!=null) {
@@ -40,10 +38,6 @@ public class MicrosoftStackFilter implements JobFilter {
             long doublePointCount = 2 * doublePointKeywords.stream().filter(k -> text.contains(k.toLowerCase())).count();
             long quadPointCount = 4 * quadPointKeywords.stream().filter(k -> text.contains(k.toLowerCase())).count();
             if ((singlePointCount + doublePointCount + quadPointCount) > 3) {
-                System.err.println(".Net single point " + singlePointCount
-                        + " doublePointCount " + doublePointCount +
-                        " quadPointCount " + quadPointCount +
-                        " ->reject: " + job);
                 return false;
             }
         }

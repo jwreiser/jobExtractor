@@ -48,20 +48,16 @@ public class WorkLifeBalanceFilter implements JobFilter {
             return true;
         }
         if(goodCompanies.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
-            System.err.println("good work life balance company ->include: " + job);
             return true;
         }
 
         if(badCompanies.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
-            System.err.println("bad work life balance company ->reject: " + job);
             return false;
         }
         if(fastCompanies.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
-            System.err.println("bad work life balance company fast ->reject: " + job);
             return false;
         }
         if(onCallCompanies.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
-            System.err.println("bad work life balance company on call ->reject: " + job);
             return false;
         }
         if(job.getDescription()!=null) {
@@ -70,26 +66,21 @@ public class WorkLifeBalanceFilter implements JobFilter {
                 return true;
             }
             if (phrases.stream().anyMatch(p -> description.contains(p))) {
-                System.err.println("work life balance ->reject: " + job);
                 return false;
             }
         }
         if(job.getCompany()!=null){
             CompanySummary sum = job.getCompany();
             if(sum.getWorkLifeBalance()!=null && !sum.getWorkLifeBalance()){
-                System.err.println("work life balance company ->reject: " + job);
                 return false;
             }
             if(sum.getFastPaced()!=null && !sum.getFastPaced()){
-                System.err.println("work life balance company fast->reject: " + job);
                 return false;
             }
             if(sum.getSoftwareEngineerHighOvertime()!=null && sum.getSoftwareEngineerHighOvertime()){
-                System.err.println("work life balance company OT->reject: " + job);
                 return false;
             }
             if(sum.getSoftwareEngineerAfterHoursSupport()!=null && sum.getSoftwareEngineerAfterHoursSupport()){
-                System.err.println("work life balance company after hours support->reject: " + job);
                 return false;
             }
         }

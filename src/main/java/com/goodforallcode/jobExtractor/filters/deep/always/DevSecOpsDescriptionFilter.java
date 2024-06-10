@@ -18,7 +18,6 @@ public class DevSecOpsDescriptionFilter implements JobFilter {
             String text = job.getDescription().toLowerCase();
             long count = keywords.stream().filter(k -> text.contains(k.toLowerCase())).count();
             if (count > 3) {
-                System.err.println("DevSecOps " + count + " ->reject: " + job);
                 return false;
             }
         }

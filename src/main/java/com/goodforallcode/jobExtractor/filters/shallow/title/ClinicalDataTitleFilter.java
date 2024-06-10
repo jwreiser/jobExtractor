@@ -15,7 +15,6 @@ public class ClinicalDataTitleFilter implements JobFilter {
         String title =job.getTitle().toLowerCase();
 
         if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
-            System.err.println("Coder job title->reject: "+job);
             return false;
         }
         return true;

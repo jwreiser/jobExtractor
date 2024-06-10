@@ -23,7 +23,7 @@ public class ProgrammingLanguageFilter implements JobFilter {
      * scala: scalable perl: properly
      */
     public static List<String> languages = List.of(
-            "Ruby", "Rust", "Golang", "Net ", "DotNet", ".Net", "iOS ", "React ",
+            "Ruby", " Rust", "Golang", "Net ", "DotNet", ".Net", "iOS ", "React ",
             "Angular", "Typescript", "Javascript", "CNO", "C#", "C++", "Visual C", "Scala ",
             "Swift ", "Fortran","Delphi","Ignition",
             "Dart", " C ", " R ", "PHP", "Apex", "React Native",
@@ -54,31 +54,26 @@ public class ProgrammingLanguageFilter implements JobFilter {
 
         if (preferences.getProgrammingLanguages().stream().anyMatch(l ->
                 title.contains(l.toLowerCase()))) {
-            System.err.println("title Language ->include: " + job);
             return true;
         }
         if (preferences.getProgrammingLanguages().stream().anyMatch(l ->
                 job.getSkills().contains(l))) {
-            System.err.println("Skill Language ->include: " + job);
             return true;
         }
         if (!include) {
 
 
             if (titleContainsUnknownLanguage(job.getTitle())) {
-                System.err.println("titleContainsUnknownLanguage ->reject: " + job);
                 return false;
             }
 
             //don't reject shared lanaguages with conjunctions in the title
             if (!title.contains(" and ") && !title.contains("/")) {
                 if (sharedLanguages.stream().anyMatch(l -> title.contains(l.toLowerCase() + " engineer"))) {
-                    System.err.println("shared language engineer ->reject: " + job);
                     return false;
                 }
 
                 if (sharedLanguages.stream().anyMatch(l -> title.contains(l.toLowerCase() + " developer"))) {
-                    System.err.println("shared language developer ->reject: " + job);
                     return false;
                 }
             }
@@ -87,28 +82,25 @@ public class ProgrammingLanguageFilter implements JobFilter {
             if (job.getDescription() != null) {
                 final String description = job.getDescription().toLowerCase();
                 if (languages.stream().anyMatch(l -> description.contains("strong knowledge of " + l.toLowerCase()))) {
-                    System.err.println("strong knowledge of ->reject: " + job);
                     return false;
                 }
 
                 if (languages.stream().anyMatch(l -> description.contains("advanced knowledge of " + l.toLowerCase()))) {
-                    System.err.println("advanced knowledge of ->reject: " + job);
                     return false;
                 }
 
                 if (containsUnknownLanguage(description, preferences)) {
-                    System.err.println("language contains unknown->reject: " + job);
                     return false;
                 }
 
                 if (notEnoughExperience(description, preferences)) {
-                    System.err.println("language not Enough Experience ->reject: " + job);
                     return false;
                 }
 
 
             }
         }
+
         return !include;
     }
 
@@ -150,8 +142,8 @@ public class ProgrammingLanguageFilter implements JobFilter {
     public boolean containsUnknownLanguage(String descriptionLower, Preferences preferences) {
         List<String> expertPatterns = List.of("expert"+getUntilNextBoundary(), "strong[^\\d\\)\\.\\;]*");
         List<String> knowledgePatterns = List.of("proficien"+getUntilNextBoundary(), "fluency[^\\d\\)\\.\\;]*"
-                , "fluent[^\\d\\)\\.\\;]*", "with"+getUntilNextBoundary(),
-                "using"+getUntilNextBoundary());
+                , "fluent[^\\d\\)\\.\\;]*", "with"+getUntilNextBoundary());
+        //we don't want using or with as those don't demand deep knowledge and may not be strictly required
         boolean contains = false;
         if (expertPatterns.stream().anyMatch(p -> containsUnknownLanguage(p, descriptionLower, preferences, true))) {
             contains = true;
@@ -181,7 +173,6 @@ public class ProgrammingLanguageFilter implements JobFilter {
         if (sharedLanguages.stream().anyMatch(l ->
                 RegexUtil.matchesPattern(descriptionLower, patternText +
                         prepareLanguageForRegularExpression(l)))) {
-            System.err.println("language contains shared unknown->reject: " + descriptionLower);
             containsUnknownLanguage = true;
         }
         return containsUnknownLanguage;

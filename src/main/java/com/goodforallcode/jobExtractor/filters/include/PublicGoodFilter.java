@@ -15,23 +15,19 @@ public class PublicGoodFilter implements JobFilter {
 
     public boolean include(Preferences preferences, Job job) {
         if (companyNames.stream().anyMatch(c -> job.getCompanyName().equals(c))) {
-            System.err.println("public good company name-> include: " + job);
             return true;
         }
         if (job.getDescription() != null) {
             final String description = job.getDescription().toLowerCase();
             if (phrases.stream().anyMatch(p -> description.contains(p))) {
-                System.err.println("public good -> include: " + job);
                 return true;
             }
             if (companyNames.stream().anyMatch(c -> CompanyUtil.descriptionContainsCompanyName(c, job.getDescription()))) {
-                System.err.println("public good based on company description ->reject: " + job);
                 return false;
             }
         }
         if (job.getIndustries() != null) {
             if (industryPhrases.stream().anyMatch(p -> job.getIndustries().contains(p))) {
-                System.err.println("public good -> include: " + job);
                 return true;
             }
 

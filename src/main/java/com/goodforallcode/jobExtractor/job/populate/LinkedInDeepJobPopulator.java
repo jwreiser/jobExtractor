@@ -155,7 +155,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
 
 
             for (Element span : element.getElementsByTag("span")) {
-                text = span.text();
+                text = span.text().replaceAll("Matches your job preferences","").replaceAll(",","").replaceAll("workplace type is","");
                 if (text.contains("employees")) {
                     job.setMinimumNumEmployees(getValueFromTwoWordText(text, 1).intValue());
                     job.setMaximumNumEmployees(getValueFromTwoWordText(text, 2).intValue());
@@ -171,9 +171,13 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
                     job.setContract(true);
                     foundInsights++;
                 }
-                if (text.equals("Remote")) {
+                if (text.startsWith("Remote")) {
                     job.setRemote(true);
                     foundInsights++;
+                }else if (text.startsWith("Hybrid")) {
+                    job.setRemote(false);
+                }else if (text.startsWith("On-site")) {
+                    job.setRemote(false);
                 }
                 if (foundInsights >= knownInsights) {
                     break;

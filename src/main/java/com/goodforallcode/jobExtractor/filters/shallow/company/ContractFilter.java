@@ -33,18 +33,15 @@ public class ContractFilter implements JobFilter {
 
 
         if(job.isContract()){
-            System.err.println("Contract based on flag -> reject: "+job);
             return false;
         }
 
         if(companyNames.stream().anyMatch(c-> CompanyUtil.containsCompanyName(c,job))){
-            System.err.println("Contract Based Employer ->reject: "+job);
             return false;
         }
 
         final String title= job.getTitle().toLowerCase();
         if(bothPhrases.stream().anyMatch(p->title.contains(p.toLowerCase()))){
-            System.err.println("Contract Based on title ->reject: "+job);
             return false;
         }
 
@@ -52,13 +49,11 @@ public class ContractFilter implements JobFilter {
         if(job.getDescription()!=null){
             final String description= job.getDescription().toLowerCase();
             if(bothPhrases.stream().anyMatch(p->description.contains(p.toLowerCase()))){
-                System.err.println("Contract Based on description ->reject: "+job);
                 return false;
             }
         }
 
         if(job.getCompany()!=null && job.getCompany().getContractor()!=null && job.getCompany().getContractor()){
-            System.err.println("Contract based on company summary ->reject: " + job);
             return false;
         }
         return true;

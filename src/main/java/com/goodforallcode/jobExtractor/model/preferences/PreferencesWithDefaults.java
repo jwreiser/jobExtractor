@@ -12,6 +12,7 @@ import java.util.Optional;
 public class PreferencesWithDefaults implements Preferences {
     Integer minFortuneRank=null;
     boolean excludePoorWorkLifeBalance=true;
+    boolean excludeNonRemote=true;
 
     public boolean excludeContractJobs=true;
     public boolean excludeConsultant=false;
@@ -58,6 +59,7 @@ public class PreferencesWithDefaults implements Preferences {
     boolean excludeRealEstate=false;
     boolean excludeApplied=true;
     List<String> locationPhrases=new ArrayList<>();
+    List<String> missingSkills=new ArrayList<>();
     List<String> programmingLanguages=new ArrayList<>();
 
     List<String> programmingFrameworks=new ArrayList<>();

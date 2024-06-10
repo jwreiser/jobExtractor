@@ -21,7 +21,6 @@ public class ApplicationEngineerFilter implements JobFilter {
                 return true;
             }
             if (notADeveloperKeywords.stream().anyMatch(k->text.contains(k.toLowerCase()))) {
-                System.err.println("not a developer application engineer description ->reject: " + job);
                 return false;
             }
         }

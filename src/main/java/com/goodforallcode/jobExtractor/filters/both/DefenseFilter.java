@@ -19,7 +19,6 @@ public class DefenseFilter implements JobFilter {
         if(job.getIndustries()!=null){
             for(String industry:job.getIndustries()) {
                 if (industry.startsWith("Defense ")) {
-                    System.err.println("military industry ->reject: " + job);
                     return false;
                 }
             }
@@ -28,19 +27,16 @@ public class DefenseFilter implements JobFilter {
         if(job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
             if (phrases.stream().anyMatch(k -> description.contains(k.toLowerCase()))) {
-                System.err.println("military defense ->reject: " + job);
                 return false;
             }
             if(description.contains("intelligence") && !description.contains(" ai ")
                     && !description.contains("/ai ") && !description.contains(" ai/")
                     && !description.contains(" artificial ") && !description.contains(" business ") ){
-                System.err.println("defense (intelligence) ->reject: " + job);
                 return false;
             }
         }
 
         if(job.getCompany()!=null && job.getCompany().getDefense()!=null && job.getCompany().getDefense()){
-            System.err.println("defense based on company summary ->reject: " + job);
             return false;
         }
         return true;

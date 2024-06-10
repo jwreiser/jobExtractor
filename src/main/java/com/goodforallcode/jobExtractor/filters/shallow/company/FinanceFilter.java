@@ -7,6 +7,9 @@ import com.goodforallcode.jobExtractor.util.CompanyUtil;
 
 import java.util.List;
 
+/**
+ * This is intended to catch larger financial companies. Credit Unions that may be more aabout people than money are not included optimistically
+ */
 public class FinanceFilter implements JobFilter {
     /**
      * Exceptions
@@ -21,38 +24,32 @@ public class FinanceFilter implements JobFilter {
     List<String> titlePhrases =List.of("Simcorp");
     List<String> industries =List.of("Venture Capital and Private Equity Principals",
             "Financial Services","Finance","Investment Banking","Investment Banking & Asset Management");
-    List<String> companyNameContainsKeywords =List.of("Mortgage","Credit Union"," Bank" );
+    List<String> companyNameContainsKeywords =List.of("Mortgage"," Bank" );
 
     @Override
     public boolean include(Preferences preferences, Job job) {
         if(job.getIndustries()!=null && industries.stream().anyMatch(i->job.getIndustries(). contains(i))){
-            System.err.println("Finance company industry ->reject: "+job);
             return false;
         }
         final String title= job.getTitle().toLowerCase();
         if(titlePhrases.stream().anyMatch(k->title.contains(k.toLowerCase()))){
-            System.err.println("Finance title  ->reject: "+job);
             return false;
         }
 
         final String companyName= job.getCompanyName().toLowerCase();
         if(companyNameContainsKeywords.stream().anyMatch(k->companyName.contains(k.toLowerCase()))){
-            System.err.println("Finance company name includes->reject: "+job);
             return false;
         }
 
         if(companyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
-            System.err.println("Finance company name ->reject: "+job);
             return false;
         }
         if(job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
             if (descriptionPhrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
-                System.err.println("Finance description  ->reject: " + job);
                 return false;
             }
             if(companyNames.stream().anyMatch(c-> CompanyUtil.descriptionContainsCompanyName(c,job.getDescription()))){
-                System.err.println("finance based on company description ->reject: " + job);
                 return false;
             }
         }

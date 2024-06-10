@@ -15,7 +15,6 @@ public class OperatingSystemCompanyFilter implements JobFilter {
 
 
         if(companyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
-            System.err.println("OS ->reject: "+job);
             return false;
         }
         return true;

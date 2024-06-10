@@ -24,22 +24,18 @@ public class HardwareFilter implements JobFilter {
 
     public boolean include(Preferences preferences, Job job){
         if(companyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
-            System.err.println("hardware knowledgeable company name ->reject: " + job);
             return false;
         }
         final String title = job.getTitle().toLowerCase();
         if (bothPhrases.stream().anyMatch(p -> title.contains(p.toLowerCase()))) {
-            System.err.println("hardware knowledgeable title ->reject: " + job);
             return false;
         }
         if (titlePhrases.stream().anyMatch(p -> title.contains(p.toLowerCase()))) {
-            System.err.println("hardware knowledgeable title only  ->reject: " + job);
             return false;
         }
         if(job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
             if (bothPhrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
-                System.err.println("embedded description ->reject: " + job);
                 return false;
             }
         }

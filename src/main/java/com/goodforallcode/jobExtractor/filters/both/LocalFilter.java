@@ -15,8 +15,8 @@ public class LocalFilter implements JobFilter {
             "Primary Location","within commute distance","must be living");
 
     List<String> notLocalPhrases =List.of("applications for remote work may be considered",
-            "Remote in United States","remote within United States","remote from within United States",
-            "Must reside in United States","Must reside in the United States");
+            "Remote in United States","Remote in USA","remote within United States","remote from within United States","remote from within USA",
+            "reside in United States","reside in the USA","Remote within USA");
 
     public final static List<String> americanCitiesAndStates=List.of("Alabama","Alexander City","Andalusia","Anniston",
                 "Athens","Atmore","Auburn","Austin","Bessemer","Birmingham","Chickasaw","Clanton","Cullman","Decatur","Demopolis",
@@ -56,7 +56,6 @@ public class LocalFilter implements JobFilter {
 
         if (localPhrases.stream().anyMatch(k->title.contains(k.toLowerCase()))){
             if(preferences.getLocationPhrases().stream().noneMatch(p->title.contains(" "+p+" ")||title.contains(p+",")||title.contains(","+p))) {
-                System.err.println("local title->reject: " + job);
                 return false;
             }
         }
@@ -68,12 +67,10 @@ public class LocalFilter implements JobFilter {
             }
 
             if(notLocalPhrases.stream().anyMatch(p->description.contains(p.toLowerCase()))){
-                System.err.println("local  description->include: " + job);
                 return true;
             }
             if (localPhrases.stream().anyMatch(k -> description.contains(k.toLowerCase()))) {
                 if(preferences.getLocationPhrases().stream().noneMatch(p->description.contains(" "+p+" ")||description.contains(p+",")||description.contains(","+p))) {
-                    System.err.println("Not local  description->reject: " + job);
                     return false;
                 }
 

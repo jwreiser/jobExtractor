@@ -17,7 +17,6 @@ public class AITitleFilter implements JobFilter {
 
         //if this is a job title we are not qualified for
         if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
-            System.err.println("AI title->reject: "+job);
             return false;
         }
         return true;

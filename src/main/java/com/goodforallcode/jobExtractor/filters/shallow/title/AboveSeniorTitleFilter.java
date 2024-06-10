@@ -10,7 +10,7 @@ import java.util.List;
 public class AboveSeniorTitleFilter implements JobFilter {
 
 
-    List<String> titleOnlyPhrases =List.of( "stf ","director", "VP ","staff","lead","manager"
+    List<String> titleOnlyPhrases =List.of( "stf ","director", "VP ","staff","lead ","manager"
             ,"architect","administrator","chief","principal","Systems Development","Systems Developer");
 
     @Override
@@ -21,7 +21,6 @@ public class AboveSeniorTitleFilter implements JobFilter {
         String title =job.getTitle().toLowerCase();
 
         if(titleOnlyPhrases.stream().anyMatch(k->title.contains(k.toLowerCase()))){
-            System.err.println("Above Senior title only ->reject: "+job);
             return false;
         }
 

@@ -22,14 +22,12 @@ public class FresherAndInternLevelFilter implements JobFilter {
         }
 
         if (titleKeywords.stream().anyMatch(k -> title.contains(k.toLowerCase()))) {
-            System.err.println("fresher and intern title->reject: " + job);
             return false;
 
         }
         if (job.getDescription() != null) {
             String description = job.getDescription().toLowerCase();
             if (descriptionKeywords.stream().anyMatch(k -> description.contains(k.toLowerCase()))) {
-                System.err.println("fresher and intern description ->reject: " + job);
                 return false;
             }
         }

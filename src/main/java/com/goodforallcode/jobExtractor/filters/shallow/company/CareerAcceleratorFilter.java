@@ -15,7 +15,6 @@ public class CareerAcceleratorFilter implements JobFilter {
     public boolean include(Preferences preferences, Job job) {
 
         if(companyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
-            System.err.println("Career Accelerator company name ->reject: "+job);
             return false;
         }
 

@@ -13,7 +13,6 @@ public class ModernizingMicroservicesFilter implements JobFilter {
         if (job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
             if (phrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
-                System.err.println("microservice or modernization -> include: " + job);
                 return true;
             }
         }

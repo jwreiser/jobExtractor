@@ -10,7 +10,6 @@ public class OldAgeFilter implements JobFilter {
         if (preferences.getMaxJobAgeInDays()!=null &&
                 job.getJobAgeInDays()!=null
         &&(job.getJobAgeInDays()> preferences.getMaxJobAgeInDays())){
-            System.err.println("Job too old->reject: "+job);
             return false;
         }else{
             return true;

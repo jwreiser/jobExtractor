@@ -19,10 +19,11 @@ public class RemoteFilter implements JobFilter {
     "Remote till pandemic","Remote til pandemic","able to travel","Future onsite work is required",
 "week onsite","a hybrid position","(Hybrid)","(Hybrid role)","in office days per ",
     "(Onsite / Hybrid)","is not remote,","is not remote ","is not remote.","week onsite","onsite in",
-            "is based in ");
+            "is based in ","(On-site)","(Onsite)");
+
     List<String> notRemoteEndsWith =List.of("- Hybrid","-Hybrid","- Onsite","-Onsite",
-            ": Hybrid",":Hybrid",": Onsite",":Onsite","- Onsite/Hybrid","-Onsite/Hybrid",":Onsite/Hybrid",
-            ": Onsite/Hybrid","- ONSITE HYBRID");
+            ": Hybrid",":Hybrid",": Onsite",":Onsite","- Onsite/Hybrid","-Onsite/Hybrid","(Onsite",
+            "- ONSITE HYBRID");
     List<String> notRemoteStartsWith =List.of("Hybrid:","Hybrid-","Onsite:","Onsite-");
 
     List<String>remotePhrases=List.of("100% remote","Open for remote","remote or hybrid","WFH","Work From Home"
@@ -31,8 +32,14 @@ public class RemoteFilter implements JobFilter {
     ,"full or partial remote");
     @Override
     public boolean include(Preferences preferences, Job job) {
-        final String title=job.getTitle().toLowerCase();
+        if(!preferences.isExcludeNonRemote()){
+            return true;
+        }
 
+        final String title=job.getTitle().toLowerCase();
+        if(job.getRemote()!=null && !job.getRemote()){
+            return false;
+        }
         if(isTitleRemote(title)!=null ){
             return isTitleRemote(title);
         }

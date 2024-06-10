@@ -19,11 +19,9 @@ public class BusinessIntelligenceFilter implements JobFilter {
     public boolean include(Preferences preferences, Job job) {
         final String title = job.getTitle().toLowerCase();
         if (titles.stream().anyMatch(k -> title.contains(k.toLowerCase()))) {
-            System.err.println("intelligence title only ->reject: " + job);
             return false;
         }
         if (keywords.stream().anyMatch(k -> title.contains(k.toLowerCase()))) {
-            System.err.println("intelligence title ->reject: " + job);
             return false;
         }
 
@@ -31,7 +29,6 @@ public class BusinessIntelligenceFilter implements JobFilter {
             String text = job.getDescription().toLowerCase();
 
             if (keywords.stream().filter(k -> text.contains(k.toLowerCase())).count() > 1) {
-                System.err.println("intelligence description ->reject: " + job);
                 return false;
             }
         }

@@ -14,7 +14,7 @@ public class Year2ToMidFilter implements JobFilter {
             "Early career","Entry level",
     "associate","junior","jr","entry level","intermediate");
 
-    static List<String> titleKeywords =List.of("entry","early","mid");
+    static List<String> titleKeywords =List.of("entry"," early","mid");
 
     @Override
     public boolean include(Preferences preferences, Job job) {
@@ -33,7 +33,6 @@ public class Year2ToMidFilter implements JobFilter {
         if(job.getDescription()!=null) {
             String description= job.getDescription().toLowerCase();
             if (both.stream().anyMatch(k -> description.contains(k.toLowerCase()))) {
-                System.err.println("middle both description ->include: " + job);
                 return true;
             }
         }

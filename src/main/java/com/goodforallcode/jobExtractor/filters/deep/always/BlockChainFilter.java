@@ -19,18 +19,15 @@ public class BlockChainFilter implements JobFilter {
             return true;
         }
         if(companyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
-            System.err.println("blockchain company name->reject: " + job);
             return false;
         }
         final String title= job.getTitle().toLowerCase();
         if (keywords.stream().anyMatch(k -> title.contains(k.toLowerCase()))) {
-            System.err.println("blockchain title ->reject: " + job);
             return false;
         }
         if(job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
             if (keywords.stream().anyMatch(k -> description.contains(k.toLowerCase()))) {
-                System.err.println("blockchain description ->reject: " + job);
                 return false;
             }
         }

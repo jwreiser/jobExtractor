@@ -20,11 +20,9 @@ public class DataFocusedTitleFilter implements JobFilter {
         }
         //if this is a job title we are not qualified for
         if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
-            System.err.println("Data focused job title->reject: "+job);
             return false;
         }
         if(title.startsWith("ETL ")){
-            System.err.println("Data focused job title->reject: "+job);
             return false;
         }
 

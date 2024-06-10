@@ -28,7 +28,6 @@ public class PeopleFocusedFilter implements JobFilter {
             if(job.getDescription()!=null) {
                 String description = job.getDescription().toLowerCase();
                 if (phrases.stream().anyMatch(p -> description.contains(p))) {
-                    System.err.println("people focused -> include: " + job);
                     return true;
                 }
             }

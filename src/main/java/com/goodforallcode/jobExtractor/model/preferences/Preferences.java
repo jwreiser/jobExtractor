@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public interface Preferences {
      boolean isExcludeContractJobs();
+     boolean isExcludeNonRemote();
+     void setExcludeNonRemote(boolean exclude);
      boolean isExcludeApplied();
 
      Optional<Integer> getIncludedContractMinimumDuration();
@@ -89,6 +91,8 @@ public interface Preferences {
      void setSkills(List<String> skills);
      List<String>  getProgrammingFrameworks();
      void setProgrammingLanguages(List<String> languages);
+     List<String>  getMissingSkills();
+     void setMissingSkills(List<String> missingSkills);
      void setProgrammingFrameworks(List<String> languages);
      List<String> getDesiredClearancePhrases();
 

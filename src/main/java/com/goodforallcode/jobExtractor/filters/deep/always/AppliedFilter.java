@@ -9,7 +9,6 @@ public class AppliedFilter implements JobFilter {
     @Override
     public boolean include(Preferences preferences, Job job) {
         if (job.isApplied()) {
-            System.err.println("Applied ->reject: " + job);
             return false;
         }
         return true;

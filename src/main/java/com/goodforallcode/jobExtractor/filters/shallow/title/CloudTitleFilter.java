@@ -10,7 +10,7 @@ import java.util.List;
 public class CloudTitleFilter implements JobFilter {
     List<String> descriptionKeywords = List.of("server-less","serverless"," SNS"
             ," SQS"," API Gateway"," EventBridge"," DynamoDB"," Redshift"," S3","EC2"," AWS ",
-            "cloud-native","cloud native","Matillion", " aws "," Epic Client "," Epic ancillary "," Epic system "
+            "cloud-native","cloud native","Matillion", " Epic Client "," Epic ancillary "," Epic system "
             ," Epic environment","Hyperspace","Interconnect");
 
     List<String> bothKeywords = List.of("SailPoint","Apigee","Sail point",
@@ -31,16 +31,13 @@ public class CloudTitleFilter implements JobFilter {
             return true;
         }
         if(companyNames.stream().anyMatch(cn-> CompanyUtil.containsCompanyName(cn,job))){
-            System.err.println("cloud company name ->reject: " + job);
             return false;
         }
         String title = job.getTitle().toLowerCase();
         if(jobTitlePhrases.stream().anyMatch(p->title.contains(p.toLowerCase()))){
-            System.err.println("cloud title only ->reject: " + job);
             return false;
         }
         if(bothKeywords.stream().anyMatch(p->title.contains(p.toLowerCase()))){
-            System.err.println("cloud title both ->reject: " + job);
             return false;
         }
 

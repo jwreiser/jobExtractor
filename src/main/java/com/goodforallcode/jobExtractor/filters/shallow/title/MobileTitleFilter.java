@@ -11,14 +11,13 @@ import java.util.List;
  */
 public class MobileTitleFilter implements JobFilter {
     List<String> jobTitlePhrases=List.of(
-            "Mobile","Android","iOS");
+            "Mobile","Android"," iOS");
     @Override
     public boolean include(Preferences preferences, Job job) {
         String title =job.getTitle().toLowerCase();
 
         //if this is a job title we are not qualified for
         if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
-            System.err.println("Mobile job title->reject: "+job);
             return false;
         }
         return true;
