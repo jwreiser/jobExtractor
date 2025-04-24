@@ -1,6 +1,5 @@
 package com.goodforallcode.jobExtractor.model.preferences;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,8 +58,8 @@ public interface Preferences {
      void setMaxYearsOfExperience(int value);
      int getMaxYearsOfExperienceForUnlistedSkill();
      void setMaxYearsOfExperienceForUnlistedSkill(int value);
-     int getMinContractRate();
-     int getMaxContractRate();
+     int getMinHourlyRate();
+     int getMaxHourlyRate();
      Integer getMinYearlySalary();
      Integer getMaxLevel();
      void setMaxLevel(Integer level);
@@ -68,8 +67,8 @@ public interface Preferences {
      void setMaxEmployees(Integer employees);
      Integer getMaxTravelPercentage();
      void setMaxTravelPercentage(Integer employees);
-     Integer getMinFortuneRank();
-     void setMinFortuneRank(Integer fortuneRank);
+     Integer getMaxFortuneRank();
+     void setMaxFortuneRank(Integer fortuneRank);
      Integer getMaxApplicants();
      void setMaxApplicants(Integer applicants);
      Integer getSkipFirstPages();

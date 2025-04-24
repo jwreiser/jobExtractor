@@ -20,8 +20,8 @@ public class SalaryFilter implements JobFilter {
         }
 
         if (
-                (job.getMinHourlySalary()!=null && job.getMinHourlySalary()> preferences.getMaxContractRate())
-                        ||(job.getMaxHourlySalary()!=null && job.getMaxHourlySalary()< preferences.getMinContractRate())){
+                (job.getMinHourlySalary()!=null && job.getMinHourlySalary()> preferences.getMaxHourlyRate())
+                        ||(job.getMaxHourlySalary()!=null && job.getMaxHourlySalary()< preferences.getMinHourlyRate())){
             return false;
         }
 

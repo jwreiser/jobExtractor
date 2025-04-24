@@ -31,12 +31,12 @@ public class FortuneRankFilter implements JobFilter {
     @Override
     public boolean include(Preferences preferences, Job job) {
         boolean include=true;
-        if(preferences==null || preferences.getMinFortuneRank()==null) {
+        if(preferences==null || preferences.getMaxFortuneRank()==null) {
             return include;
         }
         for (Map.Entry<String, Integer> entry : ranks.entrySet()) {
             if(entry.getKey().equals(job.getCompanyName())){
-                if(entry.getValue()<preferences.getMinFortuneRank()){
+                if(entry.getValue()<preferences.getMaxFortuneRank()){
                     include=false;
                 }
                 break;
@@ -46,7 +46,7 @@ public class FortuneRankFilter implements JobFilter {
             final String descriptionLower= job.getDescription().toLowerCase();
             include = includeDescription(descriptionLower,preferences);
         }
-        if(job.getCompany()!=null && job.getCompany().getFortuneRanking()!=null && job.getCompany().getFortuneRanking()<preferences.getMinFortuneRank()){
+        if(job.getCompany()!=null && job.getCompany().getFortuneRanking()!=null && job.getCompany().getFortuneRanking()<preferences.getMaxFortuneRank()){
             System.err.println("summary rank "+job.getCompany().getFortuneRanking()+" ->reject: " + job);
             include=false;
         }
@@ -60,7 +60,7 @@ public class FortuneRankFilter implements JobFilter {
             include =false;
         }
         Integer rank=RegexUtil.getIntegerValue(descriptionLower,"fortune[^\\d]*(\\d*)[^\\d]*client");
-        if(rank!=null && preferences!=null&&preferences.getMinFortuneRank()!=null && rank<preferences.getMinFortuneRank()){
+        if(rank!=null && preferences!=null&&preferences.getMaxFortuneRank()!=null && rank<preferences.getMaxFortuneRank()){
             return false;
         }
 
