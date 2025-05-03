@@ -1,11 +1,12 @@
 package com.goodforallcode.jobExtractor.model.preferences;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 public interface Preferences {
      boolean isExcludeContractJobs();
+     boolean isExcludeNonRemote();
+     void setExcludeNonRemote(boolean exclude);
      boolean isExcludeApplied();
 
      Optional<Integer> getIncludedContractMinimumDuration();
@@ -13,6 +14,12 @@ public interface Preferences {
 
      boolean isExcludePoorWorkLifeBalance();
      void setExcludePoorWorkLifeBalance(boolean exclude);
+     boolean isExcludeWeekends();
+     void setExcludeWeekends(boolean exclude);
+     boolean isExcludeOnCall();
+     void setExcludeOnCall(boolean exclude);
+     boolean isExcludeAggressiveTimelines();
+     void setExcludeAggressiveTimelines(boolean exclude);
 
      boolean isExcludePromoted();
      void setExcludePromoted(boolean exclude);
@@ -53,12 +60,14 @@ public interface Preferences {
      boolean isExcludeMilitary();
      boolean isExcludeStartups();
      boolean isRemoteOnly();
+     boolean isSoftwareSearch();
+     void setSoftwareSearch(boolean exclude);
      int getMaxYearsOfExperience();
      void setMaxYearsOfExperience(int value);
      int getMaxYearsOfExperienceForUnlistedSkill();
      void setMaxYearsOfExperienceForUnlistedSkill(int value);
-     int getMinContractRate();
-     int getMaxContractRate();
+     int getMinHourlyRate();
+     int getMaxHourlyRate();
      Integer getMinYearlySalary();
      Integer getMaxLevel();
      void setMaxLevel(Integer level);
@@ -66,8 +75,8 @@ public interface Preferences {
      void setMaxEmployees(Integer employees);
      Integer getMaxTravelPercentage();
      void setMaxTravelPercentage(Integer employees);
-     Integer getMinFortuneRank();
-     void setMinFortuneRank(Integer fortuneRank);
+     Integer getMaxFortuneRank();
+     void setMaxFortuneRank(Integer fortuneRank);
      Integer getMaxApplicants();
      void setMaxApplicants(Integer applicants);
      Integer getSkipFirstPages();
@@ -89,6 +98,8 @@ public interface Preferences {
      void setSkills(List<String> skills);
      List<String>  getProgrammingFrameworks();
      void setProgrammingLanguages(List<String> languages);
+     List<String>  getMissingSkills();
+     void setMissingSkills(List<String> missingSkills);
      void setProgrammingFrameworks(List<String> languages);
      List<String> getDesiredClearancePhrases();
 

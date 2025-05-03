@@ -8,7 +8,7 @@ import com.goodforallcode.jobExtractor.util.CompanyUtil;
 import java.util.List;
 
 public class MegaBrandFilter implements JobFilter {
-    List<String> companyNames =List.of( "Amazon","Facebook","Pinterest","Walmart","McDonald's");
+    List<String> companyNames =List.of( "Amazon","Facebook","Pinterest","Walmart","McDonald's","Sam's Club");
 
     @Override
     public boolean include(Preferences preferences, Job job) {

@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import static com.mongodb.client.model.Filters.*;
 
 public class MongoDbCache implements Cache {
-    public static String uri = "mongodb+srv://devUser:fakePass1@cluster0.q2ny9rm.mongodb.net/?retryWrites=true&w=majority";
+    public static String uri = "mongodb+srv://jreiseris:rO4Gln1dDWydv3ar@cluster0.a13e6el.mongodb.net/?retryWrites=true&w=majority";
     private static boolean serverUp = true;
     final public static String DATABASE_NAME = "MyJobSearch";
     final public static String JOBS_COLLECTION_NAME = "Jobs";

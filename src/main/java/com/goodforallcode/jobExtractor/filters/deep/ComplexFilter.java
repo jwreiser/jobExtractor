@@ -7,7 +7,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 /**
- *
+ * This is to screen for jobs that have rigorous functional requirements like performance, latency, etc.
  */
 public class ComplexFilter implements JobFilter {
     /**

@@ -13,6 +13,9 @@ public class MainframeFilter implements JobFilter {
 
     @Override
     public boolean include(Preferences preferences, Job job) {
+        if(!preferences.isSoftwareSearch()){
+            return true;
+        }
         if(companyNames.stream().anyMatch(c-> CompanyUtil.containsCompanyName(c,job))){
             System.err.println("Mainframe company name ->reject: " + job);
             return false;

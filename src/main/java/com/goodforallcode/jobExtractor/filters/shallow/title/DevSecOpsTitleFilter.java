@@ -21,6 +21,10 @@ public class DevSecOpsTitleFilter implements JobFilter {
 
     @Override
     public boolean include(Preferences preferences, Job job) {
+        if(!preferences.isSoftwareSearch()){
+            return true;
+        }
+
         String title = job.getTitle().toLowerCase();
         if(titles.stream().anyMatch(t->title.contains(t.toLowerCase()))){
             System.err.println("DevSecOps title ->reject: " + job);

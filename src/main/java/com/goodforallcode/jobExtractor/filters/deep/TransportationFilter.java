@@ -6,6 +6,10 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.List;
 
+/**
+ * Exceptions:
+ * meal preparation Medication and appointment reminders Transportation
+ */
 public class TransportationFilter implements JobFilter {
     List<String> industries =List.of("Truck Transportation","Transportation");
     final List<String> companyNames= List.of("Cambridge Systematics, Inc.");
@@ -20,14 +24,6 @@ public class TransportationFilter implements JobFilter {
             return false;
         }
 
-        if(job.getDescription()!=null){
-            final String descriptionLower=job.getDescription().toLowerCase();
-            if(descriptionLower.contains("transportation")){
-                System.err.println("Transportation description ->reject: " + job);
-                return false;
-            }
-
-        }
         return true;
     }
 

@@ -64,15 +64,15 @@ public class FilterFactory {
         filters.add(new MegaBrandFilter());
         filters.add(new MicrosoftStackFilter());
 
-        filters.add(new NightShiftFilter());
+        filters.add(new NightShiftBothFilter());
         filters.add(new NotEnglishFilter());
         filters.add(new NumApplicantsFilter(false,false));
         filters.add(new OutsourcingAndOffshoreFilter());
-        filters.add(new OldAgeFilter());
+        filters.add(new JobTooOldFilter());
         filters.add(new PeopleFocusedFilter(false));
         filters.add(new ProgrammingLanguageFilter(false));
         filters.add(new OperatingSystemCompanyFilter());
-        filters.add(new PharmacyFilter());
+        filters.add(new PharmacyAndPharmaceuticalFilter());
         filters.add(new PromotedFilter());
         filters.add(new ProgrammingFrameworkFilter());
         filters.add(new RealEstateFilter());
@@ -91,17 +91,24 @@ public class FilterFactory {
         filters.add(new AgileRoleTitleFilter());
         filters.add(new AITitleFilter());
         filters.add(new AutomationTitleFilter());
+        filters.add(new BilingualTitleFilter());
         filters.add(new BusinessAnalystTitleFilter());
         filters.add(new CaseManagementTitleFilter());
         filters.add(new ClinicalDataTitleFilter());
         filters.add(new CloudTitleFilter());
         filters.add(new ContentManagementTitleFilter());
         filters.add(new CoordinationAndManagementTitleFilter());
+        filters.add(new CredentialedTitleFilter());
+        filters.add(new DangerousTitleFilter());
         filters.add(new DataFocusedTitleFilter());
         filters.add(new DatabaseTitleFilter());
         filters.add(new DataManagementTitleFilter());
         filters.add(new DevSecOpsTitleFilter());
         filters.add(new EducatorTitleFilter());
+        filters.add(new FinanceJobTitleFilter());
+        filters.add(new HighSchoolTypeJobTitleFilter());
+        filters.add(new RequiresTrainingJobTitleFilter());
+        filters.add(new HomeCareJobTitleFilter());
         filters.add(new HumanAndCustomerManagementAndSalesTechnologyTitleFilter());
         filters.add(new IdentityManagementTitleFilter());
         filters.add(new IntegrationTitleFilter());
@@ -110,6 +117,7 @@ public class FilterFactory {
         filters.add(new LifecycleManagementTitleFilter());
         filters.add(new MessagingTitleFilter());
         filters.add(new MobileTitleFilter());
+        filters.add(new NightShiftBothFilter());
         filters.add(new OpenCallTitleFilter());
         filters.add(new PhysicalEngineerTitleFilter());
         filters.add(new ProfessionalServicesEngineerTitleFilter());
@@ -150,6 +158,7 @@ public class FilterFactory {
         filters.add(new InsuranceFilter());
         filters.add(new IntegrationFilter());
         filters.add(new JeeFilter());
+        filters.add(new NightShiftBothFilter());
         filters.add(new ResearcherFilter());
         filters.add(new SupportFilter());
         return filters;
@@ -212,7 +221,10 @@ public class FilterFactory {
 
     public static List<JobFilter> getDeepFiltersAlwaysExclude() {
         List<JobFilter> filters = new ArrayList<>();
+        filters.add(new AggressiveTimelinesFilter());
+        filters.add(new OnCallFilter());
         filters.add(new ProgrammingFrameworkFilter());
+        filters.add(new WeekendsFilter());
         return filters;
     }
     public static List<JobFilter> getCompanySummaryAlwaysIncludeFilters() {
@@ -240,10 +252,10 @@ public class FilterFactory {
         filters.add(new JobSecurityFilter(false));
         filters.add(new ManufacturingFilter());
         filters.add(new MarketingFilter());
-        filters.add(new NightShiftFilter());
+        filters.add(new NightShiftBothFilter());
         filters.add(new NumEmployeesFilter());
         filters.add(new OutsourcingAndOffshoreFilter());
-        filters.add(new PharmaceuticalFilter());
+        filters.add(new PharmacyAndPharmaceuticalFilter());
         filters.add(new RetailFilter());
         filters.add(new StartupFilter());
         filters.add(new StressFilter());
@@ -298,11 +310,10 @@ public class FilterFactory {
         filters.add(new MarketingFilter());
         filters.add(new MegaBrandFilter());
         filters.add(new MSTFilter());
-        filters.add(new NightShiftFilter());
+        filters.add(new NightShiftBothFilter());
         filters.add(new NotEnglishFilter());
         filters.add(new NumApplicantsFilter(false,true));
-        filters.add(new PharmacyFilter());
-        filters.add(new PharmaceuticalFilter());
+        filters.add(new PharmacyAndPharmaceuticalFilter());
         filters.add(new PLMFilter());
 
 //        filters.add(new ProgrammingFrameworkFilter());

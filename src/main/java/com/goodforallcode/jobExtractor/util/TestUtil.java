@@ -9,7 +9,7 @@ public class TestUtil {
         PreferencesWithDefaults preferences = new PreferencesWithDefaults();
         preferences.setProgrammingLanguages(List.of("Java","pl/sql"));
         preferences.setProgrammingFrameworks(List.of("Spring"));
-        preferences.setMinFortuneRank(760);
+        preferences.setMaxFortuneRank(760);
         preferences.setExcludeIdentityManagement(true);
         preferences.setMinYearlySalary(80000);
         preferences.setMaxLevel(2);

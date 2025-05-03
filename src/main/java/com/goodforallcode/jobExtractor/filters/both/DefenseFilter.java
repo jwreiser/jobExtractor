@@ -10,10 +10,15 @@ public class DefenseFilter implements JobFilter {
 
     /**
      * Defense can be used to describe defense of a paper
+     * military status
+     * military service, veteran status, or any other category protected under
+     * readdmissions
      */
-    List<String> phrases =List.of("military"," DLA "," DOD ","defense",
-            "national security","missions"," DHS "
+    List<String> bothPhrases =List.of(" DLA "," DOD ","defense",
+            "national security"," missions"," DHS "
             ,"army","navy","air force","Lockheed Martin","Marine Corps","missile");
+
+
     @Override
     public boolean include(Preferences preferences, Job job) {
         if(job.getIndustries()!=null){
@@ -27,14 +32,14 @@ public class DefenseFilter implements JobFilter {
 
         if(job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
-            if (phrases.stream().anyMatch(k -> description.contains(k.toLowerCase()))) {
-                System.err.println("military defense ->reject: " + job);
+            if (bothPhrases.stream().anyMatch(k -> description.contains(k.toLowerCase()))) {
+                System.err.println(getClass()+" description ->reject: " + job);
                 return false;
             }
             if(description.contains("intelligence") && !description.contains(" ai ")
                     && !description.contains("/ai ") && !description.contains(" ai/")
                     && !description.contains(" artificial ") && !description.contains(" business ") ){
-                System.err.println("defense (intelligence) ->reject: " + job);
+                System.err.println(getClass()+" description (intelligence) ->reject: " + job);
                 return false;
             }
         }

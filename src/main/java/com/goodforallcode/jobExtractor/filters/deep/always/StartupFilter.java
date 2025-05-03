@@ -17,13 +17,13 @@ public class StartupFilter implements JobFilter {
      * funding:     could refer to contracts
      * founding:    can only be in title as could refer to founding principle
      * ventures:    can return to internal program like a mentorship joint ventures one
-     *
+     *evaluations
      * examples
      * venture-backed
      */
     List<String> descriptionPhrases =List.of(
             "seed-stage", "y combinator","backed"," early stage",
-            " VC","investors","pre-seed","valuation");
+            " VC","investors","pre-seed"," valuation");
     List<String> bothPhrases =List.of("startup","start-up"," start up "
             ,"B corp","Series A","Series B","foundational","scale-up");
     List<String> notPhrases =List.of("public benefit corporation","PBC");

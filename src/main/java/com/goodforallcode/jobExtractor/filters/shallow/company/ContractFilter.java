@@ -16,7 +16,11 @@ public class ContractFilter implements JobFilter {
             "AgileEngine","Bitsoft International, Inc.","Revature","Gridiron IT","mphasis",
             "Brillio","GE","SBS Creatix","Compunnel Inc.");
 
-    List<String> bothPhrases =List.of( "contract");
+    /*
+    exceptions:
+    positions are subject to background screening as required by law or contract
+     */
+    List<String> titlePhrases =List.of( "contract");
 
     @Override
     public boolean include(Preferences preferences, Job job) {
@@ -43,19 +47,11 @@ public class ContractFilter implements JobFilter {
         }
 
         final String title= job.getTitle().toLowerCase();
-        if(bothPhrases.stream().anyMatch(p->title.contains(p.toLowerCase()))){
+        if(titlePhrases.stream().anyMatch(p->title.contains(p.toLowerCase()))){
             System.err.println("Contract Based on title ->reject: "+job);
             return false;
         }
 
-
-        if(job.getDescription()!=null){
-            final String description= job.getDescription().toLowerCase();
-            if(bothPhrases.stream().anyMatch(p->description.contains(p.toLowerCase()))){
-                System.err.println("Contract Based on description ->reject: "+job);
-                return false;
-            }
-        }
 
         if(job.getCompany()!=null && job.getCompany().getContractor()!=null && job.getCompany().getContractor()){
             System.err.println("Contract based on company summary ->reject: " + job);

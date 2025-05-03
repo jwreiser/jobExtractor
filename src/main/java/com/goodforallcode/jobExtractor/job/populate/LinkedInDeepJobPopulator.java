@@ -55,7 +55,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
             success = addDescriptionBasedDetails(job, detailsDoc);
             if (!success) {
                 return success;
-            }
+            }//this relies on LinkedIn premium
             Element tenureLink = detailsDoc.getElementsByClass("jobs-premium-company-growth__median-tenure-years-clock-icon").first();
             if (tenureLink != null) {
                 Element tenure = tenureLink.parent().getElementsByTag("strong").first();
@@ -74,10 +74,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
             }
             Elements messages = detailsDoc.getElementsByClass("artdeco-inline-feedback__message");
             for (Element element : messages) {
-                if (element.text().equals("No longer accepting applications")) {
-                    job.setAcceptingApplications(false);
-                    break;
-                }
+                TextJobPopulator.updateJob(element.text(), job);
             }
 
             addInsightBasedInformation(job, detailsDoc);
@@ -150,7 +147,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
                 }
             }
         }
-        Elements insightElements = detailsDoc.getElementsByClass("job-details-jobs-unified-top-card__job-insight");
+        Elements insightElements = detailsDoc.getElementsByClass("job-card-container__job-insight-text");
         for (Element element : insightElements) {
 
 
@@ -167,52 +164,61 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
                         foundInsights++;
                     }
                 }
-                if (text.equals("Contract")) {
-                    job.setContract(true);
-                    foundInsights++;
-                }
-                if (text.equals("Remote")) {
-                    job.setRemote(true);
-                    foundInsights++;
-                }
-                if (foundInsights >= knownInsights) {
-                    break;
-                }
+                TextJobPopulator.updateJob(text,job);
             }
         }
     }
 
     private static void populateSummaryBasedFields(Job job, Document detailsDoc) {
         String text;
-        Element summary = detailsDoc.getElementsByClass("job-details-jobs-unified-top-card__primary-description").first();
+        Element summary = detailsDoc.getElementsByClass("jobs-description-content__text--stretch").first();
         if (summary != null) {
-            Elements summaryElements = summary.getElementsByTag("span");
-            for (Element summaryElement : summaryElements) {
-                text = summaryElement.text();
-                if (text.contains("applicants")) {
-                    if (text.toLowerCase().contains("over ")) {
+            processSummary(job, summary);
+        }
+        //try two different ways as first does not always work
+        summary = detailsDoc.getElementsByClass("job-details-jobs-unified-top-card__primary-description-container").first();
+        if (summary != null) {
+            processSummary(job, summary);
+        }
+
+    }
+
+    private static void processSummary(Job job, Element summary) {
+        String text;
+        Elements summaryElements = summary.getElementsByTag("span");
+        for (Element summaryElement : summaryElements) {
+            text = summaryElement.text();
+            String[] bullets=text.split(" · ");
+            for(String bulletText:bullets) {
+                if (bulletText.contains("applicants")) {
+                    if (bulletText.toLowerCase().contains("over ")) {
                         job.setNumApplicants(300);//I don’t like the magic number but since the actual value is unknown I don’t want to waste time guessing
                     } else {
-                        Float applicants = getValueFromTwoWordText(text, 1);
+                        Float applicants = getValueFromTwoWordText(bulletText, 1);
 
                         if (applicants != null) {
                             job.setNumApplicants(applicants.intValue());
                         }
                     }
-                } else if (job.getJobAgeInDays() == null && text.contains(" ago")) {
-                    Long value = Long.parseLong(CharMatcher.inRange('0', '9').retainFrom(text));
-                    if (text.contains("day ago")) {
+                } else if (job.getJobAgeInDays() == null && bulletText.contains(" ago")) {
+                    String ageText = bulletText.substring(0, bulletText.indexOf("ago")).trim();
+                    Long value = Long.parseLong(CharMatcher.inRange('0', '9').retainFrom(ageText));
+
+                    if (bulletText.contains("day ago")) {
+                        job.setJobAgeInDays(1L);
+                    } else if (bulletText.contains("days ago")) {
                         job.setJobAgeInDays(value);
-                    } else if (text.contains("days ago")) {
-                        job.setJobAgeInDays(value);
-                    } else if (text.contains("week ago")) {
+                    } else if (bulletText.contains("week ago")) {
+                        job.setJobAgeInDays(7L);
+                    } else if (bulletText.contains("weeks ago")) {
                         job.setJobAgeInDays(7 * value);
-                    } else if (text.contains("weeks ago")) {
-                        job.setJobAgeInDays(7 * value);
+                    } else if (bulletText.contains("hours ago")) {
+                        job.setJobAgeInDays(0L);
                     }
 
                 }
             }
+
         }
     }
 
@@ -241,10 +247,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
 
             Elements descriptionStatuses = descriptionDiv.getElementsByAttributeValue("role", "status");
             for (Element status : descriptionStatuses) {
-                if (status.text().contains("This job is sourced from a job board.")) {
-                    job.setSourcedFromJobBoard(true);
-                    break;
-                }
+                TextJobPopulator.updateJob (status.text(),job);
             }
             job.setTravelPercent(getTravelPercentage(descriptionLower));
         }

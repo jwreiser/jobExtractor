@@ -31,6 +31,9 @@ public class RemoteFilter implements JobFilter {
     ,"full or partial remote");
     @Override
     public boolean include(Preferences preferences, Job job) {
+        if(!preferences.isRemoteOnly()){
+            return  true;
+        }
         final String title=job.getTitle().toLowerCase();
 
         if(isTitleRemote(title)!=null ){

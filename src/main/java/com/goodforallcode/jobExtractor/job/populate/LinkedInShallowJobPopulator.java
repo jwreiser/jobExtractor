@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
 public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
     public Job populateJob(Element item, WebDriver driver) throws TimeoutException {
         String text;
-        String companyName = item.getElementsByClass("job-card-container__primary-description").text();
+        String companyName = item.getElementsByClass("artdeco-entity-lockup__subtitle").text();
 
         Element jobLink = item.select("a.job-card-container__link").first();
         if(jobLink==null){
@@ -37,42 +37,19 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
             throw new TimeoutException();
         }
         try {
+            //this only shows up when you pay for LinkedIn premium
+            TextJobPopulator.updateJob(item.select("div.job-card-container__job-insight-text").text(), job);
 
-            String insight = item.select("div.job-card-container__job-insight-text").text();
-            if (insight.contains("top applicant")) {
-                job.setTopApplicant(true);
-            }
             Elements footerItems = item.select("li.job-card-container__footer-item.inline-flex.align-items-center");
             for (Element footerItem : footerItems) {
-                text = footerItem.text();
-                if (text.contains("Promoted")) {
-                    job.setPromoted(true);
-                } else if (text.contains("Easy Apply")) {
-                    job.setEasyApply(true);
-                }
-            }
-            Element numApplicants = item.select("soan.tvm__text.tvm__text--positive").first();
-            if (numApplicants != null) {
-                String[] applicantSplit = numApplicants.text().replaceAll("<!---->", "").split(" ");
-                job.setNumApplicants(Integer.valueOf(applicantSplit[0]));
+                TextJobPopulator.updateJob(footerItem.text(), job);
             }
 
-            Elements metadataItems = item.select("li.job-card-container__metadata-item");
-            for (Element metadataItem : metadataItems) {
-                text = metadataItem.text().replaceAll("<!---->", "");
-                if (text.contains("Remote")) {
-                    job.setRemote(true);
-                    job.setLocation(text.replaceAll("\\(Remote\\)", "").trim());
-                } else if (text.contains("/yr") || text.contains("/hr")) {
-                    addSalaryInformation(text, job);
-                }
-            }
-
-            Elements highlightedFooterItems = item.select("div.job-card-container__footer-item--highlighted");
-            for (Element eItem : highlightedFooterItems) {
-                text = eItem.text().replaceAll("<!---->", "");
-                if (text.contains("recommend this job anymore")) {
-                    job.setHidden(true);
+            Elements metadataItems = item.select("ul.job-card-container__metadata-wrapper");
+            if (!metadataItems.isEmpty()) {
+                metadataItems = metadataItems.first().select("li");
+                for (Element metadataItem : metadataItems) {
+                    TextJobPopulator.updateJob(metadataItem.text().replaceAll("<!---->", ""), job);
                 }
             }
 
@@ -165,57 +142,30 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
      * @param job
      */
     private static void addAgeInformation(Element item, Job job) {
-        Elements time = item.getElementsByTag("time");
-        if(time.text().contains("Reposted")){
-            job.setReposted(true);
-        }
-        String dateString = item.getElementsByClass("job-search-card__listdate").attr("datetime");
-        if (!dateString.isEmpty()) {
-            job.setJobAgeInDays(DateUtil.getAgeInDays(dateString));
-            job.setPostingDate(DateUtil.getLocalDate(dateString));
-        }else {
-            dateString = time.attr("datetime");
-            if (!dateString.isEmpty()) {
-                job.setJobAgeInDays(DateUtil.getAgeInDays(dateString));
-                job.setPostingDate(DateUtil.getLocalDate(dateString));
-            }
-        }
-
-    }
-
-
-    private void addSalaryInformation( String salaryRange, Job job) {
-        int benefitsPortion = salaryRange.indexOf("·");
-        if(benefitsPortion>0){
-            salaryRange=salaryRange.substring(0,benefitsPortion);
-        }
-        boolean contract=false;
-        if(salaryRange.contains("/hr")){
-            contract=true;
-            job.setContract(true);
-        }
-        salaryRange=salaryRange.replaceAll("/hr","").replaceAll("/yr","");
-        String[] parts = salaryRange.split(" ");
-        if (parts.length >= 1) {
-            Integer minSalary = NumUtil.convertSalaryToLong(parts[0]);
-            if (minSalary != null) {
-                if(contract){
-                    job.setMinHourlySalary(minSalary);
-                }else {
-                    job.setMinYearlySalary(minSalary);
+        Elements times = item.getElementsByTag("time");
+        if(!times.isEmpty()) {
+            for (Element time : times) {
+                if (time.text().contains("Reposted")) {
+                    job.setReposted(true);
                 }
-            }
-            if (parts.length >= 3) {//part 2 is the dash
-                Integer maxSalary = NumUtil.convertSalaryToLong(parts[2]);
-                if (maxSalary != null) {
-                    if(contract){
-                        job.setMaxHourlySalary(maxSalary);
-                    }else {
-                        job.setMaxYearlySalary(maxSalary);
+                String dateString = item.getElementsByClass("job-search-card__listdate").attr("datetime");
+                if (dateString.isEmpty()) {
+                    dateString = item.getElementsByClass("job-search-card__listdate--new").attr("datetime");
+                }
+                if (!dateString.isEmpty()) {
+                    job.setJobAgeInDays(DateUtil.getAgeInDays(dateString));
+                    job.setPostingDate(DateUtil.getLocalDate(dateString));
+                } else {
+                    dateString = time.attr("datetime");
+                    if (!dateString.isEmpty()) {
+                        job.setJobAgeInDays(DateUtil.getAgeInDays(dateString));
+                        job.setPostingDate(DateUtil.getLocalDate(dateString));
                     }
-
                 }
             }
         }
     }
+
+
+
 }

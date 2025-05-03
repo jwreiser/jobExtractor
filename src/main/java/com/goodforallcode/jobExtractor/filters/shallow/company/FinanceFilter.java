@@ -11,14 +11,16 @@ public class FinanceFilter implements JobFilter {
     /**
      * Exceptions
      * financial:   financial stability
+     * Banking: Applicants will never be asked to provide personal identification information (e.g., SSN, Driver’s License, Passport) or financial information (e.g., Banking Information)
+     * an independent brokerage that works to place homeless individuals and families into permanent housing
      */
     List<String> companyNames =List.of( "Affirm","Citibank","Kraken Digital Asset Exchange"
             ,"Jack Henry","Equitable","American Express","U.S. Bank","Modulus","Clerkie",
             "Juniper Square","Peach","T. Rowe Price","Studio Management");
 
     List<String> descriptionPhrases =List.of("FinTech","asset manager",
-            "hedge fund", "banking","trading","Brokers","Brokerage"," investment management");
-    List<String> titlePhrases =List.of("Simcorp");
+            "hedge fund", "trading","Brokers"," investment management");
+    List<String> titlePhrases =List.of("Simcorp","Accounts Payable","Billing","Loan Originator");
     List<String> industries =List.of("Venture Capital and Private Equity Principals",
             "Financial Services","Finance","Investment Banking","Investment Banking & Asset Management");
     List<String> companyNameContainsKeywords =List.of("Mortgage","Credit Union"," Bank" );

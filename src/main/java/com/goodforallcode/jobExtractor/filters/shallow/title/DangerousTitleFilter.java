@@ -6,17 +6,17 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.List;
 
-public class SalesTitleFilter implements JobFilter {
-    List<String> jobTitlePhrases=List.of("Solution engineer","Solutions engineer"
-            ,"Solutions Developer","Solution Developer","Sales","Marketing"
-    );
+public class DangerousTitleFilter implements JobFilter {
+    List<String> jobTitlePhrases=List.of(
+"Inventory Control","Addictions","Addiction","Substance Abuse","Addiction",
+            "Hazmat","Security","Surveillance","Crisis");
+
     @Override
     public boolean include(Preferences preferences, Job job) {
         String title =job.getTitle().toLowerCase();
 
-        //if this is a job title we are not qualified for
-        if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
-            System.err.println(this.getClass()+"title->reject: "+job);
+         if(jobTitlePhrases.stream().anyMatch(t->title.contains(t.toLowerCase()))){
+             System.err.println(this.getClass()+" title->reject: "+job);
             return false;
         }
         return true;

@@ -10,14 +10,17 @@ import java.util.Optional;
 @Getter
 @Setter
 public class PreferencesWithDefaults implements Preferences {
-    Integer minFortuneRank=null;
-    boolean excludePoorWorkLifeBalance=true;
+    //companies with small fortune ranks are huge
+    private Integer maxFortuneRank=760;
+    private boolean excludePoorWorkLifeBalance=true;
+    private boolean excludeNonRemote=true;
 
     public boolean excludeContractJobs=true;
-    public boolean excludeConsultant=false;
-    Optional<Integer> includedContractMinimumDuration= Optional.of(12);
+    public boolean excludeConsultant=true;
+    private Optional<Integer> includedContractMinimumDuration= Optional.of(12);
     public  boolean excludeComplexJobs=false;
     public  boolean remoteOnly=true;
+    public  boolean softwareSearch=false;
     public boolean excludePacific=true;
     public boolean excludeMountain=true;
     public boolean excludeFrontEndJobs=false;
@@ -27,9 +30,9 @@ public class PreferencesWithDefaults implements Preferences {
     public int maxYearsOfExperienceForUnlistedSkill=2;
 
     public List<String>skills= new ArrayList<>();
-     boolean excludeMilitary=true;
-    int minContractRate=50;
-    int maxContractRate=80;
+    boolean excludeMilitary=true;
+    int minHourlyRate=50;
+    int maxHourlyRate=80;
     Integer minYearlySalary=80_000;
     Integer maxYearlySalary=170_000;
     Integer maxTravelPercentage=10;
@@ -47,6 +50,9 @@ public class PreferencesWithDefaults implements Preferences {
     boolean excludeFullStack=false;
     boolean excludeIdentityManagement=false;
     boolean excludeBlockchain=false;
+    boolean excludeWeekends=true;
+    boolean excludeOnCall=true;
+    boolean excludeAggressiveTimelines=true;
     boolean skipTooManyApplicants=false;
     boolean skipUnknownNumberOfApplicants=false;
     boolean skipJobsSourcedFromExternalJobBoard=false;
@@ -57,7 +63,9 @@ public class PreferencesWithDefaults implements Preferences {
     boolean excludePromoted=false;
     boolean excludeRealEstate=false;
     boolean excludeApplied=true;
+
     List<String> locationPhrases=new ArrayList<>();
+    List<String> missingSkills=new ArrayList<>();
     List<String> programmingLanguages=new ArrayList<>();
 
     List<String> programmingFrameworks=new ArrayList<>();

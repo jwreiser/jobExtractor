@@ -47,13 +47,7 @@ public abstract class Extractor {
     public static List<String> standAloneSkillPhrases = List.of(
             "TMS", "embedded", "mulesoft");
 
-    public static WebDriver getWebDriver() {
-        System.setProperty("webdriver.gecko.driver", "D:/development/geckodriver.exe");
-        WebDriver driver = new FirefoxDriver();
-//        WebDriver driver=new HtmlUnitDriver(true);
-        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
-        return driver;
-    }
+
 
     public JobResult getJobs(Set<Cookie> cookies, Preferences preferences, List<String> urls) {
         List<Job> acceptedJobs = new ArrayList<>();
@@ -132,7 +126,7 @@ public abstract class Extractor {
     abstract JobResult getJobs(Set<Cookie> cookies, Preferences preferences, String url, Cache cache, MongoClient mongoClient);
 
     public void includeJob(WebDriver driver, List<Job> jobs, Job currentJob) {
-        //I had been clicking the save button here but it gives stale element exceptions
+        //TODO I had been clicking the save button here but it gives stale element exceptions; fix
         jobs.add(currentJob);
     }
 

@@ -11,7 +11,7 @@ public class BigDataFilter implements JobFilter {
             "Extract, Transform, and Load");
     List<String> bothPhrases =List.of(   "big data","ETL ",
             "Extract, Transform, and Load",
-            "spark","hive ","pig ","warehousing","lake","hadoop","Warehouse");
+            "spark","hive ","pig ","warehousing","hadoop");
 
     @Override
     public boolean include(Preferences preferences, Job job) {
@@ -20,17 +20,17 @@ public class BigDataFilter implements JobFilter {
         }
         String title = job.getTitle().toLowerCase();
         if (bothPhrases.stream().anyMatch(k -> title.contains(k.toLowerCase()))) {
-            System.err.println("BigData title both ->reject: " + job);
+            System.err.println(this.getClass()+" title both ->reject: " + job);
             return false;
         }
         if(job.getDescription()!=null) {
             String text = job.getDescription().toLowerCase();
             if (bothPhrases.stream().filter(k -> text.contains(k.toLowerCase())).count() > 2) {
-                System.err.println("BigData description both ->reject: " + job);
+                System.err.println(this.getClass()+" description both ->reject: " + job);
                 return false;
             }
             if (descriptionPhrases.stream().filter(k -> text.contains(k.toLowerCase())).count() > 2) {
-                System.err.println("BigData description ->reject: " + job);
+                System.err.println(this.getClass()+" description ->reject: " + job);
                 return false;
             }
         }

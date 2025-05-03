@@ -50,7 +50,9 @@ public class ProgrammingLanguageFilter implements JobFilter {
     @Override
     public boolean include(Preferences preferences, Job job) {
         final String title = getSimplifiedTitle(job.getTitle());
-        ;
+        if(!preferences.isSoftwareSearch()){
+            return true;
+        }
 
         if (preferences.getProgrammingLanguages().stream().anyMatch(l ->
                 title.contains(l.toLowerCase()))) {

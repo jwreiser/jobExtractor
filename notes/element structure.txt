@@ -3,7 +3,11 @@ location of list of items
 	main
 	<div class="jobs-search-results-list
 	<ul class="scaffold-layout__list-container">
+	<div data-view-name="jobs-search-list-feedback">
 
+item	
+	scaffold-layout__list-item
+	
 determining page is loaded
 	<div id="app-boot-bg-loader" class="app-boot-bg-skeleton">
     <div class="initial-load-animation">

@@ -7,7 +7,7 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import java.util.List;
 
 public class SpringFilter implements JobFilter {
-    List<String> phrases =List.of("Spring","Spring Boot","Spring Data","Spring MVC");
+    List<String> phrases =List.of("Spring","Spring Boot","Spring Data","Spring MVC","Spring Batch");
     public boolean include(Preferences preferences, Job job){
         if (job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
