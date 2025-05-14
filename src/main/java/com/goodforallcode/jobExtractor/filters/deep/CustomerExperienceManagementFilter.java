@@ -13,13 +13,11 @@ public class CustomerExperienceManagementFilter implements JobFilter {
     public boolean include(Preferences preferences, Job job){
         String title = job.getTitle().toLowerCase();
         if (bothPhrases.stream().anyMatch(p -> title.contains(p.toLowerCase()))) {
-            System.err.println("Customer management title ->reject: " + job);
             return false;
         }
         if(job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
             if (bothPhrases.stream().anyMatch(p -> description.contains(p.toLowerCase()))) {
-                System.err.println("Customer management->reject: " + job);
                 return false;
             }
         }

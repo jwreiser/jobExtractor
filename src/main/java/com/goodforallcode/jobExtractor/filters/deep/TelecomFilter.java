@@ -16,20 +16,16 @@ public class TelecomFilter implements JobFilter {
     public boolean include(Preferences preferences, Job job){
         String title =job.getTitle().toLowerCase();
         if(job.getIndustries()!=null&&job.getIndustries(). contains("Telecommunications")) {
-            System.err.println("Telecom industry ->reject: " + job);
             return false;
         }
 
         if(job.getCompanyName()!=null && companyNames.stream().anyMatch(cn->job.getCompanyName().equals(cn))){
-            System.err.println("Telecom company name->reject: " + job);
             return false;
         }
         if(job.getDescription()!=null) {
             String description = job.getDescription().toLowerCase();
             Optional<String> matchingPhrase = descriptionPhrases.stream().filter(p -> description.contains(p.toLowerCase())).findFirst();
             if (matchingPhrase.isPresent()) {
-                System.err.println("Telecom description phrase:" +matchingPhrase.get() +": "+job);
-
                 return false;
             }
         }

@@ -9,7 +9,6 @@ public class LevelFilter implements JobFilter {
     public boolean include(Preferences preferences, Job job) {
 
         if ( preferences.getMaxLevel()!=null && job.getLevel()!=null && preferences.getMaxLevel()<job.getLevel()){
-            System.err.println("Level too high->reject: "+job);
             return false;
         }else{
             return true;
