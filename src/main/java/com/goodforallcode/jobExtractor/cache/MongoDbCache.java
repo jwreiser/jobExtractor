@@ -276,11 +276,9 @@ public class MongoDbCache implements Cache {
             try {
                 MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
                 MongoCollection<Document> collection = database.getCollection(JOBS_COLLECTION_NAME);
-                System.err.println(collection.estimatedDocumentCount() + " cache size PRE Mongo insert");
                 InsertManyOptions options = new InsertManyOptions();
                 options.ordered(false);
                 collection.insertMany(currentJobCache, options);
-                System.err.println(collection.estimatedDocumentCount() + " cache size POST Mongo insert");
 
                 currentJobCache.clear();
                 serverUp = true;
@@ -331,11 +329,9 @@ public class MongoDbCache implements Cache {
             try {
                 MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
                 MongoCollection<Document> collection = database.getCollection(COMPANY_COLLECTION_NAME);
-                System.err.println(collection.estimatedDocumentCount() + " cache size PRE Mongo insert");
                 InsertManyOptions options = new InsertManyOptions();
                 options.ordered(false);
                 collection.insertMany(currentCompanyCache, options);
-                System.err.println(collection.estimatedDocumentCount() + " cache size POST Mongo insert");
 
                 currentCompanyCache.clear();
                 serverUp = true;
@@ -479,7 +475,7 @@ public class MongoDbCache implements Cache {
         if (!include && job.getExcludeFilter() != null) {
             docValues.put("excludeFilter", job.getExcludeFilter().getName());
         }
-        if (include && job.getIncludeFilters() != null) {
+        if (include && job.getIncludeFilters() != null && !job.getIncludeFilters().isEmpty()) {
             List<String>filterNames=job.getIncludeFilters().stream().map(f->f.getName()).collect(Collectors.toList());
             docValues.put("includeFilters", filterNames);
         }

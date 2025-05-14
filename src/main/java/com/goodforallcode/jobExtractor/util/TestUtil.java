@@ -34,7 +34,6 @@ public class TestUtil {
 
         preferences.setSkipTooManyApplicants(false);
         preferences.setSkipUnknownNumberOfApplicants(false);
-        preferences.setSkipJobsSourcedFromExternalJobBoard(false);
 
         preferences.setLocationPhrases(List.of("NY","New York","Babylon","Melville","Hauppauge","Ronkonkoma","Islandia"
                 ,"Plainview","Stony Brook"));

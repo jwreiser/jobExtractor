@@ -17,7 +17,6 @@ public class PreferencesWithDefaults implements Preferences {
 
     public boolean excludeContractJobs=true;
     public boolean excludeConsultant=true;
-    private Optional<Integer> includedContractMinimumDuration= Optional.of(12);
     public  boolean excludeComplexJobs=false;
     public  boolean remoteOnly=true;
     public  boolean softwareSearch=false;
@@ -40,7 +39,7 @@ public class PreferencesWithDefaults implements Preferences {
     Integer maxApplicants=300;
     Float desiredTenure=2.6F;
     Integer maxJobAgeInDays=34;
-    Integer minJobAgeInDays=null;
+    Integer minJobAgeInDays=0;
     boolean excludeFresher=false;
     boolean excludeSenior=false;
     boolean excludeAboveSenior=false;
@@ -55,11 +54,12 @@ public class PreferencesWithDefaults implements Preferences {
     boolean excludeAggressiveTimelines=true;
     boolean skipTooManyApplicants=false;
     boolean skipUnknownNumberOfApplicants=false;
-    boolean skipJobsSourcedFromExternalJobBoard=false;
     Integer amountOfTotalExperience =6;
     Integer maxLevel=3;
     Integer skipFirstPages=null;
     boolean excludeStartups=true;
+
+    boolean includeEarlyToMidCareer=false;
     boolean excludePromoted=false;
     boolean excludeRealEstate=false;
     boolean excludeApplied=true;

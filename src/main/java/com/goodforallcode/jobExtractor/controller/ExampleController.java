@@ -346,7 +346,6 @@ public class ExampleController {
         preferences.setExcludeFresher(false);
         preferences.setSkipTooManyApplicants(true);
         preferences.setSkipUnknownNumberOfApplicants(true);
-        preferences.setSkipJobsSourcedFromExternalJobBoard(true);
 
         return new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
     }
@@ -404,7 +403,6 @@ public class ExampleController {
         preferences.setExcludeFresher(false);
         preferences.setSkipTooManyApplicants(true);
         preferences.setSkipUnknownNumberOfApplicants(true);
-        preferences.setSkipJobsSourcedFromExternalJobBoard(true);
 
         return new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
     }

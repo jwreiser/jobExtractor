@@ -43,7 +43,7 @@ public interface DeepJobPopulator {
                 }
                 String experience = base.replaceAll("\\+", "").replaceAll("<!---->", "").trim();
                 if (NumberUtils.isCreatable(experience)) {
-                    result = Optional.of(Integer.parseInt(experience));
+                    result = Optional.of((int)Float.parseFloat(experience));
                 }
             }
 

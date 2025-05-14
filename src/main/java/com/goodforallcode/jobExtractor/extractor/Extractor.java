@@ -10,6 +10,7 @@ import com.mongodb.client.MongoClients;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.MoveTargetOutOfBoundsException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,7 +58,7 @@ public abstract class Extractor {
         Cache cache = new MongoDbCache();
         int totalJobs=0,totalHidden=0,totalSkipped=0,totalPages=0;
 
-        int numThreads = 6;
+        int numThreads = 3;
 
         Collection<List<String>> urlLists = breakListIntoThreadSizeChunks(urls, numThreads);
         ExecutorService executorService = Executors.newFixedThreadPool(numThreads);
@@ -130,14 +131,14 @@ public abstract class Extractor {
         jobs.add(currentJob);
     }
 
-    public void doubleClickOnElement(WebDriver driver, WebElement element) {
-        doubleClickElement(driver, element);
+    public boolean doubleClickOnElement(WebDriver driver, WebElement element) {
+        return doubleClickElement(driver, element);
     }
 
-    public static void doubleClickElement(WebDriver driver, WebElement element) {
+    public static boolean doubleClickElement(WebDriver driver, WebElement element) {
+        boolean success = false;
         if (element == null) {
-            System.err.println("Element was null");
-            return;
+            return success;
         }
         Actions act = new Actions(driver);
 
@@ -147,11 +148,13 @@ public abstract class Extractor {
             Thread.sleep(3_000);
             act.moveToElement(element).doubleClick(element).perform();
             Thread.sleep(2_000);
-        }catch (StaleElementReferenceException ex) {
-            //once there is a stale element there is nothing we can do. We just swallow and move on
+            success= true;
+        }catch (StaleElementReferenceException | MoveTargetOutOfBoundsException ex) {
+            //there is nothing we can do. We just swallow and move on, hopefully there is another button to try
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
+        return success;
     }
 }

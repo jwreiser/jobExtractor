@@ -9,7 +9,6 @@ public interface Preferences {
      void setExcludeNonRemote(boolean exclude);
      boolean isExcludeApplied();
 
-     Optional<Integer> getIncludedContractMinimumDuration();
 
 
      boolean isExcludePoorWorkLifeBalance();
@@ -53,14 +52,17 @@ public interface Preferences {
      void setSkipTooManyApplicants(boolean skip);
      boolean isSkipUnknownNumberOfApplicants();
      void setSkipUnknownNumberOfApplicants(boolean skip);
-     boolean isSkipJobsSourcedFromExternalJobBoard();
-     void setSkipJobsSourcedFromExternalJobBoard(boolean skip);
      boolean isExcludePacific();
      boolean isExcludeMountain();
      boolean isExcludeMilitary();
      boolean isExcludeStartups();
      boolean isRemoteOnly();
      boolean isSoftwareSearch();
+
+     //includes
+     boolean isIncludeEarlyToMidCareer();
+
+
      void setSoftwareSearch(boolean exclude);
      int getMaxYearsOfExperience();
      void setMaxYearsOfExperience(int value);
