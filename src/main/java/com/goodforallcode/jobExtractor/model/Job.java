@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.goodforallcode.jobExtractor.filters.ExcludeJobFilter;
 import com.goodforallcode.jobExtractor.filters.IncludeOrSkipJobFilter;
+import com.goodforallcode.jobExtractor.filters.JobFilter;
 import lombok.Data;
 import org.openqa.selenium.WebElement;
 
@@ -58,6 +59,10 @@ public class Job {
     @JsonInclude(JsonInclude.Include.NON_NULL)
 
     String recruiterClient;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    String state;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Integer minYearlySalary;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -119,6 +124,11 @@ public class Job {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     List<String> skills=new ArrayList<>();
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    List<String> positionCategories=new ArrayList<>();
+
+
     String title;
     String companyName;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -134,6 +144,9 @@ public class Job {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     ExcludeJobFilter excludeFilter;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    JobFilter customExcludeFilter;
     @Override
     public String toString() {
         return "Job{" +

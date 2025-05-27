@@ -42,4 +42,21 @@ public class ReflectionUtil {
         }
         return result;
     }
+
+    public static String getAttributeString(Object object, String propertyName) {
+        String result=null;
+        if(object!=null) {
+            try {
+                PropertyDescriptor descriptor = new PropertyDescriptor(propertyName, object.getClass());
+                Method getter = descriptor.getReadMethod();
+                Object value = getter.invoke(object);
+                if (value instanceof String) {
+                    result = (String) value;
+                }
+            } catch (IntrospectionException|InvocationTargetException|IllegalAccessException e) {
+                //leave as null
+            }
+        }
+        return result;
+    }
 }

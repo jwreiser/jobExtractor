@@ -95,31 +95,4 @@ public class RegexUtil {
 
         return matches;
     }
-
-    public static boolean isPresentAndImportant(String descriptionLower, String basePattern, boolean expert) {
-        if (!RegexUtil.matchesPattern(descriptionLower, basePattern)) {
-            return false;
-        } else {
-            if (!expert) {
-                if (RegexUtil.matchesPattern(descriptionLower, basePattern + ".*a bonus")) {
-                    return false;
-                }
-                if (RegexUtil.matchesPattern(descriptionLower, basePattern + ".*a plus")) {
-                    return false;
-                }
-                if (RegexUtil.matchesPattern(descriptionLower, basePattern + ".*preferred")) {
-                    return false;
-                }
-                if (RegexUtil.matchesPattern(descriptionLower, "bonus.*" + basePattern)) {
-                    return false;
-                }
-                return true;
-            }
-            return true;
-        }
-    }
-
-    public static String getUntilNextBoundary() {
-        return "[^\\d\\)\\.\\;]*";
-    }
 }

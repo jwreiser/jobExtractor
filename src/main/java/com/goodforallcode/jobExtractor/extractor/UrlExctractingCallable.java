@@ -1,5 +1,6 @@
 package com.goodforallcode.jobExtractor.extractor;
 
+import com.goodforallcode.jobExtractor.cache.Cache;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.mongodb.client.MongoClient;
@@ -15,13 +16,14 @@ public class UrlExctractingCallable implements Callable<JobResult> {
     List<String> urls;
     Set<Cookie> cookies;
     Preferences preferences;
-
+    Cache cache;
     MongoClient mongoClient;
 
-    public UrlExctractingCallable(Extractor extractor, List<String> urls, Set<Cookie> cookies, Preferences preferences) {
+    public UrlExctractingCallable(Extractor extractor, List<String> urls, Set<Cookie> cookies, Preferences preferences, Cache cache, MongoClient mongoClient) {
         this.urls = urls;
         this.cookies = cookies;
         this.preferences = preferences;
+        this.cache = cache;
         this.extractor = extractor;
         this.mongoClient=mongoClient;
     }
@@ -31,7 +33,7 @@ public class UrlExctractingCallable implements Callable<JobResult> {
 
         List<JobResult> jobResults=new ArrayList<>();
         for(String url:urls) {
-            jobResults.add(extractor.getJobs(cookies, preferences, url,  mongoClient));
+            jobResults.add(extractor.getJobs(cookies, preferences, url, cache, mongoClient));
         }
         List<Job> acceptedJobs=new ArrayList<>();
         List<Job> rejectedJobs=new ArrayList<>();

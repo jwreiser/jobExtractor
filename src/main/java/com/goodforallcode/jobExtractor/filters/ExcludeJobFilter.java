@@ -13,21 +13,28 @@ public class ExcludeJobFilter {
 
 
     String name;
+    String location;
     List<Boolean> runIfFalse = new ArrayList<>();
     List<String> titlePhrases = new ArrayList<>();
+    List<String> titleStartsWithPhrases = new ArrayList<>();
     List<String> safeTitlePhrases = new ArrayList<>();
     List<String> safeDescriptionPhrases = new ArrayList<>();
     List<String> descriptionPhrases = new ArrayList<>();
     List<String> caseSensitiveDescriptionPhrases = new ArrayList<>();
 
     List<String> badCompanies = new ArrayList<>();
+    List<String> badCompaniesEquals = new ArrayList<>();
+
     List<String> goodCompanies = new ArrayList<>();
     String includeAttribute;
     String excludeIfTrueJobAttribute;
+    String excludeIfJobAttribute;
+    String excludeIfJobAttributeValue;
     String excludeIfFalseJobAttribute;
     List<String> excludeAttributes = new ArrayList<>();
     List<DescriptionPhrasesAndCount> descriptionPhrasesAndCounts = new ArrayList<>();
     boolean testForCompanyInDescription = false;
+    boolean runOnlyIfNotFullyRemote = false;
     Float minMaxAttributeValue = null;
     String minAttribute = null;
     String maxAttribute = null;
@@ -46,10 +53,20 @@ public class ExcludeJobFilter {
         return this;
     }
 
+    public ExcludeJobFilter location(String value) {
+        this.location=value.toLowerCase();
+        return this;
+    }
+
     public ExcludeJobFilter titleCompanyNameAndDescriptionPhrases(List<String> phrases) {
         this.titlePhrases.addAll(new ArrayList<>(phrases));
         this.descriptionPhrases.addAll(new ArrayList<>(phrases));
         this.badCompanies.addAll(phrases);
+        return this;
+    }
+
+    public ExcludeJobFilter titleStartsWithPhrases(List<String> phrases) {
+        this.titleStartsWithPhrases.addAll(new ArrayList<>(phrases));
         return this;
     }
 
@@ -69,6 +86,10 @@ public class ExcludeJobFilter {
         return this;
     }
 
+    public ExcludeJobFilter runOnlyIfNotFullyRemote(boolean value) {
+        this.runOnlyIfNotFullyRemote = value;
+        return this;
+    }
     public ExcludeJobFilter maxAttribute(String minAttribute, Float maxAttributeValue) {
         this.maxAttribute = maxAttribute;
         this.minMaxAttributeValue = maxAttributeValue;
@@ -86,6 +107,12 @@ public class ExcludeJobFilter {
         return this;
     }
 
+    public ExcludeJobFilter excludeIfJobAttributeAndValue(String jobAttribute, String attributeValue) {
+        this.excludeIfJobAttribute = jobAttribute;
+        this.excludeIfJobAttributeValue = attributeValue;
+        return this;
+    }
+
 
     public ExcludeJobFilter excludeIfTrueJobAttribute(String excludeIfTrueJobAttribute) {
         this.excludeIfTrueJobAttribute = excludeIfTrueJobAttribute;
@@ -98,12 +125,12 @@ public class ExcludeJobFilter {
     }
 
     public ExcludeJobFilter safeTitlePhrases(List<String> safeTitlePhrases) {
-        this.safeTitlePhrases = safeTitlePhrases;
+        this.safeTitlePhrases.addAll(safeTitlePhrases);
         return this;
     }
 
     public ExcludeJobFilter excludeAttributes(List<String> excludeAttributes) {
-        this.excludeAttributes = excludeAttributes;
+        this.excludeAttributes.addAll(excludeAttributes);
         return this;
     }
 
@@ -116,19 +143,28 @@ public class ExcludeJobFilter {
         this.badCompanies.addAll(badCompanies);
         return this;
     }
-
+    public ExcludeJobFilter badCompaniesEquals(List<String> badCompanies) {
+        this.badCompaniesEquals.addAll(badCompanies);
+        return this;
+    }
     public ExcludeJobFilter goodCompanies(List<String> goodCompanies) {
-        this.goodCompanies = goodCompanies;
+        this.goodCompanies.addAll(goodCompanies);
         return this;
     }
 
     public ExcludeJobFilter safeDescriptionPhrases(List<String> safeDescriptionPhrases) {
-        this.safeDescriptionPhrases = safeDescriptionPhrases;
+        this.safeDescriptionPhrases.addAll(safeDescriptionPhrases);
+        return this;
+    }
+
+    public ExcludeJobFilter safeTitleAndDescriptionPhrases(List<String> safeDescriptionPhrases) {
+        this.safeDescriptionPhrases.addAll(safeDescriptionPhrases);
+        this.safeTitlePhrases.addAll(safeDescriptionPhrases);
         return this;
     }
 
     public ExcludeJobFilter caseSensitiveDescriptionPhrases(List<String> caseSensitiveDescriptionPhrases) {
-        this.caseSensitiveDescriptionPhrases = caseSensitiveDescriptionPhrases;
+        this.caseSensitiveDescriptionPhrases.addAll(caseSensitiveDescriptionPhrases);
         return this;
     }
 
@@ -148,8 +184,11 @@ public class ExcludeJobFilter {
         return this;
     }
 
-    public String exclude(Preferences preferences, Job job) {
+    public String exclude(Job job) {
         if (runIfFalse.stream().anyMatch(b -> b)) {
+            return null;
+        }
+        if(runOnlyIfNotFullyRemote&&job.getRemote()!=null&&job.getRemote()){
             return null;
         }
         final String title = job.getTitle().toLowerCase();
@@ -175,6 +214,10 @@ public class ExcludeJobFilter {
             if (match.isPresent()) {
                 return getName() + " - company name -> " + match.get();
             }
+            match = badCompaniesEquals.stream().filter(c -> job.getCompanyName().equals(c)).findFirst();
+            if (match.isPresent()) {
+                return getName() + " - company name -> " + match.get();
+            }
         }
         if (testForCompanyInDescription && badCompanies != null) {
             match = badCompanies.stream().filter(c -> CompanyUtil.descriptionContainsCompanyName(c, job.getDescription())).findFirst();
@@ -191,6 +234,15 @@ public class ExcludeJobFilter {
         }
         if (titlePhrases != null && !titlePhrases.isEmpty() && !safeTitle) {
             match = titlePhrases.stream().filter(p -> title.contains(p.toLowerCase())).findFirst();
+
+            if (match.isPresent()) {
+                return getName() + " - title -> " + match.get();
+
+            }
+        }
+
+        if (titleStartsWithPhrases != null && !titleStartsWithPhrases.isEmpty() && !safeTitle) {
+            match = titleStartsWithPhrases.stream().filter(p -> title.startsWith(p.toLowerCase())).findFirst();
 
             if (match.isPresent()) {
                 return getName() + " - title -> " + match.get();
@@ -221,6 +273,14 @@ public class ExcludeJobFilter {
                 return getName() + " - job true attribute - " + excludeIfTrueJobAttribute;
             }
         }
+
+        if (excludeIfJobAttribute != null && excludeIfJobAttributeValue != null) {
+            String value = ReflectionUtil.getAttributeString(job, excludeIfJobAttribute);
+            if (value != null && value.equals(excludeIfJobAttributeValue)) {
+                return getName() + " - job attribute - " + excludeIfJobAttribute + " " + value;
+            }
+        }
+
         if (maxAttribute != null && minMaxAttributeValue != null) {
             Float value = ReflectionUtil.getAttributeFloat(job, maxAttribute);
             if (value != null && value > minMaxAttributeValue) {
@@ -236,26 +296,17 @@ public class ExcludeJobFilter {
             }
 
         }
-        /*
-        if (minAttribute!=null && minAttributeValue!=null) {
-            Float value = ReflectionUtil.getAttributeFloat(job, minAttribute);
-            if (value != null && value >= minAttributeValue) {
-                return getName() + " - attribute - " + minAttribute + " " + value;
+        if(location!=null && !location.isEmpty() && job.getLocation()!=null && !job.getLocation().isEmpty()){
+            String jobLocation= job.getLocation().toLowerCase();
+            if (jobLocation.endsWith(" "+location)) {
+                return getName() + " - location -> " + jobLocation;
+            }else if (jobLocation.contains(" "+location+" ")) {
+                return getName() + " - location -> " + jobLocation;
+            }else if (jobLocation.equals(location)) {
+                return getName() + " - location -> " + jobLocation;
             }
-        }
 
-        Optional<String> match = titleAndDescriptionPhrases.stream().filter(p -> title.contains(p.toLowerCase())).findFirst();
-        if(match.isPresent()){
-            return getName()+" - title -> " + match.get();
         }
-        if(job.getCompanyName()!=null) {
-            match = titleAndDescriptionPhrases.stream().filter(c -> job.getCompanyName().equals(c)).findFirst();
-            if(match.isPresent()){
-                return getName()+" - company name -> " + match.get();
-            }
-        }
-
-         */
 
         if (job.getDescription() != null) {
             String description = job.getDescription().toLowerCase();

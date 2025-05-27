@@ -7,7 +7,7 @@ import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.goodforallcode.jobExtractor.filters.both.LocalFilter.americanCitiesAndStates;
+import static com.goodforallcode.jobExtractor.filters.custom.LocalFilter.americanCitiesAndStates;
 
 public class StringUtil {
     final static List<String> stateAbbreviatsions=List.of("AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","AS","DC","GU","MP","PR","VI");
@@ -187,7 +187,12 @@ Must keep
         editedDescription=editedDescription.replaceAll("/", " ");
 
         if(!title.isEmpty()) {
-            editedDescription = editedDescription.replaceAll(editedTitle, " ");
+            try {
+                editedDescription = editedDescription.replaceAll(editedTitle, " ");
+            }catch(Exception ex){
+                System.err.println("Error compressing description: " + editedDescription+" "+ex.getMessage());
+                //TODO leaving it alone for now to see why it is failing
+            }
         }
 
         final String finalEditedDescription=editedDescription.replaceAll("Want to learn more about this role and Jobot\\? Click our Jobot logo and follow our LinkedIn page! Job details".toLowerCase(), " ").

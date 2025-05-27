@@ -72,8 +72,8 @@ public class WebdriverUtil {
         return  ulElement;
     }
 
-    public static boolean notOnJobsPage(WebDriver newDriver) {
-        return newDriver.getCurrentUrl().equals("https://www.linkedin.com/jobs/");
+    public static boolean notOnJobsPage(WebDriver driver) {
+        return driver.getCurrentUrl().equals("https://www.linkedin.com/jobs/");
     }
     private WebElement loadMainElement() throws ContentLoadingException {
         WebElement mainElement = null;

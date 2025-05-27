@@ -1,7 +1,10 @@
 package com.goodforallcode.jobExtractor.job.populate;
 
+import com.goodforallcode.jobExtractor.job.populate.field.ContractPopulator;
+import com.goodforallcode.jobExtractor.job.populate.field.FieldPopulator;
+import com.goodforallcode.jobExtractor.job.populate.field.PositionCategoryPopulator;
+import com.goodforallcode.jobExtractor.job.populate.field.StatePopulator;
 import com.goodforallcode.jobExtractor.util.DateUtil;
-import com.goodforallcode.jobExtractor.util.NumUtil;
 import com.goodforallcode.jobExtractor.model.Job;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -10,16 +13,18 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
+    List<FieldPopulator> fieldPopulators = List.of(new ContractPopulator(),new StatePopulator(),new PositionCategoryPopulator());
+
     public Job populateJob(Element item, WebDriver driver) throws TimeoutException {
         String text;
         String companyName = item.getElementsByClass("artdeco-entity-lockup__subtitle").text();
 
         Element jobLink = item.select("a.job-card-container__link").first();
         if(jobLink==null){
-            System.err.println("No job link in "+item);
             return null;
         }
         String jobUrl = jobLink.attr("href");
@@ -70,6 +75,9 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
             }
         }catch (Exception ex){
             throw ex;//catching as a way to allow for inserting a breakpoint
+        }
+        for(FieldPopulator fieldPopulator:fieldPopulators){
+            fieldPopulator.populateField(job);
         }
         return job;
 

@@ -1,5 +1,9 @@
 package com.goodforallcode.jobExtractor.job.populate;
 
+import com.goodforallcode.jobExtractor.job.populate.field.ContractPopulator;
+import com.goodforallcode.jobExtractor.job.populate.field.FieldPopulator;
+import com.goodforallcode.jobExtractor.job.populate.field.PositionCategoryPopulator;
+import com.goodforallcode.jobExtractor.job.populate.field.StatePopulator;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.util.CompanyUtil;
 import com.goodforallcode.jobExtractor.util.RegexUtil;
@@ -19,7 +23,7 @@ import java.util.concurrent.TimeoutException;
 
 public class LinkedInDeepJobPopulator implements DeepJobPopulator {
     String emptyComment = "<!---->";
-
+    List<FieldPopulator> fieldPopulators = List.of(new ContractPopulator(),new StatePopulator(),new PositionCategoryPopulator());
     public boolean populateJob(Job job, WebDriver driver) throws TimeoutException {
         String text;
         WebElement mainDiv = null;
@@ -87,7 +91,9 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
         } catch (Exception ex) {
             throw ex;//catching as a way to allow for inserting a breakpoint
         }
-
+        for(FieldPopulator fieldPopulator:fieldPopulators){
+            fieldPopulator.populateField(job);
+        }
         return success;
     }
 

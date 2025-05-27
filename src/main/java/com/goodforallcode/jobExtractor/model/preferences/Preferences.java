@@ -22,10 +22,6 @@ public interface Preferences {
 
      boolean isExcludePromoted();
      void setExcludePromoted(boolean exclude);
-     boolean isExcludeRealEstate();
-     void setExcludeRealEstate(boolean exclude);
-     boolean isExcludeIdentityManagement();
-     void setExcludeIdentityManagement(boolean exclude);
      boolean isExcludeComplexJobs();
      void setExcludeComplexJobs(boolean exclude);
 
@@ -38,8 +34,6 @@ public interface Preferences {
      void setExcludeSenior(boolean exclude);
      boolean isExcludeAboveSenior();
      void setExcludeAboveSenior(boolean exclude);
-     boolean isExcludeBlockchain();
-     void setExcludeBlockchain(boolean exclude);
      boolean isExcludeBigData();
      void setExcludeBigData(boolean exclude);
      boolean isExcludeCloudHeavy();
@@ -96,8 +90,13 @@ public interface Preferences {
      Integer getMinJobAgeInDays();
      void setMinJobAgeInDays(Integer minJobAgeInDays);
      List<String> getProgrammingLanguages();
+
      List<String> getSkills();
      void setSkills(List<String> skills);
+
+     List<String> getAcceptablePositionCategories();
+     void setAcceptablePositionCategories(List<String> categories);
+
      List<String>  getProgrammingFrameworks();
      void setProgrammingLanguages(List<String> languages);
      List<String>  getMissingSkills();
@@ -107,6 +106,7 @@ public interface Preferences {
 
      List<String> getLocationPhrases();
      void setLocationPhrases(List<String> phrases);
-
+     public String getState();
+     public void setState(String state);
 
 }

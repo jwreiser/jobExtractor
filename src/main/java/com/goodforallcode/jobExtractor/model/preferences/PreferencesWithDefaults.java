@@ -20,6 +20,7 @@ public class PreferencesWithDefaults implements Preferences {
     public  boolean excludeComplexJobs=false;
     public  boolean remoteOnly=true;
     public  boolean softwareSearch=false;
+    public  String state="";
     public boolean excludePacific=true;
     public boolean excludeMountain=true;
     public boolean excludeFrontEndJobs=false;
@@ -66,6 +67,7 @@ public class PreferencesWithDefaults implements Preferences {
 
     List<String> locationPhrases=new ArrayList<>();
     List<String> missingSkills=new ArrayList<>();
+    List<String> acceptablePositionCategories=new ArrayList<>();
     List<String> programmingLanguages=new ArrayList<>();
 
     List<String> programmingFrameworks=new ArrayList<>();

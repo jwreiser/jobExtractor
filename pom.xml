@@ -113,13 +113,13 @@
 			<artifactId>selenium-remote-driver</artifactId>
 			<version>${driver.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>htmlunit-driver</artifactId>
+			<version>4.13.0</version>
+		</dependency>
 		<!--
-    <dependency>
-        <groupId>org.seleniumhq.selenium</groupId>
-        <artifactId>htmlunit3-driver</artifactId>
-        <version>${driver.version}</version>
-    </dependency>
+
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
