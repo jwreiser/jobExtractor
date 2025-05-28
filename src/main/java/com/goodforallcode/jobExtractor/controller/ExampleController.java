@@ -27,12 +27,7 @@ public class ExampleController {
         PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
         preferences.setMaxJobAgeInDays(23);
         preferences.setMaxApplicants(400);
-        preferences.setExcludeFresher(true);
-        preferences.setExcludeBigData(true);
-        preferences.setExcludeBlockchain(true);
-        preferences.setExcludeCloudHeavy(true);
         preferences.setExcludeComplexJobs(true);
-        preferences.setExcludeRealEstate(true);
         preferences.setMaxEmployees(9000);
 
         return new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
@@ -122,7 +117,6 @@ public class ExampleController {
 //Not having this differentiates this from few applicants        preferences.setMinJobAgeInDays(2);
         preferences.setMaxApplicants(90);
 
-        preferences.setExcludeFresher(false);
         preferences.setSkipTooManyApplicants(true);
         preferences.setSkipUnknownNumberOfApplicants(true);
 
@@ -145,7 +139,6 @@ public class ExampleController {
 //Not having this differentiates this from few applicants        preferences.setMinJobAgeInDays(2);
         preferences.setMaxApplicants(90);
 
-        preferences.setExcludeFresher(true);
         preferences.setSkipTooManyApplicants(true);
         preferences.setSkipUnknownNumberOfApplicants(true);
         preferences.setExcludeConsultant(false);
@@ -183,7 +176,6 @@ public class ExampleController {
         preferences.setMinJobAgeInDays(2);
         preferences.setMaxApplicants(90);
 
-        preferences.setExcludeFresher(false);
         preferences.setSkipTooManyApplicants(true);
         preferences.setSkipUnknownNumberOfApplicants(true);
 
@@ -210,7 +202,6 @@ public class ExampleController {
         preferences.setMinJobAgeInDays(2);
         preferences.setMaxApplicants(90);
 
-        preferences.setExcludeFresher(false);
         preferences.setSkipTooManyApplicants(true);
         preferences.setSkipUnknownNumberOfApplicants(true);
 

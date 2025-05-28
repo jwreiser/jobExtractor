@@ -25,19 +25,9 @@ public interface Preferences {
      boolean isExcludeComplexJobs();
      void setExcludeComplexJobs(boolean exclude);
 
-     boolean isExcludeFresher();
-     void setExcludeFresher(boolean exclude);
 
      boolean isExcludeFullStack();
      void setExcludeFullStack(boolean exclude);
-     boolean isExcludeSenior();
-     void setExcludeSenior(boolean exclude);
-     boolean isExcludeAboveSenior();
-     void setExcludeAboveSenior(boolean exclude);
-     boolean isExcludeBigData();
-     void setExcludeBigData(boolean exclude);
-     boolean isExcludeCloudHeavy();
-     void setExcludeCloudHeavy(boolean exclude);
      boolean isExcludeConsultant();
      void setExcludeConsultant(boolean exclude);
      boolean isExcludeFrontEndJobs();
@@ -48,13 +38,10 @@ public interface Preferences {
      void setSkipUnknownNumberOfApplicants(boolean skip);
      boolean isExcludePacific();
      boolean isExcludeMountain();
-     boolean isExcludeMilitary();
      boolean isExcludeStartups();
      boolean isRemoteOnly();
      boolean isSoftwareSearch();
 
-     //includes
-     boolean isIncludeEarlyToMidCareer();
 
 
      void setSoftwareSearch(boolean exclude);
@@ -89,7 +76,6 @@ public interface Preferences {
      void setMaxJobAgeInDays(Integer maxJobAgeInDays);
      Integer getMinJobAgeInDays();
      void setMinJobAgeInDays(Integer minJobAgeInDays);
-     List<String> getProgrammingLanguages();
 
      List<String> getSkills();
      void setSkills(List<String> skills);
@@ -98,9 +84,6 @@ public interface Preferences {
      void setAcceptablePositionCategories(List<String> categories);
 
      List<String>  getProgrammingFrameworks();
-     void setProgrammingLanguages(List<String> languages);
-     List<String>  getMissingSkills();
-     void setMissingSkills(List<String> missingSkills);
      void setProgrammingFrameworks(List<String> languages);
      List<String> getDesiredClearancePhrases();
 
@@ -108,5 +91,7 @@ public interface Preferences {
      void setLocationPhrases(List<String> phrases);
      public String getState();
      public void setState(String state);
+     public String getSeniority();
+     public void setSeniority(String value);
 
 }

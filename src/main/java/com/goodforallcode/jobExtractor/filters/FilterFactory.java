@@ -16,6 +16,8 @@ public class FilterFactory {
         filters.add(new ProgrammingFrameworkFilter());
         filters.add(new PromotedFilter());
         filters.add(new SalaryFilter());
+        filters.add(new SeniorityFilter());
+        filters.add(new SkillsFilter());
         return filters;
     }
 
@@ -28,17 +30,6 @@ public class FilterFactory {
         filters.add(ExcludeJobFilter.build("CaseManagement")
                 .titleAndDescriptionPhrases(List.of("Entellitrak", "Documentum")));
 
-        filters.add(ExcludeJobFilter.build("Commerce")
-                .titlePhrases(List.of("OMS ", "Magento"))
-                .badCompanies(List.of("Whatnot", "Nisum"))
-                .industries(List.of("Retail", "E-commerce"))
-                .titleAndDescriptionPhrases(List.of("Hybris", " OMS ", "Vericent", "Varicent", "Shopify"))
-        );
-
-
-        filters.add(ExcludeJobFilter.build("ComputerVision")
-                .titleAndDescriptionPhrases(List.of("Computer Vision", "computer-vision"))
-        );
 
 
 
@@ -54,11 +45,6 @@ public class FilterFactory {
         );
 
 
-        filters.add(ExcludeJobFilter.build("Entertainment")
-                .badCompanies(List.of("NBCUniversal","Entertainment","Cinema"))
-                .badCompaniesEquals(List.of("Regal"))
-                .industries(List.of("Entertainment Providers"))
-        );
 
         filters.add(ExcludeJobFilter.build("EnterpriseApplications")
                 .descriptionPhrases(List.of("Enterprise Application", "Web Logic", "JBOSS", "WebSphere"))
@@ -91,30 +77,7 @@ public class FilterFactory {
             );
         }
 
-        filters.add(ExcludeJobFilter.build("Insurance")
-                .badCompanies(List.of("Transamerica", "Travelers",
-                        "State Farm", "GEICO", "Allstate", "Coalition, Inc.", "One80 Intermediaries", "insurance"))
-                .industries(List.of("Insurance"))
-                .titlePhrases(List.of("Insurance", "Duck Creek"))
-                .testForCompanyInDescription(false)//can't look for insurance in description as it could be describing a benefit
-        );
 
-        filters.add(ExcludeJobFilter.build("InternetTelevisionAndMobile")
-                .badCompanies(List.of("QCell"))
-                .testForCompanyInDescription(true)
-        );
-
-        filters.add(ExcludeJobFilter.build("Manufacturing")
-                .badCompanies(List.of("Adaptec Solutions"))
-                .industries(List.of("Automation Machinery Manufacturing"))
-        );
-
-
-        if (preferences.isSoftwareSearch()) {
-            filters.add(ExcludeJobFilter.build("MedicalSpecs")
-                    .titlePhrases(List.of("FHIR", "HL7"))
-            );
-        }
 
         filters.add(ExcludeJobFilter.build("Messaging")
                 .titlePhrases(List.of("Kafka"))
@@ -125,24 +88,12 @@ public class FilterFactory {
         }
 
         filters.add(ExcludeJobFilter.build("Performance")
-                .descriptionPhrases(List.of("profiling", "optimizing", "Tuning", "Onestream", " cpm "))
+                .descriptionPhrasesAndCount(List.of("profiling", "optimizing", "Tuning", "Onestream", " cpm "),1)
         );
 
-        filters.add(ExcludeJobFilter.build("PharmacyAndPharmaceutical")
-                .titlePhrases(List.of("Pharmacist", "Pharmacy"))
-                .badCompanies(List.of("CVS Health"))
-                .industries(List.of("Pharmaceutical Manufacturing"))
-                .testForCompanyInDescription(true)
-        );
 
         filters.add(ExcludeJobFilter.build("SoftwareDevelopmentProjectManagement")
                 .titlePhrases(List.of("Jira"))
-        );
-
-        filters.add(ExcludeJobFilter.build("Telecom")
-                .descriptionPhrases(List.of("Telecom", "OSS and BSS", "OSS/BSS"))
-                .badCompanies(List.of("Crown Castle"))
-                .industries(List.of("Telecommunications"))
         );
 
         if (preferences.isSkipTooManyApplicants()) {
@@ -160,17 +111,6 @@ public class FilterFactory {
     public static List<ExcludeJobFilter> getAlwaysExcludeFilters(Preferences preferences) {
         List<ExcludeJobFilter> filters = new ArrayList<>();
 
-        if (preferences.isExcludeAboveSenior()) {
-            filters.add(ExcludeJobFilter.build("AboveSenior")
-                    .titlePhrases(List.of("stf ", "director", "VP ", "lead", "manager"
-                            , "architect", "administrator", "chief", "principal", "Systems Development", "Systems Developer"))
-            );
-            if (preferences.isSoftwareSearch()) {
-                filters.add(ExcludeJobFilter.build("AboveSeniorSoftware")
-                        .titlePhrases(List.of("staff ", " staff"))
-                );
-            }
-        }
 
         filters.add(ExcludeJobFilter.build("AcceptingApplications").excludeIfFalseJobAttribute("AcceptingApplications"));
 
@@ -197,15 +137,7 @@ public class FilterFactory {
         }
 
         if(preferences.isSoftwareSearch()) {
-            filters.add(ExcludeJobFilter.build("AI")
-                    .titlePhrases(List.of("Machine Learning", " ML ", "NLP", " AI ", "AI Programmer",
-                            "Artificial Intelligence", "AI/ML", "ML/AI"))
-                    .descriptionPhrasesAndCount(List.of("chatbot", "chatbots", "Conversational AI", "ML", "NLP"
-                            , "natural language processing", "NLU", "Natural Language Understanding"
-                            , "machine learning", "TTS", "STT", "SSML", "Tensorflow", "Pytorch"
-                            , "ONNX", "MXNet"), 2)
-
-            );
+            filters.add(ExcludeJobFilter.build("AI").excludeIfTrueJobAttribute("AI"));
         }
 
         filters.add(ExcludeJobFilter.build("Applied").excludeIfTrueJobAttribute("Applied"));
@@ -218,22 +150,12 @@ public class FilterFactory {
 
             filters.add(ExcludeJobFilter.build("Basic").descriptionPhrases(List.of("JBasic", "T24", "JBASE", "PICK", "jQL", "Visual basic")));
 
-            if (preferences.isExcludeBigData()) {
 
-                filters.add(ExcludeJobFilter.build("BigData")
-                        .descriptionPhrases(List.of("pipelines", "pipeline",
-                                "Extract, Transform, and Load"))
-                        .titleAndDescriptionPhrases(List.of("big data", "ETL ",
-                                "Extract, Transform, and Load",
-                                "spark", "hive ", "pig ", "warehousing", "hadoop"))
-                );
-
-            }
         }
 
         filters.add(ExcludeJobFilter.build("BadManagement").badCompanies(List.of("Research Innovations Incorporated",
                 "IT Labs", "Hansen Technologies", "LaunchDarkly", "TIDAL", "DXC Technology", "Oak Ridge National Laboratory", "EPLAN",
-                "Envision Horizons","NinjaOne"))
+                "Envision Horizons","NinjaOne","Tire Rack"))
         );
 
 
@@ -295,26 +217,6 @@ Employee Polygraph Protection Act
 
 
 
-
-        if (preferences.isExcludeCloudHeavy()) {
-            filters.add(ExcludeJobFilter.build("Cloud")
-                    .titlePhrases(List.of("AWS ", "Epic ", "OpenShift", "SailPoint", "Apigee",
-                            "Informatica", "azure ", "gcp", "cloud", "Lambda", "Snowflake",
-                            "Matillion", "Apigee", "FlashStack", "SFCC", "PCF", "Flashstack", "ECSA "))
-                    .titleAndDescriptionPhrases(List.of("SailPoint", "Apigee", "Sail point",
-                            "Informatica", "azure ", "gcp", "Lambda", "Snowflake",
-                            "Matillion", "Apigee", "FlashStack", "SFCC", "PCF", "Flashstack", "ECSA "))
-                    .descriptionPhrasesAndCount(List.of("server-less", "serverless", " SNS"
-                            , " SQS", " API Gateway", " EventBridge", " DynamoDB", " Redshift", " S3", "EC2", " AWS ",
-                            "cloud-native", "cloud native", "Matillion", " aws ", " Epic Client ", " Epic ancillary ", " Epic system "
-                            , " Epic environment", "Hyperspace", "Interconnect", "SailPoint", "Apigee", "cloud",
-                            "Informatica", "azure ", "gcp", "cloud", "Lambda", "Snowflake",
-                            "Matillion", "Apigee", "FlashStack", "SFCC", "PCF", "Flashstack", "ECSA "), 3)
-                    .badCompanies(List.of("Cloudflare", "Render", "Bowman Williams", "Concourse Labs"))
-            );
-
-        }
-
         if (testForStateExclusion("CT", preferences)) {
             filters.add(ExcludeJobFilter.build("Connecticut")
                     .excludeIfJobAttributeAndValue("state", "CT")
@@ -323,32 +225,8 @@ Employee Polygraph Protection Act
         }
 
         if (preferences.isExcludeConsultant()) {
-        /*exceptions
-    planning consultants
-    consulting with customers
-     */
-
-            filters.add(ExcludeJobFilter.build("Consultant")
-                    .titlePhrases(List.of("consulting", "consultant"))
-                    .badCompanies(List.of("Curate Partners", "Modis", "Akkodis"
-                            , "Ricardo plc", "FullStack Labs", "Sierra7",  "Vaco", "QuantumBricks",
-                            "Lorven Technologies Inc.", "ZETTALOGIX INC", "Sierra Solutions", "CGI",
-                            "Daugherty Business Solutions", "World Wide Technology", "Qualitest", "Cognizant",
-                            "Solü Technology Partners", "Nakupuna Companies", "SDI Presence",
-                            "DMI (Digital Management, LLC)", "Next Level Business Services",
-                            "NLB Services"))
-                    .industries(List.of("Business Consulting and Services", "Consulting"))
-                    .descriptionPhrases(List.of("consulting"))
-                    .safeDescriptionPhrases(List.of("consulting with"))
-                    .titleCompanyNameAndDescriptionPhrases(List.of("consultancy"))
-                    .testForCompanyInDescription(true)
-                    .excludeAttributes(List.of("consulting")
-                    ));
+            filters.add(ExcludeJobFilter.build("Consultant").excludeIfTrueJobAttribute("consultant"));
         }
-
-
-
-
 
         if(preferences.isSoftwareSearch()) {
             filters.add(ExcludeJobFilter.build("ContentManagement")
@@ -406,41 +284,6 @@ Employee Polygraph Protection Act
         );
 
 
-        /**
-         * Defense can be used to describe defense of a paper
-         * military status
-         * military service, veteran status, or any other category protected under
-         * readdmissions
-         */
-        filters.add(ExcludeJobFilter.build("Defense").industries(List.of("Defense"))
-                .descriptionPhrases(List.of("DLA", "DOD", "defense",
-                        "national security", " missions", "DHS", "army", "navy", "air force",
-                        "Lockheed Martin", "Marine Corps", "missile"))
-                .excludeAttributes(List.of("defense"))
-                .badCompanies(List.of("Northrop Grumman", "Raytheon", "General Dynamics",
-                        "Parsons Corporation", "SAIC", "Leidos", "RVCM (RevaComm)", "BAE Systems",
-                        "ECS", "Innovative Defense Technologies (IDT)"))
-        );
-
-        if (preferences.isSoftwareSearch()) {
-
-            filters.add(ExcludeJobFilter.build("DevSecOps")
-                    .titlePhrases(List.of("Datacenter Engineer", "Devop", "Devsecop",
-                            "Release Engineer", "Build", "Dev ops", "Devops",
-                            " IT Engineer", "Information Technology Engineer",
-                            "devsecops", "Monitoring", "VDI ",
-                            "Infrastructure", "Site Reliability", "SRE", "Reliability Engineer", "Observability",
-                            "Operations", " Ops Engineer", "CSfC Engineer",
-                            "Information assurance", "Integration Engineer", "Release Management",
-                            "Platform Engineer", "C3ISR", "SysOps", "Kubernetes", "Delivery", "Configuration", "Deployment"))
-                    .descriptionPhrasesAndCount(List.of("network", "security", "install",
-                            "VMware", "Servers", "Sccm", "administration", "administer",
-                            "configuration management", " configure", " deploy", "maintain", "setup"), 3)
-                    .titleAndDescriptionPhrases(List.of("Tibco"))
-            );
-        }
-
-
 
         filters.add(ExcludeJobFilter.build("Dishonest")
                 .badCompanies(List.of("IT Minds LLC", "Bitsoft International, Inc."
@@ -478,12 +321,6 @@ Employee Polygraph Protection Act
                 .titleAndDescriptionPhrases(List.of("Freelance"))
         );
 
-        if (preferences.isExcludeFresher()) {
-            filters.add(ExcludeJobFilter.build("FresherAndIntern")
-                    .descriptionPhrases(List.of(" intern "))
-                    .titleAndDescriptionPhrases(List.of("Fresher", "intern ", "internship"))
-            );
-        }
 
         filters.add(ExcludeJobFilter.build("FrontEnd")
                 .titlePhrases(List.of("Ui developer", "Ui engineer", "UX developer",
@@ -527,14 +364,13 @@ Employee Polygraph Protection Act
         }
 
         filters.add(ExcludeJobFilter.build("HighSchoolTypeJob")
-                .titlePhrases(List.of("Cashier",
-                        "Mailroom","Stocker","Stock "," Camp ",
-                        "Hairstylist", "Warehouse",
-                        "Clerk", "Laborer", "Attendant", "Stocking",
-                        "Groomer", "Host", "Valet",
-                        "Froster", "Manufacturing", "Assembler"
-                        , "Stockroom Associate", "Store Associate", "Lifeguard", "Installer", "Installation"
-                        , "Operator", "Dock Worker", "Data Entry", "Stylist"))
+                .titlePhrases(List.of(
+                        "Mailroom"," Camp ",
+                        "Clerk", "Laborer", "Attendant",
+                        "Groomer",  "Valet",
+                         "Manufacturing", "Assembler"
+                        ,  "Lifeguard", "Installer", "Installation"
+                        , "Operator", "Dock Worker", "Data Entry"))
                 .badCompanies(List.of("The Container Store","Barnes & Noble", "Hobby Lobby","7-Eleven", "Dollar Tree", "Dollar General", "Family Dollar",
                         "Federal Express", "FedEx", "Fed Ex", "Fedex", "Fed Ex"))
         );
@@ -548,16 +384,16 @@ Employee Polygraph Protection Act
 
 
 
+        if(preferences.isSoftwareSearch()) {
         filters.add(ExcludeJobFilter.build("Integration")
-                .titleAndDescriptionPhrases(List.of("Mulesoft", "Boomi ", "Implementation Engineer", "Integration "
-                        , "Integrations ", "System Integrator"))
+                .titleAndDescriptionPhrases(List.of("Mulesoft", "Boomi ", "Implementation Engineer",
+                         "Integrations ", "System Integrator"))
+                .titlePhrases(List.of("Integration "))
         );
+        }
 
 
 
-        filters.add(ExcludeJobFilter.build("ITRole")
-                .titlePhrases(List.of("IT Engineer"))
-        );
 
         filters.add(ExcludeJobFilter.build("Javascript").descriptionPhrases(List.of("advanced JavaScript")));
         filters.add(ExcludeJobFilter.build("JEE").descriptionPhrasesAndCount(List.of("JSP", "JSF", "Struts", "Tomcat", "Websphere", "JBoss",
@@ -601,9 +437,6 @@ Employee Polygraph Protection Act
         }
 
 
-        filters.add(ExcludeJobFilter.build("MegaBrand")
-                .badCompanies(List.of("Amazon", "Facebook", "Pinterest", "Walmart", "McDonald's", "Sam's Club"))
-        );
 
 
 
@@ -653,19 +486,8 @@ Employee Polygraph Protection Act
                 "Solü Technology Partners")));
 
 
-
-
-
         if (preferences.isExcludeOnCall()) {
-            filters.add(ExcludeJobFilter.build("OnCall").descriptionPhrases(List.of("on call", "on-call", "go-live support",
-                            "24/7", " 24-7 ","24-hour","24 hour",
-                            "24x7", "rotation", "After business hours", "After hours",
-                            "outside of normal business", "outside normal business"))
-                    .badCompanies(List.of("Oracle", "Ancestry", "Gremlin", "Homecare Homebase","Wealthfront","Verint"))
-                    .safeDescriptionPhrases(List.of("internal rotation"))
-                    .testForCompanyInDescription(true)
-                    .excludeAttributes(List.of("softwareEngineerAfterHoursSupport"))
-            );
+            filters.add(ExcludeJobFilter.build("OnCall").excludeIfTrueJobAttribute("onCall"));
         }
 
         filters.add(ExcludeJobFilter.build("OpenCall")
@@ -691,7 +513,8 @@ Employee Polygraph Protection Act
                         "Intelerad Medical Systems"))
                 .testForCompanyInDescription(true)
                 .excludeAttributes(List.of("offshores"))
-                .descriptionPhrases(List.of("IT services and outsourcing company", "with offshore","Hyderabad", "India"))
+                        .titleAndDescriptionPhrases(List.of("Hyderabad", "India"))
+                .descriptionPhrases(List.of("IT services and outsourcing company", "with offshore"))
         );
 
 
@@ -731,12 +554,7 @@ Employee Polygraph Protection Act
                 .badCompanies(List.of("The Church of Jesus Christ of Latter-day Saints"))
                 .testForCompanyInDescription(true)
         );
-        filters.add(ExcludeJobFilter.build("RequiresTraining")
-                .titlePhrases(List.of("Physician", "Surgeon", "Researcher", "Psychologist", "Audiologist", "Endoscopy",
-                        "Supervisor", "Pathologist", "Ophthalmic", "Optometric", "Optometrist", "Optician", "Orthopedic",
-                        "Ophthalmologist", "Psychiatrist", "Physicist", "Phlebotomist", "Pediatrician", "Paramedic",
-                        "Cardiac", "Cardiol",   "Respiratory Therapist"))
-        );
+
         if (preferences.isRemoteOnly()) {
             /**
              *  Exceptions
@@ -764,19 +582,9 @@ Employee Polygraph Protection Act
         }
 
 
-        filters.add(ExcludeJobFilter.build("Retail")
-                .badCompanies(List.of("Abercrombie"))
-                .industries(List.of("Retail", "Apparel, Accessories & Footwear"))
-                .descriptionPhrases(List.of("retail"))
-                .testForCompanyInDescription(true)
-        );
 
 
 
-        filters.add(ExcludeJobFilter.build("Science")
-                .titlePhrases(List.of("Geologist", "Lab Aide", "Laboratory Scientist", "Laboratory Technologist"))
-                .badCompanies(List.of("Labcorp", "Quest Diagnostics"))
-        );
 
 
         filters.add(ExcludeJobFilter.build("Search")
@@ -784,59 +592,9 @@ Employee Polygraph Protection Act
                 .titlePhrases(List.of("Elasticsearch", "OpenSearch", "lucene", "Solr", "Splunk"))
         );
 
-        if (preferences.isExcludeSenior()) {
-            /**
-             * Exceptions
-             * Coaches: Health Coaches(Benefit)
-             * expert: recruiter may have expertise and seems hyperbolic at times
-             * principal can only be in title because it could be reports to
-             * specialist also may refer to recruiter
-             *
-             * subject matter expert:   seems to happen in non senior roles too
-             * Advanced knowledge of:   seems to happen in quite jr roles too
-             */
 
-            filters.add(ExcludeJobFilter.build("Senior")
-                    .descriptionPhrases(List.of("Completes product technical design",
-                            "produce software designs", "subordinate", "lead project teams"))
-                    .safeDescriptionPhrases(List.of("Intermediate to advanced knowledge of"))
-                    .titlePhrases(List.of("specialist", "sr ", "sr.", "senior"))
-            );
-
-        }
-
-
-
-
-
-        /**
-         * Exceptions
-         * Bonus : Could be a bonus plan for referrals
-         * investors: can have investors but still be a PBC
-         * funded:      could refer to insurance
-         * funding:     could refer to contracts
-         * ventures:    can return to internal program like a mentorship joint ventures one
-         *evaluations
-         * examples
-         * venture-backed
-         */
         filters.add(ExcludeJobFilter.build("Startup")
-                .badCompanies(List.of("Patterned Learning AI", "Patterned Learning AI",
-                        "Patterned Learning Career", "minware", "Included Health", "Valon",
-                        "Storm 3", "Storm 4", "Storm 5", "Storm 6",
-                        "Nira Energy", "Apploi", "Convictional", "Bramkas",
-                        "Ascendion", "WellSaid Labs", "Alma", "Maven Clinic", "hims & hers", "Amberflo.io",
-                        "AllVoices", "Certificial", "Rutter", "Hazel Health", "AIQ (Alpine IQ)", "Jerry",
-                        "Underdog.io", "ONE", "Apexon", "Docugami", "Clerkie", "Human Interest",
-                        "CornerUp", "Cloudbeds", "SandboxAQ", "Fitness Matrix Inc", "Sight Machine",
-                        "Offered.ai", "SpectrumAi", "Numerated", "Avid Technology Professionals", "TherapyNotes, LLC"))
-                .descriptionPhrases(List.of("seed-stage", "y combinator", "backed", " early stage", "early-stage", "raised funding ",
-                        " VC", "investors", "pre-seed", " valuation", "founding", "Startup-Like Environment", "Startup Environment"))
-                .safeDescriptionPhrases(List.of("public benefit corporation", "PBC", "founding principle"))
-                .titleAndDescriptionPhrases(List.of("startup", "start-up", " start up "
-                        , "B corp", "Series A", "Series B", "foundational", "scale-up"))
-                .titlePhrases(List.of("founding", "Founder", "Entrepreneur"))
-                .testForCompanyInDescription(true)
+                .excludeIfTrueJobAttribute("startup")
         );
         filters.add(ExcludeJobFilter.build("Stress")
                 .excludeAttributes(List.of("stress"))
@@ -934,8 +692,10 @@ Employee Polygraph Protection Act
                 "RestFul", "webservice", "web service")));
 
         filters.add(IncludeOrSkipJobFilter.build("RelaxedEnvironment").goodCompanies(List.of("State Farm")));
-        filters.add(IncludeOrSkipJobFilter.build("ProgrammingLanguage").skills(preferences.getProgrammingLanguages())
+        filters.add(IncludeOrSkipJobFilter.build("ProgrammingLanguage").skills(preferences.getSkills())
                 .runIfFalse(List.of(preferences.isSoftwareSearch())));
+        filters.add(IncludeOrSkipJobFilter.build("Spring").descriptionPhrases(List.of("Spring Boot", "Spring Data", "Spring MVC", "Spring Batch")));
+
 
         filters.add(IncludeOrSkipJobFilter.build("Tenure").minAttribute("Tenure", preferences.getDesiredTenure()));
 
@@ -964,21 +724,11 @@ Employee Polygraph Protection Act
                 .titlePhrases(List.of("entry", "early"))
         );
 
-        if (preferences.isIncludeEarlyToMidCareer()) {
-            /**
-             * Exceptions duties associated patient
-             */
-            filters.add(IncludeOrSkipJobFilter.build("EarlyToMidCareer").titleAndDescriptionPhrases(List.of(
-                            "associate ", "junior", "jr", "intermediate"))
-                    .titlePhrases(List.of("entry", "early", "mid", "associate"))
-            );
-        }
 
         filters.add(IncludeOrSkipJobFilter.build("FavoringCitizen").titleAndDescriptionPhrases(List.of(" mbi ", "public trust", "IRS Clearance",
                 "Citizenship required")).descriptionPhrases(List.of("Must be a US Citizen", "maintain a security clearance"
                 , "obtain a security clearance"
         )));
-        filters.add(IncludeOrSkipJobFilter.build("Spring").descriptionPhrases(List.of("Spring Boot", "Spring Data", "Spring MVC", "Spring Batch")));
         filters.add(IncludeOrSkipJobFilter.build("PeopleFocused").descriptionPhrases(List.of("life balance", "people first", "like family"))
                 .includeAttribute("peopleFocused"));
 

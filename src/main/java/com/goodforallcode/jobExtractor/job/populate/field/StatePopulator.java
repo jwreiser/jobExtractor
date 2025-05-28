@@ -1,13 +1,14 @@
 package com.goodforallcode.jobExtractor.job.populate.field;
 import com.goodforallcode.jobExtractor.filters.ExcludeJobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
+import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class StatePopulator implements FieldPopulator{
-    public void populateField(Job job) {
-        if ((job.getRemote()==null || !job.getRemote()) && (job.getState() == null || job.getState().isEmpty())) {
+    public void populateField(Job job, Preferences preferences) {
+        if ((job.getFullyRemote()==null || !job.getFullyRemote()) && (job.getState() == null || job.getState().isEmpty())) {
             List<ExcludeJobFilter> filters=new ArrayList<>();
             filters.add(ExcludeJobFilter.build("NJ")
                     .titleAndDescriptionPhrases(List.of("Newark", "New Jersey", "Jersey City", "New Brunswick", "Trenton"
@@ -33,6 +34,12 @@ public class StatePopulator implements FieldPopulator{
                     .location("FL")
                     .titleAndDescriptionPhrases(List.of("Miami", "Tampa", "Orlando", "Jacksonville"))
             );
+
+            filters.add(ExcludeJobFilter.build("VA")
+                    .location("VA")
+                    .titleAndDescriptionPhrases(List.of("Richmond", "Virginia"))
+            );
+
             for(ExcludeJobFilter filter: filters) {
                 if (filter.exclude(job) != null) {
                     job.setState(filter.getName());

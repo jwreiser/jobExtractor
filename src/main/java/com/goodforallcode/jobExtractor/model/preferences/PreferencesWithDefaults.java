@@ -21,6 +21,7 @@ public class PreferencesWithDefaults implements Preferences {
     public  boolean remoteOnly=true;
     public  boolean softwareSearch=false;
     public  String state="";
+    public  String seniority="";
     public boolean excludePacific=true;
     public boolean excludeMountain=true;
     public boolean excludeFrontEndJobs=false;
@@ -30,7 +31,6 @@ public class PreferencesWithDefaults implements Preferences {
     public int maxYearsOfExperienceForUnlistedSkill=2;
 
     public List<String>skills= new ArrayList<>();
-    boolean excludeMilitary=true;
     int minHourlyRate=50;
     int maxHourlyRate=80;
     Integer minYearlySalary=80_000;
@@ -41,15 +41,8 @@ public class PreferencesWithDefaults implements Preferences {
     Float desiredTenure=2.6F;
     Integer maxJobAgeInDays=34;
     Integer minJobAgeInDays=0;
-    boolean excludeFresher=false;
-    boolean excludeSenior=false;
-    boolean excludeAboveSenior=false;
-    boolean excludeBigData=false;
-    boolean excludeCloudHeavy=false;
 
     boolean excludeFullStack=false;
-    boolean excludeIdentityManagement=false;
-    boolean excludeBlockchain=false;
     boolean excludeWeekends=true;
     boolean excludeOnCall=true;
     boolean excludeAggressiveTimelines=true;
@@ -60,9 +53,7 @@ public class PreferencesWithDefaults implements Preferences {
     Integer skipFirstPages=null;
     boolean excludeStartups=true;
 
-    boolean includeEarlyToMidCareer=false;
     boolean excludePromoted=false;
-    boolean excludeRealEstate=false;
     boolean excludeApplied=true;
 
     List<String> locationPhrases=new ArrayList<>();

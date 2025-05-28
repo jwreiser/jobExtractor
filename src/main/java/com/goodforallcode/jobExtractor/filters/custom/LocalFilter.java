@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Optional;
 
 public class LocalFilter implements JobFilter {
-    List<String> localPhrases =List.of("local to","Local candidates", "located in a commutable distance",
+    public  static List<String> localPhrases =List.of("local to","Local candidates", "located in a commutable distance",
     "will only be considering candidates within","Preferred location is","will be located in","MUST LIVE IN","Must reside in",
-"position will be based in","Residents only","Must reside"," DC Area",
+"position will be based in","Residents only","Must reside"," DC Area","a hybrid work",
             "Remote in ","remote within ","remote from within ","in one of the following states",
             "Primary Location","within commute distance","must be living");
 
-    List<String> notLocalPhrases =List.of("applications for remote work may be considered",
+    public  static List<String> notLocalPhrases =List.of("applications for remote work may be considered",
             "Remote in United States","Remote in USA","remote within United States","remote from within United States","remote from within USA",
             "reside in United States","reside in the USA","Remote within USA");
 

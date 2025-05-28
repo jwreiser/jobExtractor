@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public record IncludeOrExcludeJobResults(boolean includeJob, boolean excludeJob
-        , boolean skipRemainingJobs, List<IncludeOrSkipJobFilter> includeFilters, Optional<ExcludeJobFilter> excludeFilter) {
+        , boolean skipRemainingJobs, IncludeOrSkipJobFilter includeFilter, ExcludeJobFilter excludeFilter) {
 
 }

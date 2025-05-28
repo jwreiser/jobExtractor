@@ -1,6 +1,7 @@
 package com.goodforallcode.jobExtractor.job.populate;
 
 import com.goodforallcode.jobExtractor.model.Job;
+import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.openqa.selenium.WebDriver;
 
@@ -8,7 +9,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 
 public interface DeepJobPopulator {
-    boolean populateJob(Job job, WebDriver driver) throws TimeoutException;
+    boolean populateJob(Job job, WebDriver driver, Preferences preferences) throws TimeoutException;
 
     default public Optional<Integer> getMaxExperienceNeeded(String description) {
         int start;
@@ -51,21 +52,6 @@ public interface DeepJobPopulator {
         return result;
     }
 
-    default public Optional<Integer> getContractDuration(String description) {
-        int start;
-        Optional result = Optional.empty();
-        int end = description.indexOf("+ months");
 
-        if (end > 0) {
-            start = description.indexOf(" ", end - 5);
-            String base = description.substring(start, end + 1);
-            String experience = base.replaceAll("\\+", "")
-                    .replaceAll("<!---->", "").replaceAll(":", "").trim();
-            if (NumberUtils.isCreatable(experience)) {
-                result = Optional.of(Integer.parseInt(experience));
-            }
-        }
-        return result;
-    }
 
 }

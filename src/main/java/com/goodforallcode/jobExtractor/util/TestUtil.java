@@ -10,7 +10,6 @@ public class TestUtil {
         preferences.setProgrammingLanguages(List.of("Java","pl/sql"));
         preferences.setProgrammingFrameworks(List.of("Spring"));
         preferences.setMaxFortuneRank(760);
-        preferences.setExcludeIdentityManagement(true);
         preferences.setMinYearlySalary(80000);
         preferences.setMaxLevel(2);
         preferences.setAmountOfTotalExperience(6);
@@ -19,18 +18,11 @@ public class TestUtil {
         preferences.setAmountOfTotalExperience(6);
         preferences.setMaxJobAgeInDays(7);
 
-        preferences.setExcludeAboveSenior(true);
-        preferences.setExcludeBigData(true);
-        preferences.setExcludeBlockchain(true);
-        preferences.setExcludeCloudHeavy(true);
         preferences.setExcludeComplexJobs(true);
         preferences.setExcludeConsultant(true);
-        preferences.setExcludeFresher(true);
         preferences.setExcludeFrontEndJobs(true);
         preferences.setExcludeFullStack(true);
         preferences.setExcludePromoted(false);
-        preferences.setExcludeRealEstate(true);
-        preferences.setExcludeSenior(false);
 
         preferences.setSkipTooManyApplicants(false);
         preferences.setSkipUnknownNumberOfApplicants(false);

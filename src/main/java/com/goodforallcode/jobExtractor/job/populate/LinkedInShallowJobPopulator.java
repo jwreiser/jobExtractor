@@ -4,6 +4,7 @@ import com.goodforallcode.jobExtractor.job.populate.field.ContractPopulator;
 import com.goodforallcode.jobExtractor.job.populate.field.FieldPopulator;
 import com.goodforallcode.jobExtractor.job.populate.field.PositionCategoryPopulator;
 import com.goodforallcode.jobExtractor.job.populate.field.StatePopulator;
+import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.goodforallcode.jobExtractor.util.DateUtil;
 import com.goodforallcode.jobExtractor.model.Job;
 import org.jsoup.nodes.Element;
@@ -17,9 +18,8 @@ import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
-    List<FieldPopulator> fieldPopulators = List.of(new ContractPopulator(),new StatePopulator(),new PositionCategoryPopulator());
 
-    public Job populateJob(Element item, WebDriver driver) throws TimeoutException {
+    public Job populateJob(Element item, WebDriver driver, Preferences preferences) throws TimeoutException {
         String text;
         String companyName = item.getElementsByClass("artdeco-entity-lockup__subtitle").text();
 
@@ -76,8 +76,8 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
         }catch (Exception ex){
             throw ex;//catching as a way to allow for inserting a breakpoint
         }
-        for(FieldPopulator fieldPopulator:fieldPopulators){
-            fieldPopulator.populateField(job);
+        for(FieldPopulator fieldPopulator:LinkedInDeepJobPopulator.fieldPopulators){
+            fieldPopulator.populateField(job,preferences);
         }
         return job;
 

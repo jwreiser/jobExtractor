@@ -161,7 +161,7 @@ public class LinkedInExtractor extends Extractor {
                 totalJobs++;
 
                 try {
-                    job = shallowPopulator.populateJob(item, driver);
+                    job = shallowPopulator.populateJob(item, driver,preferences);
                 } catch (TimeoutException e) {
                     job = null;
                 }
@@ -181,7 +181,7 @@ public class LinkedInExtractor extends Extractor {
                     cachedJobs++;
                     shallowCachedJobs.add(job);
                     totalCached++;
-                    includeOrExcludeJob(driver, job);
+                    runDeepPopulatedFilters(driver, job);
                     continue;
                 }
 
@@ -199,58 +199,24 @@ public class LinkedInExtractor extends Extractor {
                     continue;
                 }
 
-                Optional<ExcludeJobFilter> excludeJobFilter = FilterFactory.getAlwaysExcludeFilters(preferences).stream().filter(f -> f.exclude( finalJob) != null).findFirst();
-                if (excludeJobFilter.isPresent()) {
-                    job.setExcludeFilter(excludeJobFilter.get());
-                    job.setReason(excludeJobFilter.get().exclude(job));
-                    cache.addJob(job, false, mongoClient);
-                    includeOrExcludeJob(driver, job);
-                    rejectedJobs.add(job);
+                if (runFiltersThatMakeSenseForShallowPopulatedJobs(preferences, cache, mongoClient, finalJob, job, driver, rejectedJobs, acceptedJobs)) {
                     continue;
                 }
+                Optional<ExcludeJobFilter> excludeJobFilter;
 
-                Optional<JobFilter> jobFilter = FilterFactory.getAlwaysExcludeCustomFilters(preferences).stream().filter(f -> !f.include(preferences, finalJob)).findFirst();
-                if (jobFilter.isPresent()) {
-                    job.setCustomExcludeFilter(jobFilter.get());
-                    cache.addJob(job, false, mongoClient);
-                    includeOrExcludeJob(driver, job);
-                    rejectedJobs.add(job);
-                    continue;
-                }
-                boolean cached = deepLoadJob(job, driver, cache, mongoClient, deepCachedJobs);
+                boolean cached = deepLoadJob(job, driver, cache, mongoClient, deepCachedJobs, preferences);
                 if (cached) {
                     cachedJobs++;
                     totalCached++;
                     continue;
                 }
 
-
-                IncludeOrExcludeJobResults includeJobResults = alwaysIncludeJob(job, preferences,
-                        driver, cache, mongoClient);
-                if (includeJobResults != null && includeJobResults.includeFilters() != null && !includeJobResults.includeFilters().isEmpty()) {
-                    job.setIncludeFilters(includeJobResults.includeFilters());
-                    StringBuilder reason = new StringBuilder();
-                    for (IncludeOrSkipJobFilter filter : includeJobResults.includeFilters()) {
-                        reason.append(filter.include(preferences, job));
-                        reason.append(" ");
-                    }
-                    job.setReason(reason.toString());
-                    cache.addJob(job, true, mongoClient);
-                    includeJob(driver, acceptedJobs, job);
-                    continue;
-                }
-                final Job finalJob2 = job;
-                excludeJobFilter = FilterFactory.getAlwaysExcludeFilters(preferences).stream().filter(f -> f.exclude( finalJob2) != null).findFirst();
-                if (excludeJobFilter.isPresent()) {
-                    job.setExcludeFilter(excludeJobFilter.get());
-                    job.setReason(excludeJobFilter.get().exclude(job));
-                    cache.addJob(job, false, mongoClient);
-                    includeOrExcludeJob(driver, job);
-                    rejectedJobs.add(job);
+                if (runFiltersThatMakeSenseForShallowPopulatedJobs(preferences, cache, mongoClient, finalJob, job, driver, rejectedJobs, acceptedJobs)) {
                     continue;
                 }
 
-                IncludeOrExcludeJobResults includeOrExcludeJobResults = includeOrExcludeJob(job, preferences,
+
+                IncludeOrExcludeJobResults includeOrExcludeJobResults = runDeepPopulatedFilters(job, preferences,
                         driver, cache, mongoClient);
                 handleNonSkipJobResults(cache, mongoClient, acceptedJobs, rejectedJobs, driver, job, includeOrExcludeJobResults, preferences);
 
@@ -280,6 +246,52 @@ public class LinkedInExtractor extends Extractor {
         return new JobResult(acceptedJobs, rejectedJobs, shallowCachedJobs, deepCachedJobs, totalJobs, totalHidden, totalSkipped, currentPageNum);
     }
 
+    /**
+     * This will run filters that  shallow populated jobs have enough information to run.
+     * These filters will be run again when the job is deep populated.
+     *
+     * @param preferences
+     * @param cache
+     * @param mongoClient
+     * @param finalJob
+     * @param job
+     * @param driver
+     * @param rejectedJobs
+     * @param acceptedJobs
+     * @return true if the job was excluded or included, false otherwise. This indicates that we are done with the job and should move on to the next one.
+     */
+    private boolean runFiltersThatMakeSenseForShallowPopulatedJobs(Preferences preferences, Cache cache, MongoClient mongoClient, Job finalJob, Job job, WebDriver driver, List<Job> rejectedJobs, List<Job> acceptedJobs) {
+        Optional<ExcludeJobFilter> excludeJobFilter = FilterFactory.getAlwaysExcludeFilters(preferences).stream().filter(f -> f.exclude(finalJob) != null).findFirst();
+        if (excludeJobFilter.isPresent()) {
+            job.setExcludeFilter(excludeJobFilter.get());
+            job.setReason(excludeJobFilter.get().exclude(job));
+            cache.addJob(job, false, mongoClient);
+            runDeepPopulatedFilters(driver, job);
+            rejectedJobs.add(job);
+            return true;
+        }
+
+        Optional<JobFilter> jobFilter = FilterFactory.getAlwaysExcludeCustomFilters(preferences).stream().filter(f -> !f.include(preferences, finalJob)).findFirst();
+        if (jobFilter.isPresent()) {
+            job.setCustomExcludeFilter(jobFilter.get());
+            cache.addJob(job, false, mongoClient);
+            runDeepPopulatedFilters(driver, job);
+            rejectedJobs.add(job);
+            return true;
+        }
+
+        IncludeOrExcludeJobResults includeJobResults = alwaysIncludeJob(job, preferences,
+                driver, cache, mongoClient);
+        if (includeJobResults != null && includeJobResults.includeFilter() != null) {
+            job.setIncludeFilter(includeJobResults.includeFilter());
+            job.setReason(includeJobResults.includeFilter().include(preferences, job));
+            cache.addJob(job, true, mongoClient);
+            includeJob(driver, acceptedJobs, job);
+            return true;
+        }
+        return false;
+    }
+
     private static boolean morePagesLeft(List<WebElement> nextPageButtons, int numJobs, boolean justSkipped) {
         return nextPageButtons != null && !nextPageButtons.isEmpty() && (justSkipped || numJobs == 25);
     }
@@ -297,18 +309,16 @@ public class LinkedInExtractor extends Extractor {
     private void handleNonSkipJobResults(Cache cache, MongoClient mongoClient, List<Job> acceptedJobs, List<Job> rejectedJobs, WebDriver newDriver, Job job, IncludeOrExcludeJobResults includeOrExcludeJobResults
             , Preferences preferences) {
         if (includeOrExcludeJobResults.excludeJob()) {
-            job.setExcludeFilter(includeOrExcludeJobResults.excludeFilter().get());
+            job.setExcludeFilter(includeOrExcludeJobResults.excludeFilter());
             cache.addJob(job, false, mongoClient);
-            includeOrExcludeJob(newDriver, job);
+            runDeepPopulatedFilters(newDriver, job);
             rejectedJobs.add(job);
         } else if (includeOrExcludeJobResults.includeJob()) {
-            job.setIncludeFilters(includeOrExcludeJobResults.includeFilters());
-            StringBuilder reason = new StringBuilder();
-            for (IncludeOrSkipJobFilter filter : includeOrExcludeJobResults.includeFilters()) {
-                reason.append(filter.include(preferences, job));
-                reason.append(" ");
+            job.setIncludeFilter(includeOrExcludeJobResults.includeFilter());
+            if(includeOrExcludeJobResults.includeFilter()!= null) {
+                job.setReason(includeOrExcludeJobResults.includeFilter().include(preferences, job));
             }
-            job.setReason(reason.toString());
+
             cache.addJob(job, true, mongoClient);
             includeJob(newDriver, acceptedJobs, job);
         }
@@ -345,32 +355,48 @@ public class LinkedInExtractor extends Extractor {
 
         Optional<IncludeOrSkipJobFilter> alwaysIncludeFilter = FilterFactory.getAlwaysIncludeFilters(preferences).stream().filter(f -> f.include(preferences, job) != null).findFirst();
         if (alwaysIncludeFilter.isPresent()) {
-            return new IncludeOrExcludeJobResults(true, false, false, List.of(alwaysIncludeFilter.get()), null);
+            return new IncludeOrExcludeJobResults(true, false, false, alwaysIncludeFilter.get(), null);
         } else {
             return null;
         }
 
     }
 
-    public IncludeOrExcludeJobResults includeOrExcludeJob(Job job, Preferences preferences, WebDriver driver, Cache cache, MongoClient client) {
+    /**
+     * These filters either don't have enough shallow data or are not important enough to run until after we have ran
+     * all always include/exclude filters.
+     * @param job
+     * @param preferences
+     * @param driver
+     * @param cache
+     * @param client
+     * @return
+     */
+    public IncludeOrExcludeJobResults runDeepPopulatedFilters(Job job, Preferences preferences, WebDriver driver, Cache cache, MongoClient client) {
 
         boolean alreadyInCache = false;
         List<IncludeOrSkipJobFilter> includeOrSkipFilters = new ArrayList<>();
 
         Optional<IncludeOrSkipJobFilter> includeOrSkipFilter = FilterFactory.getDeepFiltersSkip(preferences).stream().filter(f -> f.include(preferences, job) != null).findFirst();
         if (includeOrSkipFilter.isPresent()) {
+            includeOrSkipFilters.addAll(includeOrSkipFilter.stream().filter(f -> f.include(preferences, job) != null).collect(Collectors.toList()));
             return new IncludeOrExcludeJobResults(false, false, false, null, null);
         }
 
-        Optional<ExcludeJobFilter> firstExcludeFilter = FilterFactory.getExcludeFilters(preferences).stream().filter(f -> f.exclude( job) != null).findFirst();
-
-        if (firstExcludeFilter.isPresent()) {
-            doubleClickOnElement(driver, job.getHideButton());
-            return new IncludeOrExcludeJobResults(false, true, false, null, firstExcludeFilter);
+        includeOrSkipFilter = FilterFactory.getIncludeFilters(preferences).stream().filter(f -> f.include(preferences, job) != null).findFirst();
+        if (includeOrSkipFilter.isPresent()) {
+            includeOrSkipFilters.addAll(includeOrSkipFilter.stream().filter(f -> f.include(preferences, job) != null).collect(Collectors.toList()));
+            return new IncludeOrExcludeJobResults(true, false, false, includeOrSkipFilter.get(), null);
         }
 
-        includeOrSkipFilters.addAll(includeOrSkipFilter.stream().filter(f -> f.include(preferences, job) != null).collect(Collectors.toList()));
-        return new IncludeOrExcludeJobResults(true, false, false, includeOrSkipFilters, null);
+        Optional<ExcludeJobFilter> firstExcludeFilter = FilterFactory.getExcludeFilters(preferences).stream().filter(f -> f.exclude( job) != null).findFirst();
+        if (firstExcludeFilter.isPresent()) {
+            doubleClickOnElement(driver, job.getHideButton());
+            return new IncludeOrExcludeJobResults(false, true, false, null, firstExcludeFilter.get());
+        }
+
+        //default state is to include the job but with no reasons why
+        return new IncludeOrExcludeJobResults(true, false, false, null, null);
     }
 
     private static String buildCompanySummaryURL(Job job) {
@@ -440,7 +466,7 @@ public class LinkedInExtractor extends Extractor {
         job.setCompany(summary);
     }
 
-    public boolean deepLoadJob(Job job, WebDriver driver, Cache cache, MongoClient mongoClient, List<Job> deepCachedJobs) {
+    public boolean deepLoadJob(Job job, WebDriver driver, Cache cache, MongoClient mongoClient, List<Job> deepCachedJobs, Preferences preferences) {
         boolean success = false;
         boolean cached = false;
         int numAttempts = 0, maxAttempts = 10;
@@ -459,7 +485,7 @@ public class LinkedInExtractor extends Extractor {
         try {
             if (driver != null) {
                 do {
-                    success = deepJobPopulator.populateJob(job, driver);
+                    success = deepJobPopulator.populateJob(job, driver,preferences);
                     numAttempts++;
                     if (!success && numAttempts < maxAttempts) {
                         if (job.getJobDetailsLink() != null) {
@@ -477,7 +503,7 @@ public class LinkedInExtractor extends Extractor {
             CompanySummary summary = cache.getCompanySummary(job, mongoClient);
             if (cache.containsJob(job, mongoClient)) {
                 deepCachedJobs.add(job);
-                includeOrExcludeJob(driver, job);
+                runDeepPopulatedFilters(driver, job);
                 cached = true;
             }
 
@@ -495,7 +521,7 @@ public class LinkedInExtractor extends Extractor {
         return cached;
     }
 
-    private void includeOrExcludeJob(WebDriver driver, Job currentJob) {
+    private void runDeepPopulatedFilters(WebDriver driver, Job currentJob) {
         try {
             doubleClickOnElement(driver, currentJob.getHideButton());
         } catch (MoveTargetOutOfBoundsException ex) {

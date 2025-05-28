@@ -59,7 +59,18 @@ public class Job {
     @JsonInclude(JsonInclude.Include.NON_NULL)
 
     String recruiterClient;
-
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    String seniority;
+    @JsonIgnore
+    boolean aboveSenior=false;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    boolean consultant=false;
+    @JsonIgnore
+    boolean senior=false;
+    @JsonIgnore
+    boolean midCareer=false;
+    @JsonIgnore
+    boolean noExperience=false;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String state;
 
@@ -93,10 +104,13 @@ public class Job {
     @JsonIgnore
     boolean easyApply=false;
     boolean contract=false;
+    boolean startUp=false;
+    boolean AI=false;
+    boolean onCall=false;
     @JsonIgnore
     boolean acceptingApplications=true;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    Boolean remote=null;
+    Boolean fullyRemote =null;
     @JsonIgnore
     boolean reposted=false;
     @JsonIgnore
@@ -119,7 +133,7 @@ public class Job {
     String description;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String reason;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonIgnore
     String compressedDescription;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -140,7 +154,7 @@ public class Job {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     CompanySummary company;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    List<IncludeOrSkipJobFilter> includeFilters;
+    IncludeOrSkipJobFilter includeFilter;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     ExcludeJobFilter excludeFilter;

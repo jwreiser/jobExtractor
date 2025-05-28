@@ -1,10 +1,8 @@
 package com.goodforallcode.jobExtractor.job.populate;
 
-import com.goodforallcode.jobExtractor.job.populate.field.ContractPopulator;
-import com.goodforallcode.jobExtractor.job.populate.field.FieldPopulator;
-import com.goodforallcode.jobExtractor.job.populate.field.PositionCategoryPopulator;
-import com.goodforallcode.jobExtractor.job.populate.field.StatePopulator;
+import com.goodforallcode.jobExtractor.job.populate.field.*;
 import com.goodforallcode.jobExtractor.model.Job;
+import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.goodforallcode.jobExtractor.util.CompanyUtil;
 import com.goodforallcode.jobExtractor.util.RegexUtil;
 import com.google.common.base.CharMatcher;
@@ -23,8 +21,10 @@ import java.util.concurrent.TimeoutException;
 
 public class LinkedInDeepJobPopulator implements DeepJobPopulator {
     String emptyComment = "<!---->";
-    List<FieldPopulator> fieldPopulators = List.of(new ContractPopulator(),new StatePopulator(),new PositionCategoryPopulator());
-    public boolean populateJob(Job job, WebDriver driver) throws TimeoutException {
+    public static List<FieldPopulator> fieldPopulators = List.of(new AIPopulator(),new ConsultantPopulator(),new ContractPopulator(),
+            new FullyRemotePopulator(),new OnCallPopulator(),
+            new PositionCategoryPopulator(),new SeniorityPopulator(),new SkillsPopulator(), new StartupPopulator(),new StatePopulator());
+    public boolean populateJob(Job job, WebDriver driver, Preferences preferences) throws TimeoutException {
         String text;
         WebElement mainDiv = null;
         boolean success = true;
@@ -92,7 +92,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
             throw ex;//catching as a way to allow for inserting a breakpoint
         }
         for(FieldPopulator fieldPopulator:fieldPopulators){
-            fieldPopulator.populateField(job);
+            fieldPopulator.populateField(job,preferences);
         }
         return success;
     }
@@ -244,12 +244,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
                 job.setMaxExperienceRequired(maxExperienceRequired.get());
 
             }
-            Optional<Integer> contractDuration = getContractDuration(description);
-            if (contractDuration.isPresent()) {
-                job.setContractMonths(contractDuration.get());
-                job.setContract(true);
 
-            }
 
             Elements descriptionStatuses = descriptionDiv.getElementsByAttributeValue("role", "status");
             for (Element status : descriptionStatuses) {
@@ -298,6 +293,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
 
         return value;
     }
+
 
 
 }

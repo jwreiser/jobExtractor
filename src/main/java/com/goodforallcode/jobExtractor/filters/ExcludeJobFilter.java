@@ -1,7 +1,6 @@
 package com.goodforallcode.jobExtractor.filters;
 
 import com.goodforallcode.jobExtractor.model.Job;
-import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.goodforallcode.jobExtractor.util.CompanyUtil;
 import com.goodforallcode.jobExtractor.util.ReflectionUtil;
 
@@ -188,7 +187,7 @@ public class ExcludeJobFilter {
         if (runIfFalse.stream().anyMatch(b -> b)) {
             return null;
         }
-        if(runOnlyIfNotFullyRemote&&job.getRemote()!=null&&job.getRemote()){
+        if(runOnlyIfNotFullyRemote&&job.getFullyRemote()!=null&&job.getFullyRemote()){
             return null;
         }
         final String title = job.getTitle().toLowerCase();

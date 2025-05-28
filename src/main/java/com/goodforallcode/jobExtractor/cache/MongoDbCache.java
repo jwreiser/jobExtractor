@@ -475,9 +475,8 @@ public class MongoDbCache implements Cache {
         if (!include && job.getExcludeFilter() != null) {
             docValues.put("excludeFilter", job.getExcludeFilter().getName());
         }
-        if (include && job.getIncludeFilters() != null && !job.getIncludeFilters().isEmpty()) {
-            List<String>filterNames=job.getIncludeFilters().stream().map(f->f.getName()).collect(Collectors.toList());
-            docValues.put("includeFilters", filterNames);
+        if (include && job.getIncludeFilter() != null) {
+            docValues.put("includeFilter", job.getIncludeFilter().getName());
         }
 
         if (job.getIndustries() != null) {
