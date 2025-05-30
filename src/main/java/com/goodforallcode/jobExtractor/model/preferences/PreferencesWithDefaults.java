@@ -5,7 +5,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Getter
 @Setter
@@ -19,12 +18,10 @@ public class PreferencesWithDefaults implements Preferences {
     public boolean excludeConsultant=true;
     public  boolean excludeComplexJobs=false;
     public  boolean remoteOnly=true;
-    public  boolean softwareSearch=false;
     public  String state="";
     public  String seniority="";
     public boolean excludePacific=true;
     public boolean excludeMountain=true;
-    public boolean excludeFrontEndJobs=false;
 
     List<String> desiredClearancePhrases=List.of("mbi","public trust","citizen");
     public int maxYearsOfExperience=6;
@@ -42,7 +39,6 @@ public class PreferencesWithDefaults implements Preferences {
     Integer maxJobAgeInDays=34;
     Integer minJobAgeInDays=0;
 
-    boolean excludeFullStack=false;
     boolean excludeWeekends=true;
     boolean excludeOnCall=true;
     boolean excludeAggressiveTimelines=true;
@@ -54,9 +50,8 @@ public class PreferencesWithDefaults implements Preferences {
     boolean excludeStartups=true;
 
     boolean excludePromoted=false;
-    boolean excludeApplied=true;
-
-    List<String> locationPhrases=new ArrayList<>();
+    List<String> badLocationPhrases =new ArrayList<>();
+    List<String> timezones =new ArrayList<>();
     List<String> missingSkills=new ArrayList<>();
     List<String> acceptablePositionCategories=new ArrayList<>();
     List<String> programmingLanguages=new ArrayList<>();

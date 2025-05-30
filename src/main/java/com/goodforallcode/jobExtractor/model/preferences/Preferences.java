@@ -1,15 +1,11 @@
 package com.goodforallcode.jobExtractor.model.preferences;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface Preferences {
      boolean isExcludeContractJobs();
      boolean isExcludeNonRemote();
      void setExcludeNonRemote(boolean exclude);
-     boolean isExcludeApplied();
-
-
 
      boolean isExcludePoorWorkLifeBalance();
      void setExcludePoorWorkLifeBalance(boolean exclude);
@@ -26,25 +22,14 @@ public interface Preferences {
      void setExcludeComplexJobs(boolean exclude);
 
 
-     boolean isExcludeFullStack();
-     void setExcludeFullStack(boolean exclude);
      boolean isExcludeConsultant();
      void setExcludeConsultant(boolean exclude);
-     boolean isExcludeFrontEndJobs();
-     void setExcludeFrontEndJobs(boolean exclude);
      boolean isSkipTooManyApplicants();
      void setSkipTooManyApplicants(boolean skip);
      boolean isSkipUnknownNumberOfApplicants();
      void setSkipUnknownNumberOfApplicants(boolean skip);
-     boolean isExcludePacific();
-     boolean isExcludeMountain();
      boolean isExcludeStartups();
      boolean isRemoteOnly();
-     boolean isSoftwareSearch();
-
-
-
-     void setSoftwareSearch(boolean exclude);
      int getMaxYearsOfExperience();
      void setMaxYearsOfExperience(int value);
      int getMaxYearsOfExperienceForUnlistedSkill();
@@ -87,8 +72,11 @@ public interface Preferences {
      void setProgrammingFrameworks(List<String> languages);
      List<String> getDesiredClearancePhrases();
 
-     List<String> getLocationPhrases();
-     void setLocationPhrases(List<String> phrases);
+     List<String> getBadLocationPhrases();
+     void setBadLocationPhrases(List<String> phrases);
+     List<String> getTimezones();
+     void setTimezones(List<String> timezones);
+
      public String getState();
      public void setState(String state);
      public String getSeniority();

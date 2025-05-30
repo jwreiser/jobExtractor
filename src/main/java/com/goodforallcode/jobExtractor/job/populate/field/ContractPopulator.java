@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class ContractPopulator implements FieldPopulator {
     public void populateField(Job job, Preferences preferences) {
-        if (!job.isContract()) {
+        if (contractNotSetToTrue(job)) {
             if (job.getDescription() != null && job.getDescription().length() > 0) {
                 Optional<Integer> contractDuration = getContractDuration(job.getDescription().toLowerCase());
                 if (contractDuration.isPresent()) {//always do this so we can set the contract duration
@@ -18,7 +18,7 @@ public class ContractPopulator implements FieldPopulator {
                     job.setContract(true);
                 }
             }
-            if (!job.isContract()) {
+            if (contractNotSetToTrue(job)) {
                 ExcludeJobFilter filter = ExcludeJobFilter.build("Contract")
                         .badCompanies(List.of("Accenture", "Guidehouse", "Piper Companies"
                                 , "Wise Skulls", "Brooksource", "Harnham", "Cypress HCM", "Belcan", "Mindex", "Altimetrik",
@@ -26,7 +26,8 @@ public class ContractPopulator implements FieldPopulator {
                                 "NTT DATA Services", "Spatial Front, Inc", "Tential Solutions",
                                 "IT Crowd", "Koniag Government Services", "SCIGON", "Latitude Inc", "IT Labs",
                                 "AgileEngine", "Bitsoft International, Inc.", "Revature", "Gridiron IT", "mphasis",
-                                "Brillio", "GE", "SBS Creatix", "Compunnel Inc."))
+                                "Brillio", "SBS Creatix", "Compunnel Inc."))
+                        .badCompaniesStartsWith(List.of("GE "))
                         .titlePhrases(List.of("contract"))
                         .descriptionPhrases(List.of("Federal clients", "supporting a DoD", "contract position", "government contractor", "+ Month Contract"
                                 , "+ Months Contract"));
@@ -37,6 +38,10 @@ public class ContractPopulator implements FieldPopulator {
         }
 
 
+    }
+
+    private static boolean contractNotSetToTrue(Job job) {
+        return job.getContract() == null || !job.getContract();
     }
 
     private static Optional<Integer> getContractDuration(String description) {

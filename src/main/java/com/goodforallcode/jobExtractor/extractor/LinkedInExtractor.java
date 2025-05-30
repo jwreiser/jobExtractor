@@ -1,5 +1,6 @@
 package com.goodforallcode.jobExtractor.extractor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goodforallcode.jobExtractor.cache.Cache;
 import com.goodforallcode.jobExtractor.driver.DriverInitializer;
 import com.goodforallcode.jobExtractor.driver.Scroller;
@@ -243,7 +244,15 @@ public class LinkedInExtractor extends Extractor {
 
             }
         }
-        return new JobResult(acceptedJobs, rejectedJobs, shallowCachedJobs, deepCachedJobs, totalJobs, totalHidden, totalSkipped, currentPageNum);
+        JobResult result=new JobResult(acceptedJobs, rejectedJobs, shallowCachedJobs, deepCachedJobs, totalJobs, totalHidden, totalSkipped, currentPageNum);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String json = mapper.writeValueAsString(result);
+            System.err.println(json);
+        } catch (Exception e) {
+
+        }
+        return result;
     }
 
     /**

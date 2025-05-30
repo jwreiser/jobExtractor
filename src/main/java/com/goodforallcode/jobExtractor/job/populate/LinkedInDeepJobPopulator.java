@@ -22,8 +22,10 @@ import java.util.concurrent.TimeoutException;
 public class LinkedInDeepJobPopulator implements DeepJobPopulator {
     String emptyComment = "<!---->";
     public static List<FieldPopulator> fieldPopulators = List.of(new AIPopulator(),new ConsultantPopulator(),new ContractPopulator(),
-            new FullyRemotePopulator(),new OnCallPopulator(),
-            new PositionCategoryPopulator(),new SeniorityPopulator(),new SkillsPopulator(), new StartupPopulator(),new StatePopulator());
+            new CredentialedPopulator(),new FullyRemotePopulator(),
+            new MunicipalityPopulator(),new LowEducationFieldPopulator(),new OnCallPopulator(),
+            new PositionCategoryPopulator(),new SeniorityPopulator(),new SkillsPopulator(), new StartupPopulator(),new StatePopulator()
+    ,new TimeZonePopulator());
     public boolean populateJob(Job job, WebDriver driver, Preferences preferences) throws TimeoutException {
         String text;
         WebElement mainDiv = null;
@@ -149,7 +151,7 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
                 int endLoc = totalText.indexOf("·", startLoc + 1);
                 if(endLoc>0) {
                     String location = totalText.substring(startLoc+1, endLoc).trim();
-                    job.setLocation(location);
+                    job.setMunicipality(location);
                 }
             }
         }

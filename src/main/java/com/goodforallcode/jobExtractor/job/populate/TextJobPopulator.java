@@ -17,7 +17,7 @@ public class TextJobPopulator {
         if (text.contains("Remote")) {
             job.setFullyRemote(true);
             if (!text.equals("Remote")) {
-                job.setLocation(text.replaceAll("\\(Remote\\)", "").trim());
+                job.setMunicipality(text.replaceAll("\\(Remote\\)", "").trim());
             }
         }
         if (text.equals("Contract")) {

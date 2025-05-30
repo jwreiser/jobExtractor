@@ -20,14 +20,12 @@ public class TestUtil {
 
         preferences.setExcludeComplexJobs(true);
         preferences.setExcludeConsultant(true);
-        preferences.setExcludeFrontEndJobs(true);
-        preferences.setExcludeFullStack(true);
         preferences.setExcludePromoted(false);
 
         preferences.setSkipTooManyApplicants(false);
         preferences.setSkipUnknownNumberOfApplicants(false);
 
-        preferences.setLocationPhrases(List.of("NY","New York","Babylon","Melville","Hauppauge","Ronkonkoma","Islandia"
+        preferences.setBadLocationPhrases(List.of("NY","New York","Babylon","Melville","Hauppauge","Ronkonkoma","Islandia"
                 ,"Plainview","Stony Brook"));
 
         preferences.setSkills(List.of("Microservices","Java","REST APIs","Git", "Hibernate","Representational State Transfer (REST)", "Maven"));

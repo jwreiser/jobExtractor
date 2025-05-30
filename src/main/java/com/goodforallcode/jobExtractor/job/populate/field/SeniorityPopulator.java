@@ -7,43 +7,63 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class SeniorityPopulator implements FieldPopulator {
     public void populateField(Job job, Preferences preferences) {
 
-        List<String> titleAboveSeniorSeniorityLevels = new ArrayList<>(List.of("stf ", "director", "VP ", "lead", "manager", "Supervisor"
-                , "architect", "administrator", "chief", "principal", "Systems Development", "Systems Developer"));
-        if (preferences.isSoftwareSearch()) {
-            titleAboveSeniorSeniorityLevels.addAll(List.of("staff ", " staff"));
-        }
+        List<String> titleAboveSeniorSeniorityLevels = List.of("stf ", "director", "VP ", "lead", "manager", "Supervisor"
+                , "architect", "administrator", "chief", "principal", "Systems Development", "Systems Developer","staff ", " staff","specialist");
+        List<String> titleSafeAboveSeniorSeniorityLevels = List.of("Customer Service Specialist","Recreational Specialist");
 
-        List<String> titleSeniorSeniorityLevels = List.of("senior", "sr. ","specialist", "sr ");
+        List<String> titleSeniorSeniorityLevels = List.of("senior", "sr. ", "sr ");
+        List<String> titleSafeSeniorSeniorityLevels = List.of();
 
         List<String> titleFresherSeniorityLevels = List.of( "intern", "trainee", "apprentice", "fresher");
-        List<String> titleMidCareerSeniorityLevels = List.of("associate");
 
-        List<String> titleJuniorSeniorityLevels = List.of("junior","jr.", "entry level","early");
+        List<String> titleMidCareerSeniorityLevels = List.of("associate","junior","jr.","jr ");
+        List<String> titleSafeMidCareerSeniorityLevels = List.of("Customer Engagement Associate", "Stockroom Associate", "Store Associate", "Client Service Associate"
+                , "Support Associate", "Sales Associate", "Customer Service Associate", "Stock Associate","Guest Associate","Patient Care Associate"
+        ,"Unit Associate","Care Associate","Patient Encounter Associate","Health Associate","Board Associate");
+
+
+        /**
+         * Exceptions:
+         * EARLY INTERVENTION
+         */
+        List<String> titleJuniorSeniorityLevels = List.of("junior","jr.", "entry level","early career");
 
         List<String> clumpedSeniorityLevels = titleJuniorSeniorityLevels;
 
-        titleAboveSeniorSeniorityLevels.stream().filter(k -> job.getTitle().toLowerCase().contains(k.toLowerCase()))
-                .findFirst().ifPresent(seniority -> {
-                    job.setSeniority(seniority);
-                    job.setAboveSenior(true);
-                });
+        Optional<String> matchingPhrase=titleSafeAboveSeniorSeniorityLevels.stream().filter(k -> job.getTitle().toLowerCase().contains(k.toLowerCase())).findFirst();
+        if(!matchingPhrase.isPresent()) {
+            titleAboveSeniorSeniorityLevels.stream().filter(k -> job.getTitle().toLowerCase().contains(k.toLowerCase()))
+                    .findFirst().ifPresent(seniority -> {
+                        job.setSeniority(seniority);
+                        job.setAboveSenior(true);
+                        job.setNoExperience(false);
+                    });
+        }
 
-        titleSeniorSeniorityLevels.stream().filter(k -> job.getTitle().toLowerCase().contains(k.toLowerCase()))
-                .findFirst().ifPresent(seniority -> {
-                    job.setSeniority(seniority);
-                    job.setSenior(true);
-                });
+        matchingPhrase=titleSafeSeniorSeniorityLevels.stream().filter(k -> job.getTitle().toLowerCase().contains(k.toLowerCase())).findFirst();
+        if(!matchingPhrase.isPresent()) {
+            titleSeniorSeniorityLevels.stream().filter(k -> job.getTitle().toLowerCase().contains(k.toLowerCase()))
+                    .findFirst().ifPresent(seniority -> {
+                        job.setSeniority(seniority);
+                        job.setSenior(true);
+                        job.setNoExperience(false);
+                    });
+        }
+        matchingPhrase=titleSafeMidCareerSeniorityLevels.stream().filter(k -> job.getTitle().toLowerCase().contains(k.toLowerCase())).findFirst();
+        if(!matchingPhrase.isPresent()) {
 
-        titleMidCareerSeniorityLevels.stream().filter(k -> job.getTitle().toLowerCase().contains(k.toLowerCase()))
-                .findFirst().ifPresent(seniority -> {
-                    job.setSeniority(seniority);
-                    job.setMidCareer(true);
-                });
-
+            titleMidCareerSeniorityLevels.stream().filter(k -> job.getTitle().toLowerCase().contains(k.toLowerCase()))
+                    .findFirst().ifPresent(seniority -> {
+                        job.setSeniority(seniority);
+                        job.setMidCareer(true);
+                        job.setNoExperience(false);
+                    });
+        }
         clumpedSeniorityLevels.stream().filter(k -> job.getTitle().toLowerCase().contains(k.toLowerCase()))
                 .findFirst().ifPresent(seniority -> {
                     job.setSeniority(seniority);
@@ -85,11 +105,10 @@ public class SeniorityPopulator implements FieldPopulator {
             job.setNoExperience(true);
         }
 
-        /**
-         * Exceptions duties associated patient
-         */
         filter=ExcludeJobFilter.build("MidCareer").titleAndDescriptionPhrases(List.of(
-                "associate ", "junior", "jr", "intermediate"));
+                 "intermediate"))
+                .safeDescriptionPhrases(List.of("Intermediate Care"));
+        ;
         if (filter.exclude(job) != null) {
             job.setSeniority("mid career");
             job.setSenior(false);

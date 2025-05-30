@@ -1,5 +1,7 @@
 package com.goodforallcode.jobExtractor.util;
 
+import com.goodforallcode.jobExtractor.job.populate.field.MunicipalityPopulator;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -7,7 +9,6 @@ import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.goodforallcode.jobExtractor.filters.custom.LocalFilter.americanCitiesAndStates;
 
 public class StringUtil {
     final static List<String> stateAbbreviatsions=List.of("AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY","AS","DC","GU","MP","PR","VI");
@@ -212,7 +213,7 @@ Must keep
         allWords = Stream.of(truncatedDesc.toLowerCase().split(" ")).filter(w->!w.startsWith("#"))
                 .collect(Collectors.toCollection(ArrayList<String>::new));
         allWords.removeAll(stopWords);
-        allWords.removeAll(americanCitiesAndStates.stream().map(f->f.toLowerCase()).collect(Collectors.toList()));
+        allWords.removeAll(MunicipalityPopulator.americanMunicipalities.stream().map(f->f.toLowerCase()).collect(Collectors.toList()));
         allWords.removeAll(stateAbbreviatsions.stream().map(f->f.toLowerCase()).collect(Collectors.toList()));
 
 
@@ -233,5 +234,13 @@ Must keep
         }
         return result;
     }
+
+    public static boolean valueNotPopulated(String value) {
+        return value == null || value.isEmpty();
+    }
+    public static boolean valuePopulated(String value) {
+        return !valueNotPopulated(value);
+    }
+
 }
 

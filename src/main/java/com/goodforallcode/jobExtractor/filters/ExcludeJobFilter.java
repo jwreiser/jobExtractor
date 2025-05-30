@@ -12,7 +12,7 @@ public class ExcludeJobFilter {
 
 
     String name;
-    String location;
+    String municipality;
     List<Boolean> runIfFalse = new ArrayList<>();
     List<String> titlePhrases = new ArrayList<>();
     List<String> titleStartsWithPhrases = new ArrayList<>();
@@ -23,6 +23,7 @@ public class ExcludeJobFilter {
 
     List<String> badCompanies = new ArrayList<>();
     List<String> badCompaniesEquals = new ArrayList<>();
+    List<String> badCompaniesStartsWith = new ArrayList<>();
 
     List<String> goodCompanies = new ArrayList<>();
     String includeAttribute;
@@ -52,8 +53,8 @@ public class ExcludeJobFilter {
         return this;
     }
 
-    public ExcludeJobFilter location(String value) {
-        this.location=value.toLowerCase();
+    public ExcludeJobFilter municipality(String value) {
+        this.municipality =value.toLowerCase();
         return this;
     }
 
@@ -146,6 +147,10 @@ public class ExcludeJobFilter {
         this.badCompaniesEquals.addAll(badCompanies);
         return this;
     }
+    public ExcludeJobFilter badCompaniesStartsWith(List<String> badCompanies) {
+        this.badCompaniesStartsWith.addAll(badCompanies);
+        return this;
+    }
     public ExcludeJobFilter goodCompanies(List<String> goodCompanies) {
         this.goodCompanies.addAll(goodCompanies);
         return this;
@@ -209,13 +214,21 @@ public class ExcludeJobFilter {
         }
 
         if (badCompanies != null) {
-            match = badCompanies.stream().filter(c -> job.getCompanyName().contains(c)).findFirst();
+            match = badCompanies.stream().filter(c -> job.getCompanyName().toLowerCase().contains(c.toLowerCase())).findFirst();
             if (match.isPresent()) {
                 return getName() + " - company name -> " + match.get();
             }
-            match = badCompaniesEquals.stream().filter(c -> job.getCompanyName().equals(c)).findFirst();
+        }
+        if (badCompaniesEquals != null) {
+                match = badCompaniesEquals.stream().filter(c -> job.getCompanyName().equalsIgnoreCase(c)).findFirst();
             if (match.isPresent()) {
-                return getName() + " - company name -> " + match.get();
+                return getName() + " - company name equals -> " + match.get();
+            }
+        }
+        if (badCompaniesStartsWith != null) {
+            match = badCompaniesStartsWith.stream().filter(c -> job.getCompanyName().toLowerCase().startsWith(c.toLowerCase())).findFirst();
+            if (match.isPresent()) {
+                return getName() + " - company name starts with -> " + match.get();
             }
         }
         if (testForCompanyInDescription && badCompanies != null) {
@@ -295,14 +308,14 @@ public class ExcludeJobFilter {
             }
 
         }
-        if(location!=null && !location.isEmpty() && job.getLocation()!=null && !job.getLocation().isEmpty()){
-            String jobLocation= job.getLocation().toLowerCase();
-            if (jobLocation.endsWith(" "+location)) {
-                return getName() + " - location -> " + jobLocation;
-            }else if (jobLocation.contains(" "+location+" ")) {
-                return getName() + " - location -> " + jobLocation;
-            }else if (jobLocation.equals(location)) {
-                return getName() + " - location -> " + jobLocation;
+        if(municipality !=null && !municipality.isEmpty() && job.getMunicipality()!=null && !job.getMunicipality().isEmpty()){
+            String jobMunicipality= job.getMunicipality().toLowerCase();
+            if (jobMunicipality.endsWith(" "+ municipality)) {
+                return getName() + " - Municipality -> " + jobMunicipality;
+            }else if (jobMunicipality.contains(" "+ municipality +" ")) {
+                return getName() + " - Municipality -> " + jobMunicipality;
+            }else if (jobMunicipality.equals(municipality)) {
+                return getName() + " - Municipality -> " + jobMunicipality;
             }
 
         }

@@ -18,10 +18,11 @@ public class SkillsPopulator implements FieldPopulator{
                 "Spring Cloud","Spring Framework", "Spring Boot","Spring MVC","Spring Batch",
                 "Python","PHP","Django","Flask",
                 "NoSQL","SQL","MongoDB","Redis","MySQL","PostgreSQL",
+                "Unix", "OpenShift", "RHEL", "Linux",
 
                 "Data Science",
                 "Java",
-                "Go","GraphQL",
+                "GraphQL",
                 "Kotlin","Laravel",
                 "Microservices",
                 "Machine Learning",

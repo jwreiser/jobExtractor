@@ -47,7 +47,8 @@ public class Job {
     String url;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    String location;
+    String municipality;//this should not include states
+
     /*
     this is used to click to a job while crawling.
     It may be missing information to access outside of the driver
@@ -59,18 +60,17 @@ public class Job {
     @JsonInclude(JsonInclude.Include.NON_NULL)
 
     String recruiterClient;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean consultant;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String seniority;
-    @JsonIgnore
     boolean aboveSenior=false;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    boolean consultant=false;
-    @JsonIgnore
     boolean senior=false;
-    @JsonIgnore
     boolean midCareer=false;
-    @JsonIgnore
     boolean noExperience=false;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String state;
 
@@ -103,14 +103,23 @@ public class Job {
     boolean hidden=false;
     @JsonIgnore
     boolean easyApply=false;
-    boolean contract=false;
-    boolean startUp=false;
-    boolean AI=false;
-    boolean onCall=false;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean contract=null;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean startUp=null;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean onCall=null;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean ai =null;
+
     @JsonIgnore
     boolean acceptingApplications=true;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Boolean fullyRemote =null;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean credentialed =null;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean lowEducationField =null;
     @JsonIgnore
     boolean reposted=false;
     @JsonIgnore
@@ -133,6 +142,9 @@ public class Job {
     String description;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String reason;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    String timeZone;
     @JsonIgnore
     String compressedDescription;
 
@@ -147,6 +159,7 @@ public class Job {
     String companyName;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     List<String> industries=new ArrayList<>();
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     //this is a subset of industries seperated so that we can differentiate it from the sector from company summaries when we search the cache
     String jobIndustry;
     @JsonInclude(JsonInclude.Include.NON_NULL)

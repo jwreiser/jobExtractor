@@ -19,6 +19,7 @@ public class JobExtractorApplication {
 
 			MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
  			MongoCollection<Document> collection = database.getCollection(JOBS_COLLECTION_NAME);
+//			collection.deleteMany(new Document());
 
 			 //			collection.dropIndex("hashedDescription_1");
 /*

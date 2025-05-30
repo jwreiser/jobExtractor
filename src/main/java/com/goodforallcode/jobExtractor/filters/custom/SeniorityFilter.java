@@ -10,16 +10,14 @@ public class SeniorityFilter implements JobFilter {
     @Override
     public boolean include(Preferences preferences, Job job) {
         if(preferences.getSeniority()!=null&&!preferences.getSeniority().isEmpty()&&job.getSeniority()!=null) {
-            String seniority = job.getSeniority().toLowerCase();
-            if(seniority.equals("senior") && job.isAboveSenior()){
+            String seniority = preferences.getSeniority().toLowerCase();
+            if(seniority.equals("senior")  && (job.isAboveSenior()||job.isNoExperience())){
                 return false;
             }
-            if(seniority.equals("senior") && job.isNoExperience()){
+            if(seniority.equals("entry level") && (job.isMidCareer() || !job.isNoExperience()|| job.isSenior() || job.isAboveSenior())){
                 return false;
             }
-            if(seniority.equals("entry level") && !job.isNoExperience()){
-                return false;
-            }
+
         }
 
         return true;

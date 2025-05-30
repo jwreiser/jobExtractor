@@ -32,13 +32,7 @@ public class LinkedInExtractorTests {
         PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
         preferences.setMaxJobAgeInDays(23);
         preferences.setMaxApplicants(400);
-        preferences.setExcludeFresher(true);
-        preferences.setExcludeSenior(true);
-        preferences.setExcludeBigData(true);
-        preferences.setExcludeBlockchain(true);
-        preferences.setExcludeCloudHeavy(true);
         preferences.setExcludeComplexJobs(true);
-        preferences.setExcludeRealEstate(true);
         preferences.setMaxEmployees(9000);
         IncludeOrExcludeJobResults results=extractor.runDeepPopulatedFilters(job,preferences,null,null,null);
         assertFalse(results.includeJob());
@@ -71,7 +65,7 @@ public class LinkedInExtractorTests {
 //        boolean success = extractor.deepLoadJob(job, webDriver);
 //        webDriver.close();
 //        assertTrue(success);
-        assertTrue(job.isContract());
+        assertTrue(job.getContract());
     }
 
     @Test
@@ -83,13 +77,7 @@ public class LinkedInExtractorTests {
         PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
         preferences.setMaxJobAgeInDays(23);
         preferences.setMaxApplicants(400);
-        preferences.setExcludeFresher(true);
-        preferences.setExcludeSenior(true);
-        preferences.setExcludeBigData(true);
-        preferences.setExcludeBlockchain(true);
-        preferences.setExcludeCloudHeavy(true);
         preferences.setExcludeComplexJobs(true);
-        preferences.setExcludeRealEstate(true);
         preferences.setMaxEmployees(9000);
         IncludeOrExcludeJobResults results=extractor.runDeepPopulatedFilters(job,preferences,null,null,null);
         assertFalse(results.includeJob());
@@ -105,13 +93,7 @@ public class LinkedInExtractorTests {
         PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
         preferences.setMaxJobAgeInDays(23);
         preferences.setMaxApplicants(400);
-        preferences.setExcludeFresher(true);
-        preferences.setExcludeSenior(true);
-        preferences.setExcludeBigData(true);
-        preferences.setExcludeBlockchain(true);
-        preferences.setExcludeCloudHeavy(true);
         preferences.setExcludeComplexJobs(true);
-        preferences.setExcludeRealEstate(true);
         preferences.setMaxEmployees(9000);
         IncludeOrExcludeJobResults results=extractor.runDeepPopulatedFilters(job,preferences,null,null,null);
         assertFalse(results.includeJob());
@@ -125,17 +107,11 @@ public class LinkedInExtractorTests {
         job.setDescription(null);
         job.setIndustries(List.of("Staffing and Recruiting"));
         job.setCompanyName("W3Global");
-        job.setLocation("New York");
+        job.setMunicipality("New York");
         PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
         preferences.setMaxJobAgeInDays(23);
         preferences.setMaxApplicants(400);
-        preferences.setExcludeFresher(true);
-        preferences.setExcludeSenior(true);
-        preferences.setExcludeBigData(true);
-        preferences.setExcludeBlockchain(true);
-        preferences.setExcludeCloudHeavy(true);
         preferences.setExcludeComplexJobs(true);
-        preferences.setExcludeRealEstate(true);
         preferences.setMaxEmployees(9000);
         IncludeOrExcludeJobResults results=extractor.runDeepPopulatedFilters(job,preferences,null,null,null);
         assertFalse(results.includeJob());
@@ -149,17 +125,11 @@ public class LinkedInExtractorTests {
         job.setDescription(null);
         job.setIndustries(List.of("Software Development"));
         job.setCompanyName("Talentify.io");
-        job.setLocation("United States");
+        job.setMunicipality("United States");
         PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
         preferences.setMaxJobAgeInDays(23);
         preferences.setMaxApplicants(400);
-        preferences.setExcludeFresher(true);
-        preferences.setExcludeSenior(true);
-        preferences.setExcludeBigData(true);
-        preferences.setExcludeBlockchain(true);
-        preferences.setExcludeCloudHeavy(true);
         preferences.setExcludeComplexJobs(true);
-        preferences.setExcludeRealEstate(true);
         preferences.setMaxEmployees(9000);
         IncludeOrExcludeJobResults results=extractor.runDeepPopulatedFilters(job,preferences,null,null,null);
         assertFalse(results.includeJob());
@@ -176,13 +146,7 @@ public class LinkedInExtractorTests {
         PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
         preferences.setMaxJobAgeInDays(23);
         preferences.setMaxApplicants(400);
-        preferences.setExcludeFresher(true);
-        preferences.setExcludeSenior(true);
-        preferences.setExcludeBigData(true);
-        preferences.setExcludeBlockchain(true);
-        preferences.setExcludeCloudHeavy(true);
         preferences.setExcludeComplexJobs(true);
-        preferences.setExcludeRealEstate(true);
         preferences.setMaxEmployees(9000);
         IncludeOrExcludeJobResults results=extractor.runDeepPopulatedFilters(job,preferences,null,null,null);
         assertFalse(results.includeJob());
@@ -199,13 +163,7 @@ public class LinkedInExtractorTests {
         PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
         preferences.setMaxJobAgeInDays(23);
         preferences.setMaxApplicants(400);
-        preferences.setExcludeFresher(true);
-        preferences.setExcludeSenior(true);
-        preferences.setExcludeBigData(true);
-        preferences.setExcludeBlockchain(true);
-        preferences.setExcludeCloudHeavy(true);
         preferences.setExcludeComplexJobs(true);
-        preferences.setExcludeRealEstate(true);
         preferences.setMaxEmployees(9000);
         IncludeOrExcludeJobResults results=extractor.runDeepPopulatedFilters(job,preferences,null,null,null);
         assertFalse(results.includeJob());

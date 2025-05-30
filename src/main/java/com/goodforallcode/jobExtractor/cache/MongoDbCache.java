@@ -19,7 +19,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.*;
 
@@ -78,7 +77,7 @@ public class MongoDbCache implements Cache {
 
             Bson query=and(eq("companyName", job.getCompanyName()),eq("jobIndustry", job.getJobIndustry())
                     ,eq("employeeRangeLow", job.getMinimumNumEmployees()),eq("employeeRangeHigh", job.getMaximumNumEmployees())
-                    ,eq("location", job.getLocation()));
+                    ,eq("location", job.getMunicipality()));
             try {
                 MongoDatabase database = mongoClient.getDatabase(DATABASE_NAME);
                 MongoCollection<Document> collection = database.getCollection(COMPANY_COLLECTION_NAME);
@@ -386,7 +385,7 @@ public class MongoDbCache implements Cache {
         docValues.put("jobIndustry", job.getJobIndustry());
         docValues.put("jobMinNumEmployees", job.getMinimumNumEmployees());
         docValues.put("jobMaxNumEmployees", job.getMaximumNumEmployees());
-        docValues.put("location", job.getLocation());
+        docValues.put("location", job.getMunicipality());
 
         docValues.put("employeeRangeLow", summary.getEmployeeRangeLow());
         if(summary.getEmployeeRangeHigh()!=null) {
@@ -504,8 +503,8 @@ public class MongoDbCache implements Cache {
             docValues.put("skills", job.getSkills());
         }
 
-        if (job.isContract()) {
-            docValues.put("contract", job.isContract());
+        if (job.getContract()!= null&& job.getContract()) {
+            docValues.put("contract", job.getContract());
         }
         if (compressedDescription != null) {
             docValues.put("description", compressedDescription);
