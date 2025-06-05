@@ -11,10 +11,10 @@ import java.util.List;
 public class PreferencesWithDefaults implements Preferences {
     //companies with small fortune ranks are huge
     private Integer maxFortuneRank=760;
-    private boolean excludePoorWorkLifeBalance=true;
     private boolean excludeNonRemote=true;
 
     public boolean excludeContractJobs=true;
+    public boolean excludeHiddenJobs=true;
     public boolean excludeConsultant=true;
     public  boolean excludeComplexJobs=false;
     public  boolean remoteOnly=true;

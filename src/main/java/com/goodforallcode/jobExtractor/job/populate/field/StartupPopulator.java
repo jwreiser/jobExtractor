@@ -33,7 +33,7 @@ public class StartupPopulator implements FieldPopulator{
                                 "CornerUp", "Cloudbeds", "SandboxAQ", "Fitness Matrix Inc", "Sight Machine",
                                 "Offered.ai", "SpectrumAi", "Numerated", "Avid Technology Professionals", "TherapyNotes, LLC"))
                         .descriptionPhrases(List.of("seed-stage", "y combinator", "backed", " early stage", "early-stage", "raised funding ",
-                                " VC", "investors", "pre-seed", " valuation", "founding", "Startup-Like Environment", "Startup Environment"))
+                                " VC", "investors", "pre-seed", " valuation", "founding", "Startup-Like Environment", "Startup Environment","As an early"))
                         .safeDescriptionPhrases(List.of("public benefit corporation", "PBC", "founding principle"))
                         .titleAndDescriptionPhrases(List.of("startup", "start-up", " start up ","startup"
                                 , "B corp", "Series A", "Series B", "foundational", "scale-up"))

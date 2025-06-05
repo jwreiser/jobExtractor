@@ -3,6 +3,7 @@ package com.goodforallcode.jobExtractor.filters;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.util.CompanyUtil;
 import com.goodforallcode.jobExtractor.util.ReflectionUtil;
+import com.goodforallcode.jobExtractor.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,7 @@ public class ExcludeJobFilter {
     }
 
     public ExcludeJobFilter municipality(String value) {
-        this.municipality =value.toLowerCase();
+        this.municipality = value.toLowerCase();
         return this;
     }
 
@@ -90,6 +91,7 @@ public class ExcludeJobFilter {
         this.runOnlyIfNotFullyRemote = value;
         return this;
     }
+
     public ExcludeJobFilter maxAttribute(String minAttribute, Float maxAttributeValue) {
         this.maxAttribute = maxAttribute;
         this.minMaxAttributeValue = maxAttributeValue;
@@ -143,14 +145,17 @@ public class ExcludeJobFilter {
         this.badCompanies.addAll(badCompanies);
         return this;
     }
+
     public ExcludeJobFilter badCompaniesEquals(List<String> badCompanies) {
         this.badCompaniesEquals.addAll(badCompanies);
         return this;
     }
+
     public ExcludeJobFilter badCompaniesStartsWith(List<String> badCompanies) {
         this.badCompaniesStartsWith.addAll(badCompanies);
         return this;
     }
+
     public ExcludeJobFilter goodCompanies(List<String> goodCompanies) {
         this.goodCompanies.addAll(goodCompanies);
         return this;
@@ -192,7 +197,7 @@ public class ExcludeJobFilter {
         if (runIfFalse.stream().anyMatch(b -> b)) {
             return null;
         }
-        if(runOnlyIfNotFullyRemote&&job.getFullyRemote()!=null&&job.getFullyRemote()){
+        if (runOnlyIfNotFullyRemote && job.getFullyRemote() != null && job.getFullyRemote()) {
             return null;
         }
         final String title = job.getTitle().toLowerCase();
@@ -213,28 +218,32 @@ public class ExcludeJobFilter {
             }
         }
 
-        if (badCompanies != null) {
-            match = badCompanies.stream().filter(c -> job.getCompanyName().toLowerCase().contains(c.toLowerCase())).findFirst();
-            if (match.isPresent()) {
-                return getName() + " - company name -> " + match.get();
+        if (StringUtil.valuePopulated(job.getCompanyName())) {
+            String companyName = job.getCompanyName().toLowerCase();
+
+            if (badCompanies != null) {
+                match = badCompanies.stream().filter(c -> companyName.contains(c.toLowerCase())).findFirst();
+                if (match.isPresent()) {
+                    return getName() + " - company name -> " + match.get();
+                }
             }
-        }
-        if (badCompaniesEquals != null) {
-                match = badCompaniesEquals.stream().filter(c -> job.getCompanyName().equalsIgnoreCase(c)).findFirst();
-            if (match.isPresent()) {
-                return getName() + " - company name equals -> " + match.get();
+            if (badCompaniesEquals != null) {
+                match = badCompaniesEquals.stream().filter(c -> companyName.equalsIgnoreCase(c)).findFirst();
+                if (match.isPresent()) {
+                    return getName() + " - company name equals -> " + match.get();
+                }
             }
-        }
-        if (badCompaniesStartsWith != null) {
-            match = badCompaniesStartsWith.stream().filter(c -> job.getCompanyName().toLowerCase().startsWith(c.toLowerCase())).findFirst();
-            if (match.isPresent()) {
-                return getName() + " - company name starts with -> " + match.get();
+            if (badCompaniesStartsWith != null) {
+                match = badCompaniesStartsWith.stream().filter(c -> companyName.startsWith(c.toLowerCase())).findFirst();
+                if (match.isPresent()) {
+                    return getName() + " - company name starts with -> " + match.get();
+                }
             }
-        }
-        if (testForCompanyInDescription && badCompanies != null) {
-            match = badCompanies.stream().filter(c -> CompanyUtil.descriptionContainsCompanyName(c, job.getDescription())).findFirst();
-            if (match.isPresent()) {
-                return getName() + " - based on company description -> " + match.get();
+            if (testForCompanyInDescription && badCompanies != null) {
+                match = badCompanies.stream().filter(c -> CompanyUtil.descriptionContainsCompanyName(c, job.getDescription())).findFirst();
+                if (match.isPresent()) {
+                    return getName() + " - based on company description -> " + match.get();
+                }
             }
         }
 
@@ -308,13 +317,13 @@ public class ExcludeJobFilter {
             }
 
         }
-        if(municipality !=null && !municipality.isEmpty() && job.getMunicipality()!=null && !job.getMunicipality().isEmpty()){
-            String jobMunicipality= job.getMunicipality().toLowerCase();
-            if (jobMunicipality.endsWith(" "+ municipality)) {
+        if (municipality != null && !municipality.isEmpty() && job.getMunicipality() != null && !job.getMunicipality().isEmpty()) {
+            String jobMunicipality = job.getMunicipality().toLowerCase();
+            if (jobMunicipality.endsWith(" " + municipality)) {
                 return getName() + " - Municipality -> " + jobMunicipality;
-            }else if (jobMunicipality.contains(" "+ municipality +" ")) {
+            } else if (jobMunicipality.contains(" " + municipality + " ")) {
                 return getName() + " - Municipality -> " + jobMunicipality;
-            }else if (jobMunicipality.equals(municipality)) {
+            } else if (jobMunicipality.equals(municipality)) {
                 return getName() + " - Municipality -> " + jobMunicipality;
             }
 

@@ -4,11 +4,12 @@ import java.util.List;
 
 public interface Preferences {
      boolean isExcludeContractJobs();
+
      boolean isExcludeNonRemote();
      void setExcludeNonRemote(boolean exclude);
+     boolean isExcludeHiddenJobs();
+     void setExcludeHiddenJobs(boolean exclude);
 
-     boolean isExcludePoorWorkLifeBalance();
-     void setExcludePoorWorkLifeBalance(boolean exclude);
      boolean isExcludeWeekends();
      void setExcludeWeekends(boolean exclude);
      boolean isExcludeOnCall();

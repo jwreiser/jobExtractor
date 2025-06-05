@@ -30,7 +30,7 @@ public class ContractPopulator implements FieldPopulator {
                         .badCompaniesStartsWith(List.of("GE "))
                         .titlePhrases(List.of("contract"))
                         .descriptionPhrases(List.of("Federal clients", "supporting a DoD", "contract position", "government contractor", "+ Month Contract"
-                                , "+ Months Contract"));
+                                , "+ Months Contract","This is a contract", "contractor position", "contract role", "contractor role", "contract opportunity"));
                 if (filter.exclude(job) != null) {
                     job.setContract(true);
                 }

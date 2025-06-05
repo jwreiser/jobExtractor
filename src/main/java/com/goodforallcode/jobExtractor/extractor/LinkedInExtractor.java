@@ -169,7 +169,7 @@ public class LinkedInExtractor extends Extractor {
 
                 if (job == null) {
                     break;
-                } else if (job.isHidden()) {
+                } else if (job.isHidden()&&preferences.isExcludeHiddenJobs()) {
                     hiddenJobs++;
                     totalHidden++;
                     if (hiddenJobs + skippedJobs == numJobs) {

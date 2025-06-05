@@ -80,7 +80,7 @@ public class FilterFactory {
 
         filters.add(ExcludeJobFilter.build("BadManagement").badCompanies(List.of("Research Innovations Incorporated",
                 "IT Labs", "Hansen Technologies", "LaunchDarkly", "TIDAL", "DXC Technology", "Oak Ridge National Laboratory", "EPLAN",
-                "Envision Horizons","NinjaOne","Tire Rack"))
+                "Envision Horizons","NinjaOne","Tire Rack","Help Scout"))
         );
 
 
@@ -101,12 +101,13 @@ public class FilterFactory {
                         /*
 Exceptions
 Secret: secrets in terms of authentication type stuff
-Employee Polygraph Protection Act
+
  */
 
         filters.add(ExcludeJobFilter.build("Clearance")
                 .descriptionPhrases(List.of("must have an active Public Trust Clearance", "Secret clearance"))
-                .safeDescriptionPhrases(List.of("the secret"))
+                .safeDescriptionPhrases(List.of("the secret","secret ingredient","Employee Polygraph Protection Act"
+                ,"secret herbs","secret sauce"))
                 .titleAndDescriptionPhrases(List.of("top secret", "secret ", "TS/SCI ", " TS/SCI"))
         );
 
@@ -168,8 +169,8 @@ Employee Polygraph Protection Act
         filters.add(ExcludeJobFilter.build("JobSecurity")
                 .badCompanies(List.of("Allstate", "New Relic", "Breezeline", "Slack", "Wordly",
                         "Crossover", "Invitae", "Omnicell", "Komodo Health", "Rocket Software", "Zinnia", "CSG",
-                        "ODP Corporation","Dataminr","Help Scout",
-                        "NTT DATA Services", "Cruise", "VMware", "Intelerad Medical Systems",
+                        "ODP Corporation","Dataminr","Help Scout","The ODP Corporation",
+                        "NTT DATA Services", "Cruise", "VMware", "Intelerad Medical Systems","Toast",
                         "Air Apps", "CivicPlus", "Vertisystem Inc.", "Kyruus", "Atlassian", "Zwift"))
                 .includeAttribute("jobSecurity")
                 .excludeAttributes(List.of("recentLayoffs"))
@@ -196,6 +197,7 @@ Employee Polygraph Protection Act
                 .titleAndDescriptionPhrases(List.of("- 7A", "- 7A", "- 7:30A", "- 8:30A", "- 8A", "- 8A", "Over Night", "-11p",
                         "2nd shift", "3rd shift", "second shift", "third shift", "night shift", "evening shift", "graveyard shift","overnight"))
                 .excludeAttributes(List.of("softwareEngineerNightOrWeekendHours"))
+                .badCompanies(List.of("Toast"))
         );
 
         filters.add(ExcludeJobFilter.build("NotEnglish")
@@ -265,7 +267,6 @@ Employee Polygraph Protection Act
                     .safeDescriptionPhrases(List.of("weekends as needed"))
             );
         }
-        if (preferences.isExcludePoorWorkLifeBalance()) {
             filters.add(ExcludeJobFilter.build("WorkLifeBalance")
                     .goodCompanies(List.of("Ebay", "Guidehouse", "Trimble", "American Specialty Health", "Nationwide", "Webstaurant Store",
                             "Mayo Clinic"))
@@ -275,13 +276,14 @@ Employee Polygraph Protection Act
                             "Arize AI", "Gevo, Inc.", "Harmonia Holdings", "Block","PKWARE",
                             "Penn State Health", "Actalent", "Grafana Labs", "Softrams", "FinTech LLC",
                             "Paytient", "DaVita", "Businessolver", "Integra Connect", "Corcentric",
-                            "Discover Financial Services", "CivicPlus", "Saxon-Global", "GE", "Home Depot", "Wendy's"
+                            "Discover Financial Services", "CivicPlus", "Saxon-Global", "Home Depot", "Wendy's"
                     ))
+                            .badCompaniesStartsWith(List.of("GE "))
                     .excludeAttributes(List.of("workLifeBalance", "softwareEngineerHighOvertime"))
                     .testForCompanyInDescription(true)
             );
 
-        }
+
 
 
         filters.add(ExcludeJobFilter.build("YearsExperience").maxAttribute("maxExperienceRequired", (float) preferences.getAmountOfTotalExperience()));

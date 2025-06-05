@@ -14,38 +14,60 @@ public class SkillsPopulator implements FieldPopulator{
 
                 "C++", "C#","Dot-NET",".NET",
 
-                "JavaScript", "React", "Angular", "Vue.js", "Node.js","VueJS", "TypeScript","React Native","NextJS",
+                "JavaScript", "React", "Angular", "Vue.js", "Node.js","VueJS", "TypeScript","React Native","NextJS","Node",
                 "Spring Cloud","Spring Framework", "Spring Boot","Spring MVC","Spring Batch",
                 "Python","PHP","Django","Flask",
                 "NoSQL","SQL","MongoDB","Redis","MySQL","PostgreSQL",
                 "Unix", "OpenShift", "RHEL", "Linux",
+                "AWS", "Azure", "GCP", "Google Cloud Platform",
+                 "Tailwind CSS", "Bootstrap", "Material UI",
 
+                "Kubernetes", "Docker",
                 "Data Science",
                 "Java",
+                "Golang",
                 "GraphQL",
                 "Kotlin","Laravel",
                 "Microservices",
                 "Machine Learning",
                 "RESTful APIs",  "Ruby",
-                "Swift"
+                "Swift","OneStream","Hogan","Elixir"
                 );
         for(String skill : skills) {
             if (job.getDescription()!=null){
                 String description=job.getDescription().toLowerCase().replace("/"," ");
-                if(description.contains(" "+skill.toLowerCase()+" ")) {
+                if(valueContainsSkill(description, skill)){
                     job.getSkills().add(skill);
+                    continue;
                 }
-            }else if (job.getTitle().toLowerCase().contains(","+skill.toLowerCase()+" ")) {
-                job.getSkills().add(skill);
-            }else if (job.getTitle().toLowerCase().contains(","+skill.toLowerCase()+",")) {
-                job.getSkills().add(skill);
-            }else if (job.getTitle().toLowerCase().contains(", "+skill.toLowerCase()+",")) {
-                job.getSkills().add(skill);
-            }else if (job.getTitle().toLowerCase().contains(", "+skill.toLowerCase()+" ")) {
+            }else if(valueContainsSkill(job.getTitle().toLowerCase(), skill)){
                 job.getSkills().add(skill);
             }
         }
 
     }
+
+
+    /**
+     *
+     * @param value this is the job title,description,etc.
+     * @param skill
+     */
+    private static boolean valueContainsSkill(String value, String skill) {
+        if (value.contains(","+ skill.toLowerCase()+" ")) {
+            return true;
+        }else if (value.contains(","+ skill.toLowerCase()+",")) {
+            return true;
+        }else if (value.contains(", "+ skill.toLowerCase()+",")) {
+            return true;
+        }else if (value.contains(", "+ skill.toLowerCase()+" ")) {
+            return true;
+        }else if (value.contains(" "+ skill.toLowerCase()+" ")) {
+            return true;
+        }else if (value.contains(" "+ skill.toLowerCase()+",")) {
+            return true;
+        }
+        return false;
     }
+}
 

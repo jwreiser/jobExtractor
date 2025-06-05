@@ -17,7 +17,20 @@ public class TextJobPopulator {
         if (text.contains("Remote")) {
             job.setFullyRemote(true);
             if (!text.equals("Remote")) {
-                job.setMunicipality(text.replaceAll("\\(Remote\\)", "").trim());
+                String municipality = text.replaceAll("\\(Remote\\)", "").trim();
+                if(!municipality.equalsIgnoreCase("united states")){
+                    if(municipality.contains(",")){
+                        String[] parts = municipality.split(",");
+                        if(parts.length>1) {
+                            job.setMunicipality(parts[0].trim());
+                            job.setState(parts[1].trim());
+                        }
+
+                    }else {
+                        job.setMunicipality(municipality);
+                    }
+                }
+
             }
         }
         if (text.equals("Contract")) {

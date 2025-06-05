@@ -22,7 +22,7 @@ public class ConsultantPopulator implements FieldPopulator {
                         "Daugherty Business Solutions", "World Wide Technology", "Qualitest", "Cognizant",
                         "Solü Technology Partners", "Nakupuna Companies", "SDI Presence",
                         "DMI (Digital Management, LLC)", "Next Level Business Services",
-                        "NLB Services"))
+                        "NLB Services","Consulting"))
                 .industries(List.of("Business Consulting and Services", "Consulting"))
                 .descriptionPhrases(List.of("consulting"))
                 .safeDescriptionPhrases(List.of("consulting with"))
