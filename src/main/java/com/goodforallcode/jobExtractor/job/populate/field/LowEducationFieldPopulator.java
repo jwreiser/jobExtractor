@@ -12,8 +12,8 @@ public class LowEducationFieldPopulator implements FieldPopulator {
 
         ExcludeJobFilter filter = ExcludeJobFilter.build("LowEducationField")
                 .titlePhrases(List.of(
-                        "Mailroom"," Camp ",
-                        "Clerk", "Laborer", "Attendant",
+                        "Mailroom"," Camp ","Packer", "Packager", "Picker",
+                        "Clerk", "Laborer", "Attendant","Scheduler","Scheduling","Clerical",
                         "Groomer",  "Valet","Dispatcher",
                         "Manufacturing", "Assembler"
                         ,  "Lifeguard", "Installer", "Installation"

@@ -4,6 +4,7 @@ import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.goodforallcode.jobExtractor.util.CompanyUtil;
 import com.goodforallcode.jobExtractor.util.ReflectionUtil;
+import com.goodforallcode.jobExtractor.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,8 @@ public class IncludeOrSkipJobFilter {
     List<String> badCompanies=new ArrayList<>();
     List<String> goodCompanies=new ArrayList<>();
     List<String> skills=new ArrayList<>();
-    String includeAttribute;
+    String includeCompanyAttribute;
+    String includeJobAttribute;
     boolean testForCompanyInDescription=false;
     Float minMaxAttributeValue =null;
     String minAttribute=null;
@@ -64,8 +66,12 @@ public class IncludeOrSkipJobFilter {
         this.minMaxAttributeValue = maxAttributeValue;
         return  this;
     }
-    public IncludeOrSkipJobFilter includeAttribute(String includeAttribute) {
-        this.includeAttribute = includeAttribute;
+    public IncludeOrSkipJobFilter includeCompanyAttribute(String includeAttribute) {
+        this.includeCompanyAttribute = includeAttribute;
+        return  this;
+    }
+    public IncludeOrSkipJobFilter includeJobAttribute(String includeAttribute) {
+        this.includeJobAttribute = includeAttribute;
         return  this;
     }
 
@@ -132,9 +138,14 @@ public class IncludeOrSkipJobFilter {
                 return getName()+" - company name -> " + match.get();
             }
         }
-        if(job.getCompany()!=null && includeAttribute!=null){
-            if(ReflectionUtil.isAttributeTrue(job.getCompany(),includeAttribute)){
-                return getName()+" - attribute - " +  includeAttribute;
+
+        if(StringUtil.valuePopulated(includeJobAttribute)  &&ReflectionUtil.isAttributeTrue(job, includeJobAttribute)){
+            return getName()+" - job attribute - " + includeJobAttribute;
+        }
+
+        if(job.getCompany()!=null && includeCompanyAttribute !=null){
+            if(ReflectionUtil.isAttributeTrue(job.getCompany(), includeCompanyAttribute)){
+                return getName()+" - company attribute - " + includeCompanyAttribute;
             }
         }
         if (job.getDescription()!=null) {

@@ -1,15 +1,23 @@
 package com.goodforallcode.jobExtractor.job.populate;
 
+import com.goodforallcode.jobExtractor.job.populate.field.*;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.openqa.selenium.WebDriver;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 
 public interface DeepJobPopulator {
     boolean populateJob(Job job, WebDriver driver, Preferences preferences) throws TimeoutException;
+
+    public static List<FieldPopulator> fieldPopulators = List.of(new AIPopulator(),new ConsultantPopulator(),new ContractPopulator(),
+            new CredentialedPopulator(),new FullyRemotePopulator(),new LowEducationFieldPopulator()
+            ,new MunicipalityPopulator(),new OnCallPopulator(),
+            new PositionCategoryPopulator(),new SeniorityPopulator(),new ShiftFieldPopulator(),new SkillsPopulator(), new StartupPopulator(),new StatePopulator()
+            ,new TimeZonePopulator(),new WillTrainPopulator());
 
     default public Optional<Integer> getMaxExperienceNeeded(String description) {
         int start;

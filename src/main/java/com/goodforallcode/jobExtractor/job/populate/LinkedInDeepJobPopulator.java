@@ -21,11 +21,6 @@ import java.util.concurrent.TimeoutException;
 
 public class LinkedInDeepJobPopulator implements DeepJobPopulator {
     String emptyComment = "<!---->";
-    public static List<FieldPopulator> fieldPopulators = List.of(new AIPopulator(),new ConsultantPopulator(),new ContractPopulator(),
-            new CredentialedPopulator(),new FullyRemotePopulator(),
-            new MunicipalityPopulator(),new LowEducationFieldPopulator(),new OnCallPopulator(),
-            new PositionCategoryPopulator(),new SeniorityPopulator(),new SkillsPopulator(), new StartupPopulator(),new StatePopulator()
-    ,new TimeZonePopulator());
     public boolean populateJob(Job job, WebDriver driver, Preferences preferences) throws TimeoutException {
         String text;
         WebElement mainDiv = null;

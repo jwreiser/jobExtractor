@@ -191,13 +191,7 @@ Secret: secrets in terms of authentication type stuff
 
 
         filters.add(ExcludeJobFilter.build("NightShift")
-                .descriptionPhrases(List.of("nights", "pm to close","-1am", "-2am", "-3am", "-4am", "-5am", "-6am", "-7am", "-8am"))
-                .titlePhrases(List.of("Evening", " night ", " nights"))
-                .titleStartsWithPhrases(List.of("night "))
-                .titleAndDescriptionPhrases(List.of("- 7A", "- 7A", "- 7:30A", "- 8:30A", "- 8A", "- 8A", "Over Night", "-11p",
-                        "2nd shift", "3rd shift", "second shift", "third shift", "night shift", "evening shift", "graveyard shift","overnight"))
-                .excludeAttributes(List.of("softwareEngineerNightOrWeekendHours"))
-                .badCompanies(List.of("Toast"))
+                .excludeIfTrueJobAttribute("nightShift")
         );
 
         filters.add(ExcludeJobFilter.build("NotEnglish")
@@ -329,7 +323,7 @@ Secret: secrets in terms of authentication type stuff
         filters.add(IncludeOrSkipJobFilter.build("Backend").titlePhrases(List.of("Backend", "Back-end", "Back end")));
 
         filters.add(IncludeOrSkipJobFilter.build("JobSecurity").goodCompanies(List.of("Mayo Clinic"))
-                .includeAttribute("jobSecurity")
+                .includeCompanyAttribute("jobSecurity")
         );
         filters.add(IncludeOrSkipJobFilter.build("ModernizingMicroservices").descriptionPhrases(List.of("microservice", "microservices", "modernization", " API ", " APIs ",
                 "RestFul", "webservice", "web service")));
@@ -372,16 +366,15 @@ Secret: secrets in terms of authentication type stuff
                 , "obtain a security clearance"
         )));
         filters.add(IncludeOrSkipJobFilter.build("PeopleFocused").descriptionPhrases(List.of("life balance", "people first", "like family"))
-                .includeAttribute("peopleFocused"));
+                .includeCompanyAttribute("peopleFocused"));
 
         filters.add(IncludeOrSkipJobFilter.build("PublicGood").testForCompanyInDescription(true).goodCompanies(List.of("Blackbaud", "Mayo Clinic"))
                 .descriptionPhrases(List.of("nonprofit", "health equity", "fair opportunity", "unjust"
                         , "structural inequities", "racism", "underserved", "food access")).industries(List.of("Hospitals and Health Care", "Mental Health Care", "Higher Education"))
-                .includeAttribute("publicGood")
+                .includeCompanyAttribute("publicGood")
         );
         filters.add(IncludeOrSkipJobFilter.build("WillTrain")
-                .titleAndDescriptionPhrases(List.of("will train", "willing to train"))
-                .titlePhrases(List.of(" train"))
+                .includeJobAttribute("willTrain")
         );
 
 

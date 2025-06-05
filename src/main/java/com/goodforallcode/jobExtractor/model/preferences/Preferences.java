@@ -5,8 +5,6 @@ import java.util.List;
 public interface Preferences {
      boolean isExcludeContractJobs();
 
-     boolean isExcludeNonRemote();
-     void setExcludeNonRemote(boolean exclude);
      boolean isExcludeHiddenJobs();
      void setExcludeHiddenJobs(boolean exclude);
 
@@ -30,7 +28,13 @@ public interface Preferences {
      boolean isSkipUnknownNumberOfApplicants();
      void setSkipUnknownNumberOfApplicants(boolean skip);
      boolean isExcludeStartups();
+
      boolean isRemoteOnly();
+     void setRemoteOnly(boolean value);
+     boolean isSoftwareSearch();
+     void setSoftwareSearch(boolean value);
+
+
      int getMaxYearsOfExperience();
      void setMaxYearsOfExperience(int value);
      int getMaxYearsOfExperienceForUnlistedSkill();

@@ -11,6 +11,11 @@ import java.util.List;
 public class PositionCategoryPopulator implements FieldPopulator {
     public void populateField(Job job, Preferences preferences) {
         List<ExcludeJobFilter> filters = new ArrayList<>();
+
+        filters.add(ExcludeJobFilter.build("AccountManagement")
+                .titlePhrases(List.of("Account Manage"))
+        );
+
         /**  Exceptions
          * Waitstaff
          */
@@ -47,6 +52,12 @@ public class PositionCategoryPopulator implements FieldPopulator {
                 .titlePhrases(List.of("Direct Support Professional", "DSP ", "hygiene", "independence skill"))
         );
 
+        filters.add(ExcludeJobFilter.build("BeautyAndSpa")
+                .titlePhrases(List.of("Hairstylist", "Froster", "Stylist", "Dermatologist", "Dermatology", "Cosmetic",
+                        "Aesthetic", "Plastic Surgeon", "Plastic Surgery", "Esthetician", "Spa ", "Massage", "Eyebrows"
+                ))
+                .badCompanies(List.of(" spa","Estee Lauder"))
+        );
         filters.add(ExcludeJobFilter.build("BigData")
                 .descriptionPhrasesAndCount(List.of("pipeline", "big data",
                         "Extract", "Transform", "Load", "ETL ", "spark", "hive ", "pig ", "warehousing", "hadoop"), 2)
@@ -86,12 +97,17 @@ public class PositionCategoryPopulator implements FieldPopulator {
                 .titleAndDescriptionPhrases(List.of("Camp ", "Counselor"))
         );
 
+
+        filters.add(ExcludeJobFilter.build("Cardiology")
+                .titlePhrases(List.of("Cardiac", "Cardiol", "cardiov"))
+        );
+
         filters.add(ExcludeJobFilter.build("CaseManagementSoftware")
                 .titleAndDescriptionPhrases(List.of("Entellitrak", "Documentum"))
         );
 
         filters.add(ExcludeJobFilter.build("CleaningAndMaintenance")
-                .titlePhrases(List.of("Environmental Svc", "Environmental services", "Housekeeping", "Housekeeper", "Cleaner",
+                .titlePhrases(List.of("Environmental Svc", "Environmental service", "Housekeeping", "Housekeeper", "Cleaner",
                         "Porter", "Custodian", "Janitor", "Maintenance", "Maintenance", "Custodial", "Sanitation"))
         );
         filters.add(ExcludeJobFilter.build("ClinicalDataEntry")
@@ -149,12 +165,13 @@ public class PositionCategoryPopulator implements FieldPopulator {
         filters.add(ExcludeJobFilter.build("Credentialed")
                 .titleAndDescriptionPhrases(List.of("Credentialed", "Licensed", "Registered"))
                 .titlePhrases(List.of("Certified"))
+                .safeTitleAndDescriptionPhrases(List.of("non-licensed"))
         );
 
         filters.add(ExcludeJobFilter.build("CustomerService")
                 .titlePhrases(List.of("Service Representative", "Ambassador", "Customer Service", "Customer Specialist", "Concierge"
                         , "Client Service Associate", "Customer Success", "Customer Support", "Customer Care", "Retention Specialist", "Membership Assistant"
-                        , "Patient Representative", "Customer Assistant"
+                        , "Patient Representative", "Customer Assistant", "Care & Retention"
                         , "Call Center", "Membership Experience", "Member Experience", "Support Associate", "Guest Experience", "Customer Experience"
                         , "Account Liaison"))
         );
@@ -163,6 +180,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
         filters.add(ExcludeJobFilter.build("CyberSecurity")
                 .badCompanies(List.of("Zscaler", "Fortra", "Concourse Labs", "PropelAuth", "Trinity Cyber", "Quokka.io"))
                 .titlePhrases(List.of("Vulnerability engineer", "Detection", "Sentinel", "SIEM ", "Risk ", "Cyber Security", "CyberSecurity", "Cyber-Security"))
+                        .safeTitlePhrases(List.of("credit risk"))
                 .industries(List.of(" Computer and Network Security"))
         );
 
@@ -170,6 +188,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
                 .titlePhrases(List.of("Inventory Control", "Hazmat", "Security", "Surveillance", "Crisis", "Emergency", "Police Officer", "Private Investigator"
                         , "Firefighter", "Officer"))
                 .safeTitlePhrases(List.of("Cyber Security", "Cybersecurity", "Cyber-Security", "Security Engineer"))
+                .badCompanies(List.of("Brookhaven National Laboratory"))
         );
 
 
@@ -245,7 +264,8 @@ public class PositionCategoryPopulator implements FieldPopulator {
 
         filters.add(ExcludeJobFilter.build("Doctor")
                 .titlePhrases(List.of("Physician", "Doctor", "Orthopedic", "Pediatrician", "Neurolog", "Endocrin",
-                        "Cardiac", "Cardiol", "Primary Care"))
+                        "Primary Care"))
+                .safeTitlePhrases(List.of("Physician Assistant"))
         );
 
         filters.add(ExcludeJobFilter.build("Elderly")
@@ -253,6 +273,11 @@ public class PositionCategoryPopulator implements FieldPopulator {
                 .badCompanies(List.of("Senior Living", "Gurwin Healthcare System", "The Bristal Assisted Living", "Atria Senior", "Senior Life"))
                 .titleAndDescriptionPhrases(List.of("Assisted Living"))
         );
+
+        filters.add(ExcludeJobFilter.build("EmbeddedSoftware")
+                .titleAndDescriptionPhrases(List.of("embedded"))
+        );
+
 
         filters.add(ExcludeJobFilter.build("EnterpriseApplicationSoftwareDevelopment")
                 .descriptionPhrases(List.of("Web Logic", "JBOSS", "WebSphere"))
@@ -282,9 +307,11 @@ public class PositionCategoryPopulator implements FieldPopulator {
          * an independent brokerage that works to place homeless individuals and families into permanent housing
          */
         filters.add(ExcludeJobFilter.build("Finance")
-                .badCompanies(List.of("Affirm", "Citibank", "Kraken Digital Asset Exchange"
-                        , "Jack Henry", "Equitable", "American Express", "U.S. Bank", "Modulus", "Clerkie",
+                .badCompanies(List.of("Affirm", "Citibank", "Kraken Digital Asset Exchange","BankUnited  ","TransUnion","Equifax",
+                        "Jack Henry", "Equitable", "American Express", "U.S. Bank", "Modulus", "Clerkie","Experian","Financial",
                         "Juniper Square", "Peach", "T. Rowe Price", "Studio Management", "Mortgage", "Credit Union", " Bank", "Wells Fargo"))
+                .badCompaniesStartsWith(List.of("Bank "))
+
                 .industries(List.of("Venture Capital and Private Equity Principals",
                         "Financial Services", "Finance", "Investment Banking", "Investment Banking & Asset Management"))
                 .titlePhrases(List.of("Simcorp", "Accounts", "Billing", "Loan Originator", "Wealth", "Financial", "Investment",
@@ -307,7 +334,8 @@ public class PositionCategoryPopulator implements FieldPopulator {
         filters.add(ExcludeJobFilter.build("FoodIndustry")
                 .titlePhrases(List.of("Dining", "Busser", "To-Go ", "Host", "Baker",
                         "Dishwasher", "Food Service", "Food Runner", "Barista", "Waiter", "Waitress",
-                        "Fish Market", "Cook", "Server Assistant", "Bartender", "Prepared Foods", "Deli ", "Culinary", "Cafeteria", "Meat", "Restaurant", "Banquet", " Server"
+                        "Fish Market", "Cook", "Server Assistant", "Bartender", "Prepared Foods", "Deli ", "Culinary", "Cafeteria",
+                        "Meat", "Restaurant", "Banquet", " Server","Chef"
                         , "Kitchen", "Pizza", "Server"))
                 .badCompanies(List.of("Whole Foods Market", "Outback Steakhouse", "Red Lobster", "Buffalo Wild Wings", "Chick-fil-A", "Denny's",
                         "Cracker Barrel", "Taco Bell", "Pizza Hut", "Waffle House", "IHOP", "Hostess", "Stop & Shop",
@@ -322,7 +350,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
         );
 
         filters.add(ExcludeJobFilter.build("FossilFuels")
-                .badCompanies(List.of("Pride International"))
+                .badCompanies(List.of("Pride International", "National Grid"))
                 .industries(List.of("Oil and Gas"))
                 .safeTitlePhrases(List.of("renewable", "solar", "wind",
                         "nuclear",
@@ -359,6 +387,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
                 .badCompanies(List.of("Games", "Unity Technologies", "Electronic Arts", "Activision", "Blizzard",
                         "Zynga", "Ubisoft", "Take-Two Interactive", "Valve Corporation",
                         "Bethesda Softworks", "Square Enix", "Bandai", "Second Dinner", "Sleeper"))
+                .safeTitlePhrases(List.of("Recommendation Engine"))
         );
 
         filters.add(ExcludeJobFilter.build("Gambling")
@@ -400,7 +429,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
 
         filters.add(ExcludeJobFilter.build("HomeCare")
                 .titlePhrases(List.of("Home Health Aid", "HHA", "Nanny", "Companion", "Personal Care Assistant", "PCA"))
-                .descriptionPhrases(List.of("in-home"))
+                .descriptionPhrases(List.of("in-home", "in home"))
                 .badCompanies(List.of("Home Companions", "Home Care"))
         );
 
@@ -415,6 +444,10 @@ public class PositionCategoryPopulator implements FieldPopulator {
                         , "d365", "Exstream", "Power Platform", "HRMS", "Peoplesoft",
                         "HRIS", "Kitewheel", " HCM ", "Vlocity", "Medallia", "SFCC", "HR ", "Human Resources"))
                 .badCompanies(List.of("Ceridian"))
+        );
+
+        filters.add(ExcludeJobFilter.build("HVAC")
+                .titleAndDescriptionPhrases(List.of("HVAC"))
         );
 
 
@@ -434,7 +467,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
                 .badCompanies(List.of("Transamerica", "Travelers",
                         "State Farm", "GEICO", "Allstate", "Coalition, Inc.", "One80 Intermediaries", "insurance"))
                 .industries(List.of("Insurance"))
-                .titlePhrases(List.of("Insurance", "Duck Creek"))
+                .titlePhrases(List.of("Insurance", "Duck Creek","Claims Examiner","Claims Adjuster"))
                 .testForCompanyInDescription(false)//can't look for insurance in description as it could be describing a benefit
         );
 
@@ -482,7 +515,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
         filters.add(ExcludeJobFilter.build("Managerial")
                 .titlePhrases(List.of("Manager", "Systems engineer", "System engineer", "System Analyst"
                         , "Systems Analyst", "developer advocate", "developer evangelist", "Coordinator", "Management"))
-                .safeTitlePhrases(List.of("Management Applications","Travel Coordinator"))
+                .safeTitlePhrases(List.of("Management Applications", "Travel Coordinator","Case Manager","Account Management"))
         );
 
         filters.add(ExcludeJobFilter.build("Manufacturing")
@@ -496,11 +529,12 @@ public class PositionCategoryPopulator implements FieldPopulator {
         );
 
         filters.add(ExcludeJobFilter.build("MedicalAssistant")
-                .titlePhrases(List.of("Medical Assistant"))
+                .titlePhrases(List.of("Medical Assistant", "Physician Assistant"))
         );
         filters.add(ExcludeJobFilter.build("MedicalDiagnostics")
                 .titlePhrases(List.of("CT/MRI", "Radiolog", "Radiograph", " MRI", "MRI ", "Ultrasound", " EKG", "EKG ", " EEG", "EEG ", "Endoscopy"
-                        , "X-Ray", "Cat Scan", "Radiation", "PET/CT", "PET Scan", "PET Tech", "Rad tech", "Sonogra", "Medical Tech", "CT Tech"))
+                        , "X-Ray", "Cat Scan", "Radiation", "PET/CT", "PET Scan", "PET Tech", "Rad tech", "Sonogra", "Medical Tech", "CT Tech"
+                        , "Echocard"))
         );
 
         filters.add(ExcludeJobFilter.build("MedicalRecords")
@@ -510,18 +544,18 @@ public class PositionCategoryPopulator implements FieldPopulator {
 
         filters.add(ExcludeJobFilter.build("MedicalRequiresTraining")
                 .titlePhrases(List.of("Surgeon", "Pathologist", "Clinician", "Phlebotomist", "Paramedic",
-                        "Respiratory Therapist", "Anesthesiologist"))
+                        "Respiratory Therapist", "Anesthesi"))
         );
 
         filters.add(ExcludeJobFilter.build("MedicalScribe")
-                .titlePhrases(List.of("Medical Scribe"))
+                .titlePhrases(List.of("Medical Scribe", "Practice Scribe"))
         );
 
         filters.add(ExcludeJobFilter.build("MegaBrand")
                 .badCompanies(List.of("Amazon", "Facebook", "Pinterest", "Walmart", "McDonald's", "Sam's Club"))
         );
         filters.add(ExcludeJobFilter.build("MentalHealth")
-                .titlePhrases(List.of("Psychologist", "Psychiatrist"))
+                .titlePhrases(List.of("Psychologist", "Psychiatrist", "Mental Health Therapist"))
         );
 
 
@@ -536,13 +570,19 @@ public class PositionCategoryPopulator implements FieldPopulator {
                 .titleAndDescriptionPhrases(List.of("flutter"))
         );
 
+        filters.add(ExcludeJobFilter.build("NetworkEngineer")
+                .titlePhrases(List.of("Network Engineer","Network Architect","Storage Engineer"))
+        );
+
         filters.add(ExcludeJobFilter.build("Nursing")
                 .titlePhrases(List.of("Nurse Practitioner", "CNA", "Nursing", "C.N.A.", " Nurse", " RN ", "LPN", "Nurse "))
                 .titleStartsWithPhrases(List.of("RN"))
         );
 
         filters.add(ExcludeJobFilter.build("OfficeAssistant")
-                .titlePhrases(List.of("Receptionist", "Office Assistant", "Secretary", "Administrative", "Office Manager", "Front Desk", "Office Coordinator"))
+                .titlePhrases(List.of("Receptionist", "Office Assistant", "Secretary",
+                        "Administrative", "Office Manager", "Front Desk", "Office Coordinator","Executive Assistant"))
+                .descriptionPhrases(List.of("administrative support"))
         );
 
         filters.add(ExcludeJobFilter.build("OccupationalTherapist")
@@ -557,8 +597,8 @@ public class PositionCategoryPopulator implements FieldPopulator {
                 .titleAndDescriptionPhrases(List.of("FCCS", "Oracle Developer", "Oracle Engineer"))
         );
 
-        filters.add(ExcludeJobFilter.build("Patient Service Representative")
-                .titlePhrases(List.of("Patient Service Rep"))
+        filters.add(ExcludeJobFilter.build("PatientRepresentative")
+                .titlePhrases(List.of("Patient Service Rep", "Patient Access Services Representative", "Patient Account Representative"))
         );
 
         filters.add(ExcludeJobFilter.build("PharmacyAndPharmaceutical")
@@ -588,24 +628,31 @@ public class PositionCategoryPopulator implements FieldPopulator {
                 .badCompanies(List.of("Physical Therapy", "Rehabilitation"))
         );
 
+        filters.add(ExcludeJobFilter.build("ProductManagement")
+                .titlePhrases(List.of("Project Analyst","Product Manager","Program Management")));
 
-        filters.add(ExcludeJobFilter.build("PublicRelations")
-                .titlePhrases(List.of("Public Relations")));
 
         filters.add(ExcludeJobFilter.build("ProfessionalServicesEngineer")
                 .titlePhrases(List.of("Professional Services Engineer")));
 
+        filters.add(ExcludeJobFilter.build("Proposals")
+                .titlePhrases(List.of("Proposal")));
+
+
+        filters.add(ExcludeJobFilter.build("PublicRelations")
+                .titlePhrases(List.of("Public Relations")));
+
         filters.add(ExcludeJobFilter.build("RealEstate")
-                .badCompanies(List.of("Anywhere Real Estate Inc.", "Pacaso",
+                .badCompanies(List.of("Real Estate", "Pacaso",
                         "Aalto", "MRI Software", "RE/MAX"))
                 .industries(List.of("Real Estate"))
                 .descriptionPhrases(List.of("real estate", "real-estate"))
         );
 
-        filters.add(ExcludeJobFilter.build("QA")
+        filters.add(ExcludeJobFilter.build("QualityAssurance")
                 .titlePhrases(List.of("Test engineer", "SDET", "tester", "QA ", "Software Developer In Test", "Software Developer Engineer in Test",
-                        "Verification Engineer", "Quality Engineer", "Software Engineer In Test", "Software Development Engineer in Test",
-                        "Test", "Quality Assurance"))
+                        "Verification Engineer", "Quality", "Software Engineer In Test", "Software Development Engineer in Test",
+                        "Test","validation"))
         );
 
         filters.add(ExcludeJobFilter.build("RecreationAndArtsTherapist")
@@ -633,7 +680,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
         filters.add(ExcludeJobFilter.build("Retail")
                 .badCompanies(List.of("Abercrombie"))
                 .industries(List.of("Retail", "Apparel, Accessories & Footwear"))
-                .descriptionPhrases(List.of("retail"))
+                .titleAndDescriptionPhrases(List.of("retail"))
                 .safeDescriptionPhrases(List.of("with all major retail", "with all retail", "with most retail", "with most major retail"))
                 .titlePhrases(List.of("Stocking", "Stocker", "Stock ", "Warehouse", "Cashier", "Stockroom Associate", "Store Associate"))
                 .testForCompanyInDescription(true)
@@ -652,7 +699,8 @@ public class PositionCategoryPopulator implements FieldPopulator {
          */
         filters.add(ExcludeJobFilter.build("SchoolAndTeaching")
                 .titlePhrases(List.of("School", "Teacher", "Rater", "Instructor", "Tutor", "Trainer", "Teaching", "Admissions ", "Mentor", "Lunch Monitor"
-                        , " Admissions", "Dissertation", "Adjunct", "Faculty", "Proctor", "Classroom", "Professor", "Education", "Bus Assistant"))
+                        , " Admissions", "Dissertation", "Adjunct", "Faculty", "Proctor", "Classroom", "Professor", "Education", "Bus Assistant"
+                ,"Lecturer"))
                 .safeTitlePhrases(List.of("Personal Trainer", "Athletic Trainer"))
                 .badCompanies(List.of("Kaplan"))
         );
@@ -663,7 +711,8 @@ public class PositionCategoryPopulator implements FieldPopulator {
         );
 
         filters.add(ExcludeJobFilter.build("ScienceAndLaboratory")
-                .titlePhrases(List.of("Geologist", "Lab Aide", "Laboratory Scientist", "Laboratory Technologist", "Physicist"))
+                .titlePhrases(List.of("Geologist", "Lab Aide", "Laboratory Scientist", "Laboratory Tech",
+                        "Lab Tech","Physicist"))
                 .badCompanies(List.of("Labcorp", "Quest Diagnostics"))
         );
 
@@ -673,13 +722,10 @@ public class PositionCategoryPopulator implements FieldPopulator {
         );
 
         filters.add(ExcludeJobFilter.build("SkilledTrades")
-                .titleAndDescriptionPhrases(List.of("machinist"))
+                .titleAndDescriptionPhrases(List.of("machinist", "Chemist"))
         );
 
-        filters.add(ExcludeJobFilter.build("SkinHairAndSpa")
-                .titlePhrases(List.of("Hairstylist", "Froster", "Stylist", "Dermatologist", "Dermatology", "Cosmetic", "Aesthetic", "Plastic Surgeon", "Plastic Surgery", "Esthetician", "Spa ", "Massage"))
-                .badCompanies(List.of(" spa"))
-        );
+
 
 
         filters.add(ExcludeJobFilter.build("SocialWorker")
@@ -712,7 +758,11 @@ public class PositionCategoryPopulator implements FieldPopulator {
         filters.add(ExcludeJobFilter.build("SupportFocusedJob")
                 .descriptionPhrases(List.of("Support tickets", "second level support"))
                 .titlePhrases(List.of("Support"))
-                .safeTitlePhrases(List.of("Direct Support Professional"))
+                .safeTitlePhrases(List.of("Direct Support Professional","Decision Support"))
+        );
+
+        filters.add(ExcludeJobFilter.build("SystemAdministrator")
+                .titlePhrases(List.of("System Admin"))
         );
 
         filters.add(ExcludeJobFilter.build("Technician")
@@ -729,6 +779,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
         filters.add(ExcludeJobFilter.build("Transportation")
                 .badCompanies(List.of("Cambridge Systematics, Inc."))
                 .industries(List.of("Truck Transportation", "Transportation"))
+                .descriptionPhrases(List.of("deliveries"))
                 .titlePhrases(List.of("Delivery", "Driver", "transport", "Courier"))
         );
 

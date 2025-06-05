@@ -1,9 +1,6 @@
 package com.goodforallcode.jobExtractor.job.populate;
 
-import com.goodforallcode.jobExtractor.job.populate.field.ContractPopulator;
 import com.goodforallcode.jobExtractor.job.populate.field.FieldPopulator;
-import com.goodforallcode.jobExtractor.job.populate.field.PositionCategoryPopulator;
-import com.goodforallcode.jobExtractor.job.populate.field.StatePopulator;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.goodforallcode.jobExtractor.util.DateUtil;
 import com.goodforallcode.jobExtractor.model.Job;

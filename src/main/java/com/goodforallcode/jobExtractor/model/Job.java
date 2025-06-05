@@ -34,7 +34,10 @@ public class Job {
         this.url = url;
     }
 
-
+    public Job(String title, String companyName,String internalUrl,String url,String description) {
+        this(title,companyName,internalUrl,url);
+        this.description = description;
+    }
     //Once the driver is gone the fields can't be marshalled
     @JsonIgnore
     WebElement hideButton;
@@ -108,6 +111,8 @@ public class Job {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Boolean startUp=null;
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean willTrain=null;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Boolean onCall=null;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Boolean ai =null;
@@ -120,6 +125,8 @@ public class Job {
     Boolean credentialed =null;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Boolean lowEducationField =null;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean nightShift =null;
     @JsonIgnore
     boolean reposted=false;
     @JsonIgnore

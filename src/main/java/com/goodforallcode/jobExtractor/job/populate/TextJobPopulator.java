@@ -1,7 +1,10 @@
 package com.goodforallcode.jobExtractor.job.populate;
 
 import com.goodforallcode.jobExtractor.model.Job;
+import com.goodforallcode.jobExtractor.util.LocationUtil;
 import com.goodforallcode.jobExtractor.util.NumUtil;
+
+import java.util.Map;
 
 public class TextJobPopulator {
     public static void updateJob(String text, Job job) {
@@ -18,19 +21,8 @@ public class TextJobPopulator {
             job.setFullyRemote(true);
             if (!text.equals("Remote")) {
                 String municipality = text.replaceAll("\\(Remote\\)", "").trim();
-                if(!municipality.equalsIgnoreCase("united states")){
-                    if(municipality.contains(",")){
-                        String[] parts = municipality.split(",");
-                        if(parts.length>1) {
-                            job.setMunicipality(parts[0].trim());
-                            job.setState(parts[1].trim());
-                        }
-
-                    }else {
-                        job.setMunicipality(municipality);
-                    }
-                }
-
+                LocationUtil locationUtil = new LocationUtil();
+                locationUtil.addLocation(municipality, job);
             }
         }
         if (text.equals("Contract")) {

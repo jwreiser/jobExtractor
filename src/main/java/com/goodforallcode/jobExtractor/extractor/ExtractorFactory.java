@@ -8,7 +8,14 @@ import org.springframework.stereotype.Component;
 @Getter
 public class ExtractorFactory {
     public static Extractor getExtractor(String url){
-        LinkedInExtractor extractor = new LinkedInExtractor();
+        Extractor extractor = null;
+        if(url.contains("linkedin.com")) {
+            extractor =new LinkedInExtractor();
+        } else if(url.contains("ilr.cornell.edu")) {
+            extractor = new ILRExtractor();
+        } else if(url.contains("80000hours.org")) {
+            extractor = new EightyKHoursExtractor();
+        }
         return extractor;
     }
 }

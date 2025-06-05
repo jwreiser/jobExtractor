@@ -5,6 +5,7 @@ import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.mongodb.client.MongoClient;
 import org.openqa.selenium.Cookie;
+import org.openqa.selenium.WebDriver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +19,15 @@ public class UrlExctractingCallable implements Callable<JobResult> {
     Preferences preferences;
     Cache cache;
     MongoClient mongoClient;
-
-    public UrlExctractingCallable(Extractor extractor, List<String> urls, Set<Cookie> cookies, Preferences preferences, Cache cache, MongoClient mongoClient) {
+    WebDriver driver;
+    public UrlExctractingCallable(Extractor extractor, List<String> urls, Set<Cookie> cookies, Preferences preferences, Cache cache, MongoClient mongoClient,WebDriver driver) {
         this.urls = urls;
         this.cookies = cookies;
         this.preferences = preferences;
         this.cache = cache;
         this.extractor = extractor;
         this.mongoClient=mongoClient;
+        this.driver = driver;
     }
 
     @Override
@@ -33,7 +35,7 @@ public class UrlExctractingCallable implements Callable<JobResult> {
 
         List<JobResult> jobResults=new ArrayList<>();
         for(String url:urls) {
-            jobResults.add(extractor.getJobs(cookies, preferences, url, cache, mongoClient));
+            jobResults.add(extractor.getJobs(cookies, preferences, url, cache, mongoClient, driver));
         }
         List<Job> acceptedJobs=new ArrayList<>();
         List<Job> rejectedJobs=new ArrayList<>();

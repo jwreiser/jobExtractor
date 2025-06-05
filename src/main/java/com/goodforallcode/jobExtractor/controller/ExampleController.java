@@ -271,7 +271,7 @@ public class ExampleController {
         );
 
         PreferencesWithDefaults preferences = TestUtil.getDefaultPreferences();
-        preferences.setExcludeNonRemote(false);
+        preferences.setRemoteOnly(false);
         return new QueryInput(urls, preferences, "USERNAME", "PASSWORD");
     }
 
