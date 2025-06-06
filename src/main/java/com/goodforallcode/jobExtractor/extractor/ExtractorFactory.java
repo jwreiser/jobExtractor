@@ -15,6 +15,8 @@ public class ExtractorFactory {
             extractor = new ILRExtractor();
         } else if(url.contains("80000hours.org")) {
             extractor = new EightyKHoursExtractor();
+        }else if(url.contains("usajobs.gov")) {
+            extractor = new USAJobsExtractor();
         }
         return extractor;
     }

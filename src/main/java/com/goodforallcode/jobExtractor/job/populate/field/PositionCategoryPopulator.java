@@ -42,6 +42,10 @@ public class PositionCategoryPopulator implements FieldPopulator {
                 .titlePhrases(List.of("Automation", "Rockwell Portfolio", "BAW"))
         );
 
+        filters.add(ExcludeJobFilter.build("Aviation")
+                .badCompanies(List.of("Aviation"))
+        );
+
         filters.add(ExcludeJobFilter.build("Automotive")
                 .titlePhrases(List.of("Automotive", "MECHANIC"))
                 .titleStartsWithPhrases(List.of("Car "))
@@ -95,6 +99,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
 
         filters.add(ExcludeJobFilter.build("Camp")
                 .titleAndDescriptionPhrases(List.of("Camp ", "Counselor"))
+                .safeTitleAndDescriptionPhrases(List.of("Readjustment Counselor"))
         );
 
 
@@ -187,7 +192,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
         filters.add(ExcludeJobFilter.build("Dangerous")
                 .titlePhrases(List.of("Inventory Control", "Hazmat", "Security", "Surveillance", "Crisis", "Emergency", "Police Officer", "Private Investigator"
                         , "Firefighter", "Officer"))
-                .safeTitlePhrases(List.of("Cyber Security", "Cybersecurity", "Cyber-Security", "Security Engineer"))
+                .safeTitlePhrases(List.of("Cyber Security", "Cybersecurity", "Cyber-Security", "Security Engineer","Medical Officer"))
                 .badCompanies(List.of("Brookhaven National Laboratory"))
         );
 
@@ -555,7 +560,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
                 .badCompanies(List.of("Amazon", "Facebook", "Pinterest", "Walmart", "McDonald's", "Sam's Club"))
         );
         filters.add(ExcludeJobFilter.build("MentalHealth")
-                .titlePhrases(List.of("Psychologist", "Psychiatrist", "Mental Health Therapist"))
+                .titlePhrases(List.of("Psychologist", "Psychiatrist", "Mental Health Therapist","Family Therapist","Marriage Therapist"))
         );
 
 
@@ -661,6 +666,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
 
         filters.add(ExcludeJobFilter.build("Recruiter")
                 .titlePhrases(List.of("Talent Acquisition", "Recruiter", "Recruitment", "Talent Sourc"))
+                .safeTitlePhrases(List.of("Recruitment Incentive"))
         );
 
         filters.add(ExcludeJobFilter.build("Religious")

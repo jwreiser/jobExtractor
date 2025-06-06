@@ -86,11 +86,11 @@ public class EightyKHoursExtractor extends Extractor {
             numTries++;
             totalJobs= 0;
             staleElement = false;
-
+            Element element = null;
             for (WebElement item : items) {
 
                 totalJobs++;
-                Element element = null;
+
                 try {
                     item.click();
                     Document doc = Jsoup.parse(item.getAttribute("innerHTML"));
@@ -102,25 +102,10 @@ public class EightyKHoursExtractor extends Extractor {
 
                 boolean continueToNextJob = handleElement(element, shallowPopulator, driver, preferences, cache, mongoClient, url, acceptedJobs, rejectedJobs, shallowCachedJobs, totalJobs);
                 item.click();//minimize it to return to default state
-                if (continueToNextJob) {
-                    continue;
-                }
-
             }
         }while (staleElement && numTries<=10);
 
-        if(staleElement){
-            totalJobs = 0;
-            List<Element> elements = getJobElements(driver);
 
-            for (Element element : elements) {
-                totalJobs++;
-                boolean continueToNextJob = handleElement(element, shallowPopulator, driver, preferences, cache, mongoClient, url, acceptedJobs, rejectedJobs, shallowCachedJobs,totalJobs);
-                if (continueToNextJob) {
-                    continue;
-                }
-            }
-        }
 
         if (driver != null) {
             try {
@@ -197,22 +182,6 @@ public class EightyKHoursExtractor extends Extractor {
         return items;
     }
 
-
-    private Elements getJobElements(WebDriver driver) {
-        WebElement div = null;
-        Elements items = new Elements();
-        try {
-            div = driver.findElement(By.className("ais-InfiniteHits"));
-        } catch (NoSuchElementException nse) {
-            throw nse;
-        }
-
-        if (div != null) {
-            Document doc = Jsoup.parse(div.getAttribute("innerHTML"));
-            items = doc.select("button.job-card");
-        }
-        return items;
-    }
 
 
 
