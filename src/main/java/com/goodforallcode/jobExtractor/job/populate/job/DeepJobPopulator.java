@@ -1,4 +1,4 @@
-package com.goodforallcode.jobExtractor.job.populate;
+package com.goodforallcode.jobExtractor.job.populate.job;
 
 import com.goodforallcode.jobExtractor.job.populate.field.*;
 import com.goodforallcode.jobExtractor.model.Job;

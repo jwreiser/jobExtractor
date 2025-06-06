@@ -1,5 +1,6 @@
 package com.goodforallcode.jobExtractor.job.populate;
 
+import com.goodforallcode.jobExtractor.job.populate.job.shallow.LinkedInShallowJobPopulator;
 import com.goodforallcode.jobExtractor.model.Job;
 import org.junit.jupiter.api.Test;
 

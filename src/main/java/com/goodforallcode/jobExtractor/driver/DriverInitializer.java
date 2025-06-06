@@ -39,6 +39,7 @@ public class DriverInitializer {
     public static WebDriver getWebDriver() {
         System.setProperty("webdriver.gecko.driver", "D:/development/geckodriver.exe");
         WebDriver driver = new FirefoxDriver();
+
 //        WebDriver driver = new ChromeDriver();
 //        WebDriver driver = new InternetExplorerDriver();
 //        WebDriver driver=new HtmlUnitDriver(true);

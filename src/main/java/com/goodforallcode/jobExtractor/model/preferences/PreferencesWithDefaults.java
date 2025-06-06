@@ -18,6 +18,7 @@ public class PreferencesWithDefaults implements Preferences {
     public  boolean excludeComplexJobs=false;
     public  boolean remoteOnly=true;
     public  boolean softwareSearch=true;
+    public  boolean usingCache=true;
     public  String state="";
     public  String seniority="";
     public boolean excludePacific=true;

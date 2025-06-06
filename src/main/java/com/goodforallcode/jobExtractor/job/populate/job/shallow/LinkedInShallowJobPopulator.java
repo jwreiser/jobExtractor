@@ -1,6 +1,8 @@
-package com.goodforallcode.jobExtractor.job.populate;
+package com.goodforallcode.jobExtractor.job.populate.job.shallow;
 
+import com.goodforallcode.jobExtractor.job.populate.TextJobPopulator;
 import com.goodforallcode.jobExtractor.job.populate.field.FieldPopulator;
+import com.goodforallcode.jobExtractor.job.populate.job.LinkedInDeepJobPopulator;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.goodforallcode.jobExtractor.util.DateUtil;
 import com.goodforallcode.jobExtractor.model.Job;
@@ -11,12 +13,11 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
 
-    public Job populateJob(Element item, WebDriver driver, Preferences preferences) throws TimeoutException {
+    public Job populateJob(Element item, WebDriver driver, Preferences preferences,Integer jobIndex) throws TimeoutException {
         String text;
         String companyName = item.getElementsByClass("artdeco-entity-lockup__subtitle").text();
 
@@ -73,7 +74,7 @@ public class LinkedInShallowJobPopulator implements ShallowJobPopulator {
         }catch (Exception ex){
             throw ex;//catching as a way to allow for inserting a breakpoint
         }
-        for(FieldPopulator fieldPopulator:LinkedInDeepJobPopulator.fieldPopulators){
+        for(FieldPopulator fieldPopulator: LinkedInDeepJobPopulator.fieldPopulators){
             fieldPopulator.populateField(job,preferences);
         }
         return job;

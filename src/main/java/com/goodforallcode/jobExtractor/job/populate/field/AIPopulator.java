@@ -14,7 +14,9 @@ public class AIPopulator implements FieldPopulator{
                         .descriptionPhrasesAndCount(List.of("chatbot", "chatbots", "Conversational AI", "ML", "NLP"
                                 , "natural language processing", "NLU", "Natural Language Understanding","Generative AI","GenAI"
                                 , "machine learning", "TTS", "STT", "SSML", "Tensorflow", "Pytorch","AI services","AI concepts"
-                                , "ONNX", "MXNet"), 2);
+                                , "ONNX", "MXNet"), 2)
+                        .badCompanies(List.of("OpenAI"))
+                        ;
                 if (filter.exclude(job) != null) {
                     job.setAi(true);
                 }

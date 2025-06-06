@@ -3,38 +3,26 @@ package com.goodforallcode.jobExtractor.extractor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goodforallcode.jobExtractor.cache.Cache;
 import com.goodforallcode.jobExtractor.driver.DriverInitializer;
-import com.goodforallcode.jobExtractor.driver.Scroller;
-import com.goodforallcode.jobExtractor.filters.ExcludeJobFilter;
 import com.goodforallcode.jobExtractor.filters.FilterFactory;
 import com.goodforallcode.jobExtractor.filters.IncludeOrSkipJobFilter;
-import com.goodforallcode.jobExtractor.filters.JobFilter;
-import com.goodforallcode.jobExtractor.job.populate.*;
-import com.goodforallcode.jobExtractor.model.CompanySummary;
+import com.goodforallcode.jobExtractor.job.populate.job.shallow.ILRShallowJobPopulator;
+import com.goodforallcode.jobExtractor.job.populate.job.shallow.ShallowJobPopulator;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.CompanyUtil;
-import com.goodforallcode.jobExtractor.util.RESTUtil;
-import com.goodforallcode.jobExtractor.util.WebdriverUtil;
 import com.mongodb.client.MongoClient;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.MoveTargetOutOfBoundsException;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Collectors;
 
 
 @Getter
@@ -97,7 +85,7 @@ public class ILRExtractor extends Extractor {
                 totalJobs++;
 
                 try {
-                    job = shallowPopulator.populateJob(item, driver,preferences);
+                    job = shallowPopulator.populateJob(item, driver,preferences,null);
                 } catch (TimeoutException e) {
                     job = null;
                 }

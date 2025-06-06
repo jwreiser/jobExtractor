@@ -202,7 +202,7 @@ public abstract class Extractor {
         }
 
         IncludeOrExcludeJobResults includeJobResults = alwaysIncludeJob(job, preferences,
-                driver, cache, mongoClient);
+                driver);
         if (includeJobResults != null && includeJobResults.includeFilter() != null) {
             job.setIncludeFilter(includeJobResults.includeFilter());
             job.setReason(includeJobResults.includeFilter().include(preferences, job));
@@ -213,7 +213,7 @@ public abstract class Extractor {
         return false;
     }
 
-    public IncludeOrExcludeJobResults alwaysIncludeJob(Job job, Preferences preferences, WebDriver driver, Cache cache, MongoClient client) {
+    public IncludeOrExcludeJobResults alwaysIncludeJob(Job job, Preferences preferences, WebDriver driver) {
         List<IncludeOrSkipJobFilter> includeOrSkipFilters = new ArrayList<>();
 
         Optional<IncludeOrSkipJobFilter> alwaysIncludeFilter = FilterFactory.getAlwaysIncludeFilters(preferences).stream().filter(f -> f.include(preferences, job) != null).findFirst();

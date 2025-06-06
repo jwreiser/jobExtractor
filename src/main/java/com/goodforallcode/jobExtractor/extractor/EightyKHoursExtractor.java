@@ -5,8 +5,8 @@ import com.goodforallcode.jobExtractor.cache.Cache;
 import com.goodforallcode.jobExtractor.driver.DriverInitializer;
 import com.goodforallcode.jobExtractor.filters.FilterFactory;
 import com.goodforallcode.jobExtractor.filters.IncludeOrSkipJobFilter;
-import com.goodforallcode.jobExtractor.job.populate.ILRShallowJobPopulator;
-import com.goodforallcode.jobExtractor.job.populate.ShallowJobPopulator;
+import com.goodforallcode.jobExtractor.job.populate.job.shallow.EightyKShallowJobPopulator;
+import com.goodforallcode.jobExtractor.job.populate.job.shallow.ShallowJobPopulator;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.mongodb.client.MongoClient;
@@ -52,78 +52,75 @@ public class EightyKHoursExtractor extends Extractor {
         List<WebElement> nextPageButtons = new ArrayList<>();
         List<Integer> pageValues;
         driver.get(url);
-        //TODO click on city and skill set
-        currentPageNum++;
-        justSkipped = false;
-                /*
-                the current number of results can change as the page loads so we
-                don't want to JUST read it right away as it may get lowered
-                 */
         try {
-            Thread.sleep(10_000);//time to load the page and not overwhelm the server
+            Thread.sleep(2_000);//time to load the page and not overwhelm the server
         } catch (InterruptedException ex) {
 
         }
 
-
-        Elements items = getJobItems(driver);
-
-        ShallowJobPopulator shallowPopulator = getShallowJobPopulator();
-        hiddenJobs = 0;
-        skippedJobs = 0;
-        cachedJobs = 0;
-        everyJobHiddenCachedOrSkipped = false;
-        numJobs = items.size();
-        Job job;
-        for (Element item : items) {
-
-            totalJobs++;
-
+        if(preferences.isRemoteOnly()) {
+            List<WebElement> locationDivs = driver.findElements(By.id("tags_location_80k-container"));
+            WebElement cityDiv = locationDivs.get(1);
+            List<WebElement> cityOptions = cityDiv.findElements(By.cssSelector("input[type='checkbox']"));
+            WebElement remoteUsa=cityOptions.get(4);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", remoteUsa);
+        }
+        if(preferences.isSoftwareSearch()) {
             try {
-                job = shallowPopulator.populateJob(item, driver, preferences);
-            } catch (TimeoutException e) {
-                job = null;
-            }
+                Thread.sleep(2_000);//time to load the changes
+            } catch (InterruptedException ex) {
 
-            if (job == null) {
-                break;
-            } else if (job.isHidden() && preferences.isExcludeHiddenJobs()) {
-                hiddenJobs++;
-                totalHidden++;
-                if (hiddenJobs + skippedJobs == numJobs) {
-                    everyJobHiddenCachedOrSkipped = true;
-                }
-                continue;
             }
-            job.setSourceUrl(url);
-            if (cache.containsJob(job, mongoClient)) {
-                cachedJobs++;
-                shallowCachedJobs.add(job);
-                totalCached++;
-                continue;
-            }
-
-            final Job finalJob = job;
-            Optional<IncludeOrSkipJobFilter> includeOrSkipJobFilter = FilterFactory.getShallowFiltersSkip(preferences).stream().filter(f -> f.include(preferences, finalJob) != null).findFirst();
-            if (includeOrSkipJobFilter.isPresent()) {
-                        /*we don't want to cache acceptedJobs that are too new otherwise we may
-                        not see them again in other future searches
-                         */
-                skippedJobs++;
-                totalSkipped++;
-                if (hiddenJobs + cachedJobs + skippedJobs == numJobs) {
-                    everyJobHiddenCachedOrSkipped = true;
-                }
-                continue;
-            }
-
-            if (!runFiltersThatMakeSenseForShallowPopulatedJobs(preferences, cache, mongoClient, finalJob, job, driver, rejectedJobs, acceptedJobs)) {
-                IncludeOrExcludeJobResults includeOrExcludeJobResults = runFinalFilters(job, preferences, driver, new ArrayList<>());
-                handleNonSkipJobResults(cache, mongoClient, acceptedJobs, rejectedJobs, driver, job, includeOrExcludeJobResults, preferences);
-            }
-
+            WebElement skillDiv = driver.findElement(By.id("tags_skill-container"));
+            List<WebElement> skillOptions = skillDiv.findElements(By.cssSelector("input[type='checkbox']"));
+            WebElement software=skillOptions.get(1);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", software);
         }
 
+        boolean staleElement = false;
+        ShallowJobPopulator shallowPopulator = getShallowJobPopulator();
+        int numTries = 0;
+        List<WebElement> items;
+        do {
+            items = getJobWebElements(driver);
+            numTries++;
+            totalJobs= 0;
+            staleElement = false;
+
+            for (WebElement item : items) {
+
+                totalJobs++;
+                Element element = null;
+                try {
+                    item.click();
+                    Document doc = Jsoup.parse(item.getAttribute("innerHTML"));
+                    element = doc.firstElementChild();
+                } catch (StaleElementReferenceException e) {
+                    staleElement = true;//looks like it is always null the first time (and first time only)
+                    break;
+                }
+
+                boolean continueToNextJob = handleElement(element, shallowPopulator, driver, preferences, cache, mongoClient, url, acceptedJobs, rejectedJobs, shallowCachedJobs, totalJobs);
+                item.click();//minimize it to return to default state
+                if (continueToNextJob) {
+                    continue;
+                }
+
+            }
+        }while (staleElement && numTries<=10);
+
+        if(staleElement){
+            totalJobs = 0;
+            List<Element> elements = getJobElements(driver);
+
+            for (Element element : elements) {
+                totalJobs++;
+                boolean continueToNextJob = handleElement(element, shallowPopulator, driver, preferences, cache, mongoClient, url, acceptedJobs, rejectedJobs, shallowCachedJobs,totalJobs);
+                if (continueToNextJob) {
+                    continue;
+                }
+            }
+        }
 
         if (driver != null) {
             try {
@@ -143,28 +140,79 @@ public class EightyKHoursExtractor extends Extractor {
         return result;
     }
 
+    private boolean handleElement(Element element,ShallowJobPopulator shallowPopulator, WebDriver driver, Preferences preferences, Cache cache, MongoClient mongoClient
+                                  ,String url, List<Job> acceptedJobs, List<Job> rejectedJobs, List<Job> shallowCachedJobs,int jobIndex) {
+        Job job;
+        boolean continueToNextJob=false;
+        try {
+            job = shallowPopulator.populateJob(element, driver, preferences,jobIndex);
+            if(preferences.isRemoteOnly()) {
+                job.setFullyRemote(true);//We are only searching for remote jobs and it's not worth the effort to check if it is remote
+            }
+        } catch (TimeoutException e) {
+            job = null;
+        }
+
+        if (job != null) {
+            if (job.isHidden() && preferences.isExcludeHiddenJobs()) {
+                continueToNextJob = true;
+            }
+            job.setSourceUrl(url);
+            if (preferences.isUsingCache() && cache.containsJob(job, mongoClient)) {
+                shallowCachedJobs.add(job);
+                continueToNextJob = true;
+            }
+
+            final Job finalJob = job;
+            Optional<IncludeOrSkipJobFilter> includeOrSkipJobFilter = FilterFactory.getShallowFiltersSkip(preferences).stream().filter(f -> f.include(preferences, finalJob) != null).findFirst();
+            if (includeOrSkipJobFilter.isPresent()) {
+                continueToNextJob= true;
+            }
+
+            if (!runFiltersThatMakeSenseForShallowPopulatedJobs(preferences, cache, mongoClient, finalJob, job, driver, rejectedJobs, acceptedJobs)) {
+                IncludeOrExcludeJobResults includeOrExcludeJobResults = runFinalFilters(job, preferences, driver, new ArrayList<>());
+                handleNonSkipJobResults(cache, mongoClient, acceptedJobs, rejectedJobs, driver, job, includeOrExcludeJobResults, preferences);
+            }
+        }
+        return continueToNextJob;
+    }
 
     protected ShallowJobPopulator getShallowJobPopulator() {
-        return new ILRShallowJobPopulator();
+        return new EightyKShallowJobPopulator();
     }
 
 
-    private Elements getJobItems(WebDriver driver) {
+    private List<WebElement> getJobWebElements(WebDriver driver) {
+        WebElement div = null;
+        List<WebElement> items= new ArrayList<>();
+        try {
+            div = driver.findElement(By.className("ais-InfiniteHits"));
+        } catch (NoSuchElementException nse) {
+            throw nse;
+        }
+
+        if (div != null) {
+            items=div.findElements(By.tagName("button"));
+        }
+        return items;
+    }
+
+
+    private Elements getJobElements(WebDriver driver) {
         WebElement div = null;
         Elements items = new Elements();
         try {
-            div = driver.findElement(By.id("dynamic-content"));
+            div = driver.findElement(By.className("ais-InfiniteHits"));
         } catch (NoSuchElementException nse) {
             throw nse;
         }
 
         if (div != null) {
             Document doc = Jsoup.parse(div.getAttribute("innerHTML"));
-            items = doc.select("div.job-info-inner");
+            items = doc.select("button.job-card");
         }
         return items;
     }
-
 
 
 

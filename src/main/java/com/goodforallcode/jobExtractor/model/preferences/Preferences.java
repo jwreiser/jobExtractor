@@ -31,6 +31,9 @@ public interface Preferences {
 
      boolean isRemoteOnly();
      void setRemoteOnly(boolean value);
+     boolean isUsingCache();
+     void setUsingCache(boolean value);
+
      boolean isSoftwareSearch();
      void setSoftwareSearch(boolean value);
 

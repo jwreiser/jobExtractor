@@ -7,10 +7,10 @@ import com.goodforallcode.jobExtractor.driver.Scroller;
 import com.goodforallcode.jobExtractor.filters.ExcludeJobFilter;
 import com.goodforallcode.jobExtractor.filters.FilterFactory;
 import com.goodforallcode.jobExtractor.filters.IncludeOrSkipJobFilter;
-import com.goodforallcode.jobExtractor.job.populate.DeepJobPopulator;
-import com.goodforallcode.jobExtractor.job.populate.LinkedInDeepJobPopulator;
-import com.goodforallcode.jobExtractor.job.populate.LinkedInShallowJobPopulator;
-import com.goodforallcode.jobExtractor.job.populate.ShallowJobPopulator;
+import com.goodforallcode.jobExtractor.job.populate.job.DeepJobPopulator;
+import com.goodforallcode.jobExtractor.job.populate.job.LinkedInDeepJobPopulator;
+import com.goodforallcode.jobExtractor.job.populate.job.shallow.LinkedInShallowJobPopulator;
+import com.goodforallcode.jobExtractor.job.populate.job.shallow.ShallowJobPopulator;
 import com.goodforallcode.jobExtractor.model.CompanySummary;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
@@ -151,7 +151,7 @@ public class LinkedInExtractor extends Extractor {
                 totalJobs++;
 
                 try {
-                    job = shallowPopulator.populateJob(item, driver,preferences);
+                    job = shallowPopulator.populateJob(item, driver,preferences,null);
                 } catch (TimeoutException e) {
                     job = null;
                 }
