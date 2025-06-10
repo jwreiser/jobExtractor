@@ -10,6 +10,7 @@ public class FilterFactory {
 
     public static List<JobFilter> getAlwaysExcludeCustomFilters(Preferences preferences) {
         List<JobFilter> filters = new ArrayList<>();
+        filters.add(new AgeFilter());
         filters.add(new FortuneRankFilter());
         filters.add(new MunicipalityFilter());
         filters.add(new PositionCategoryFilter());
@@ -30,7 +31,7 @@ public class FilterFactory {
 
 
         filters.add(ExcludeJobFilter.build("ExternalContractor")
-                .excludeAttributes(List.of("softwareEngineerExternalContractors"))
+                .excludeCompanyAttributes(List.of("softwareEngineerExternalContractors"))
         );
 
 
@@ -57,19 +58,19 @@ public class FilterFactory {
         filters.add(ExcludeJobFilter.build("AcceptingApplications").excludeIfFalseJobAttribute("AcceptingApplications"));
 
         filters.add(ExcludeJobFilter.build("Acquisitions")
-                .excludeAttributes(List.of("acquisitions"))
-                .badCompanies(List.of("BeyondTrust","PointClickCare","MeridianLink"))
+                .excludeCompanyAttributes(List.of("acquisitions"))
+                .matchingCompanies(List.of("BeyondTrust","PointClickCare","MeridianLink"))
         );
 
 
         if (preferences.isExcludeAggressiveTimelines()) {
             filters.add(ExcludeJobFilter.build("AggressiveTimelines")
-                    .badCompanies(List.of("Clarifai", "Digital Technology Partners",
+                    .matchingCompanies(List.of("Clarifai", "Digital Technology Partners",
                             "Stryker", "Clover Health"))
                     .descriptionPhrases(List.of("fast-moving", "fast-paced", "fast paced", "aggressive timelines",
                             "aggressive delivery schedule"))
                     .testForCompanyInDescription(true)
-                    .excludeAttributes(List.of("fastPaced"))
+                    .excludeCompanyAttributes(List.of("fastPaced"))
             );
         }
 
@@ -78,7 +79,7 @@ public class FilterFactory {
 
 
 
-        filters.add(ExcludeJobFilter.build("BadManagement").badCompanies(List.of("Research Innovations Incorporated",
+        filters.add(ExcludeJobFilter.build("BadManagement").matchingCompanies(List.of("Research Innovations Incorporated",
                 "IT Labs", "Hansen Technologies", "LaunchDarkly", "TIDAL", "DXC Technology", "Oak Ridge National Laboratory", "EPLAN",
                 "Envision Horizons","NinjaOne","Tire Rack","Help Scout"))
         );
@@ -92,7 +93,7 @@ public class FilterFactory {
 
 
         filters.add(ExcludeJobFilter.build("CareerAccelerator")
-                .badCompanies(List.of("Outcoder iO", "SynergisticIT"))
+                .matchingCompanies(List.of("Outcoder iO", "SynergisticIT"))
                 .testForCompanyInDescription(true)
         );
 
@@ -124,7 +125,7 @@ Secret: secrets in terms of authentication type stuff
 
             filters.add(ExcludeJobFilter.build("Contract")
                     .excludeIfTrueJobAttribute("contract")
-                    .excludeAttributes(List.of("contractor"))
+                    .excludeCompanyAttributes(List.of("contractor"))
             );
         }
 
@@ -137,7 +138,7 @@ Secret: secrets in terms of authentication type stuff
 
 
         filters.add(ExcludeJobFilter.build("Dishonest")
-                .badCompanies(List.of("IT Minds LLC", "Bitsoft International, Inc."
+                .matchingCompanies(List.of("IT Minds LLC", "Bitsoft International, Inc."
                         , "Envision Horizons", "Diaconia"))
                 .testForCompanyInDescription(true)
         );
@@ -147,7 +148,7 @@ Secret: secrets in terms of authentication type stuff
 
 
         filters.add(ExcludeJobFilter.build("EnrollmentRequired")
-                .badCompanies(List.of("IT Pros"))
+                .matchingCompanies(List.of("IT Pros"))
                 .testForCompanyInDescription(true)
         );
 
@@ -155,25 +156,25 @@ Secret: secrets in terms of authentication type stuff
 
 
         filters.add(ExcludeJobFilter.build("ForeignLocatedCompany")
-                .badCompanies(List.of("Redcare Pharmacy"))
+                .matchingCompanies(List.of("Redcare Pharmacy"))
                 .testForCompanyInDescription(true)
         );
 
 
         filters.add(ExcludeJobFilter.build("Freelance")
-                .badCompanies(List.of("CleverTech"))
+                .matchingCompanies(List.of("CleverTech"))
                 .titleAndDescriptionPhrases(List.of("Freelance"))
         );
 
 
         filters.add(ExcludeJobFilter.build("JobSecurity")
-                .badCompanies(List.of("Allstate", "New Relic", "Breezeline", "Slack", "Wordly",
+                .matchingCompanies(List.of("Allstate", "New Relic", "Breezeline", "Slack", "Wordly",
                         "Crossover", "Invitae", "Omnicell", "Komodo Health", "Rocket Software", "Zinnia", "CSG",
                         "ODP Corporation","Dataminr","Help Scout","The ODP Corporation",
                         "NTT DATA Services", "Cruise", "VMware", "Intelerad Medical Systems","Toast",
                         "Air Apps", "CivicPlus", "Vertisystem Inc.", "Kyruus", "Atlassian", "Zwift"))
                 .includeAttribute("jobSecurity")
-                .excludeAttributes(List.of("recentLayoffs"))
+                .excludeCompanyAttributes(List.of("recentLayoffs"))
         );
 
         filters.add(ExcludeJobFilter.build(" JobTooOld").maxAttribute("jobAgeInDays", (float) preferences.getMaxJobAgeInDays()));
@@ -204,7 +205,7 @@ Secret: secrets in terms of authentication type stuff
         );
 
 
-        filters.add(ExcludeJobFilter.build(" NotPeopleFocused").badCompanies(List.of("Maximus", "IDR, Inc.", "Marketlab",
+        filters.add(ExcludeJobFilter.build(" NotPeopleFocused").matchingCompanies(List.of("Maximus", "IDR, Inc.", "Marketlab",
                 "Gainwell Technologies", "Revature",
                 "Solü Technology Partners")));
 
@@ -217,22 +218,12 @@ Secret: secrets in terms of authentication type stuff
                 .titlePhrases(List.of("Engineering Prospects", "open call", "Expression of Interest"))
         );
 
-
-
         filters.add(ExcludeJobFilter.build("OutsourcingAndOffshore")
-                .badCompanies(List.of("Rockwell Automation", "Equinix", "Banner Health", "Ritchie Bros",
-                        "Blue Cross NC", "Ascension", "Transamerica", "Conduent", "Zinnia", "LiveRamp",
-                        "Intelerad Medical Systems"))
-                .testForCompanyInDescription(true)
-                .excludeAttributes(List.of("offshores"))
-                        .titleAndDescriptionPhrases(List.of("Hyderabad", "India"))
-                .descriptionPhrases(List.of("IT services and outsourcing company", "with offshore"))
+                .excludeIfTrueJobAttribute("outsources")
         );
 
-
-
         filters.add(ExcludeJobFilter.build("RegularlyWarringCountryCompany")
-                .badCompanies(List.of("Київстар"))
+                .matchingCompanies(List.of("Київстар"))
                 .testForCompanyInDescription(true)
         );
 
@@ -243,7 +234,7 @@ Secret: secrets in terms of authentication type stuff
                 .excludeIfTrueJobAttribute("startup")
         );
         filters.add(ExcludeJobFilter.build("Stress")
-                .excludeAttributes(List.of("stress"))
+                .excludeCompanyAttributes(List.of("stress"))
         );
 
 
@@ -262,9 +253,9 @@ Secret: secrets in terms of authentication type stuff
             );
         }
             filters.add(ExcludeJobFilter.build("WorkLifeBalance")
-                    .goodCompanies(List.of("Ebay", "Guidehouse", "Trimble", "American Specialty Health", "Nationwide", "Webstaurant Store",
+                    .exceptionalCompanies(List.of("Ebay", "Guidehouse", "Trimble", "American Specialty Health", "Nationwide", "Webstaurant Store",
                             "Mayo Clinic"))
-                    .badCompanies(List.of("Cardinal Health", "Cruise", "CVS Health", "Aha!", "Cash App"
+                    .matchingCompanies(List.of("Cardinal Health", "Cruise", "CVS Health", "Aha!", "Cash App"
                             , "Square", "Crunchyroll", "HCLTech", "Palo Alto Networks", "Intelerad Medical Systems",
                             "Tenable", "Kasten by Veeam", "Dremio", "Gigster", "Samsung Electronics",
                             "Arize AI", "Gevo, Inc.", "Harmonia Holdings", "Block","PKWARE",
@@ -272,8 +263,8 @@ Secret: secrets in terms of authentication type stuff
                             "Paytient", "DaVita", "Businessolver", "Integra Connect", "Corcentric",
                             "Discover Financial Services", "CivicPlus", "Saxon-Global", "Home Depot", "Wendy's"
                     ))
-                            .badCompaniesStartsWith(List.of("GE "))
-                    .excludeAttributes(List.of("workLifeBalance", "softwareEngineerHighOvertime"))
+                            .matchingCompaniesStartsWith(List.of("GE "))
+                    .excludeCompanyAttributes(List.of("workLifeBalance", "softwareEngineerHighOvertime"))
                     .testForCompanyInDescription(true)
             );
 
@@ -348,6 +339,9 @@ Secret: secrets in terms of authentication type stuff
                 ))
                 .testForCompanyInDescription(true)
         );
+        filters.add(IncludeOrSkipJobFilter.build("WillTrain")
+                .includeJobAttribute("willTrain")
+        );
 
 
         return filters;
@@ -372,9 +366,6 @@ Secret: secrets in terms of authentication type stuff
                 .descriptionPhrases(List.of("nonprofit", "health equity", "fair opportunity", "unjust"
                         , "structural inequities", "racism", "underserved", "food access")).industries(List.of("Hospitals and Health Care", "Mental Health Care", "Higher Education"))
                 .includeCompanyAttribute("publicGood")
-        );
-        filters.add(IncludeOrSkipJobFilter.build("WillTrain")
-                .includeJobAttribute("willTrain")
         );
 
 

@@ -2,6 +2,7 @@ package com.goodforallcode.jobExtractor.controller;
 
 import com.goodforallcode.jobExtractor.extractor.Extractor;
 import com.goodforallcode.jobExtractor.extractor.ExtractorFactory;
+import com.goodforallcode.jobExtractor.extractor.ExtractorRunner;
 import com.goodforallcode.jobExtractor.extractor.JobResult;
 import com.goodforallcode.jobExtractor.model.QueryInput;
 import org.openqa.selenium.Cookie;
@@ -17,31 +18,7 @@ import java.util.Set;
 public class ExtractionController {
     @PostMapping("/extract")
     public JobResult extractMatchingJobs(@RequestBody QueryInput queryInput){
-        Extractor extractor= ExtractorFactory.getExtractor(queryInput.getUrls().get(0));
-        WebDriver driver = extractor.getDriver(queryInput.getUserName(), queryInput.getPassword());
-        Set<Cookie> cookies = driver.manage().getCookies();
-        for(Cookie cookie:cookies){
-            if(cookie.getName().equals("li_at")) {
-                if (!cookie.getDomain().equals(".linkedin.com")) {
-                    String value=cookie.getValue();
-                    Date expiry=cookie.getExpiry();
-                    driver.manage().deleteCookie(cookie);
-                    driver.manage().addCookie(
-                            new Cookie("li_at", value, ".linkedin.com", "/", expiry)
-                    );
-                    cookies = driver.manage().getCookies();
-                }
-                break;
-            }
-        }
-
-        JobResult result=extractor.getJobs(cookies,queryInput.getPreferences(), queryInput.getUrls(),driver);
-        try{
-            driver.close();
-        }catch(Exception ex){
-
-        }
-
-        return result;
+        ExtractorRunner extractorRunner = new ExtractorRunner();
+        return extractorRunner.extractMatchingJobs(queryInput);
     }
 }

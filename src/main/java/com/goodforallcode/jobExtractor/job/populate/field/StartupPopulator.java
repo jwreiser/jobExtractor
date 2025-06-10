@@ -2,10 +2,8 @@ package com.goodforallcode.jobExtractor.job.populate.field;
 import com.goodforallcode.jobExtractor.filters.ExcludeJobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.List;
-import java.util.Optional;
 
 public class StartupPopulator implements FieldPopulator{
 
@@ -23,7 +21,7 @@ public class StartupPopulator implements FieldPopulator{
     public void populateField(Job job, Preferences preferences) {
 
                 ExcludeJobFilter filter = ExcludeJobFilter.build("Startup")
-                        .badCompanies(List.of("Patterned Learning AI", "Patterned Learning AI",
+                        .matchingCompanies(List.of("Patterned Learning AI", "Patterned Learning AI",
                                 "Patterned Learning Career", "minware", "Included Health", "Valon",
                                 "Storm 3", "Storm 4", "Storm 5", "Storm 6","Truehold",
                                 "Nira Energy", "Apploi", "Convictional", "Bramkas",

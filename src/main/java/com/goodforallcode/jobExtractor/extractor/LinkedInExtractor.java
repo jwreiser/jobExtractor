@@ -7,8 +7,8 @@ import com.goodforallcode.jobExtractor.driver.Scroller;
 import com.goodforallcode.jobExtractor.filters.ExcludeJobFilter;
 import com.goodforallcode.jobExtractor.filters.FilterFactory;
 import com.goodforallcode.jobExtractor.filters.IncludeOrSkipJobFilter;
-import com.goodforallcode.jobExtractor.job.populate.job.DeepJobPopulator;
-import com.goodforallcode.jobExtractor.job.populate.job.LinkedInDeepJobPopulator;
+import com.goodforallcode.jobExtractor.job.populate.job.deep.DeepJobPopulator;
+import com.goodforallcode.jobExtractor.job.populate.job.deep.LinkedInDeepJobPopulator;
 import com.goodforallcode.jobExtractor.job.populate.job.shallow.LinkedInShallowJobPopulator;
 import com.goodforallcode.jobExtractor.job.populate.job.shallow.ShallowJobPopulator;
 import com.goodforallcode.jobExtractor.model.CompanySummary;
@@ -26,7 +26,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
-import org.openqa.selenium.interactions.MoveTargetOutOfBoundsException;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -42,6 +41,13 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class LinkedInExtractor extends Extractor {
+    /**
+     * If this is true we will use a shared input driver for all jobs to avoid logging in multiple times.
+     * @return
+     */
+    public boolean needsSharedInputDriver() {
+        return true;
+    }
 
     static DeepJobPopulator deepJobPopulator = new LinkedInDeepJobPopulator();
     private static int RESULTS_PER_PAGE = 25;
@@ -151,7 +157,7 @@ public class LinkedInExtractor extends Extractor {
                 totalJobs++;
 
                 try {
-                    job = shallowPopulator.populateJob(item, driver,preferences,null);
+                    job = shallowPopulator.populateJob(null,item, driver,preferences,null);
                 } catch (TimeoutException e) {
                     job = null;
                 }
@@ -171,7 +177,6 @@ public class LinkedInExtractor extends Extractor {
                     cachedJobs++;
                     shallowCachedJobs.add(job);
                     totalCached++;
-                    runDeepPopulatedFilters(driver, job);
                     continue;
                 }
 
@@ -409,7 +414,6 @@ public class LinkedInExtractor extends Extractor {
             CompanySummary summary = cache.getCompanySummary(job, mongoClient);
             if (cache.containsJob(job, mongoClient)) {
                 deepCachedJobs.add(job);
-                runDeepPopulatedFilters(driver, job);
                 cached = true;
             }
 
@@ -425,23 +429,6 @@ public class LinkedInExtractor extends Extractor {
             }
         }
         return cached;
-    }
-
-    private void runDeepPopulatedFilters(WebDriver driver, Job currentJob) {
-        try {
-            doubleClickOnElement(driver, currentJob.getHideButton());
-        } catch (MoveTargetOutOfBoundsException ex) {
-            //swallow this so we continue to remaining work
-            //it is not a big deal if we don't hide one job
-            System.err.println("out of bounds: " + currentJob);
-            /*
-            System.err.println(STR."out of bounds: \{currentJob}");
-            String name = "Duke";
-            String info = STR."My name is \{name}";
-            System.out.println(info);
-
-             */
-        }
     }
 
 

@@ -54,6 +54,7 @@ public class ILRExtractor extends Extractor {
         boolean everyJobHiddenCachedOrSkipped = false, justSkipped = false;
         List<WebElement> nextPageButtons = new ArrayList<>();
         List<Integer> pageValues;
+        driver=getDriver(null, null);
         driver.get(url);
         do {
             currentPageNum++;
@@ -85,7 +86,7 @@ public class ILRExtractor extends Extractor {
                 totalJobs++;
 
                 try {
-                    job = shallowPopulator.populateJob(item, driver,preferences,null);
+                    job = shallowPopulator.populateJob(null,item, driver,preferences,null);
                 } catch (TimeoutException e) {
                     job = null;
                 }

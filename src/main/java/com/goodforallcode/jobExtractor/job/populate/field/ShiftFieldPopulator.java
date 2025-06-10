@@ -16,8 +16,9 @@ public class ShiftFieldPopulator implements FieldPopulator {
                 .titleStartsWithPhrases(List.of("night "))
                 .titleAndDescriptionPhrases(List.of("Evening", "- 7A", "- 7A", "- 7:30A", "- 8:30A", "- 8A", "- 8A", "Over Night", "-11p",
                         "2nd shift", "3rd shift", "second shift", "third shift", "night shift", "evening shift", "graveyard shift","overnight"))
-                .excludeAttributes(List.of("softwareEngineerNightOrWeekendHours"))
-                .badCompanies(List.of("Toast"));
+                .excludeCompanyAttributes(List.of("softwareEngineerNightOrWeekendHours"))
+                .safeDescriptionPhrases(List.of("some nights "))
+                .matchingCompanies(List.of("Toast"));
 
 
         if (filter.exclude(job) != null) {

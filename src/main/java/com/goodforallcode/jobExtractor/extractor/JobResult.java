@@ -3,6 +3,7 @@ package com.goodforallcode.jobExtractor.extractor;
 import com.goodforallcode.jobExtractor.model.Job;
 import lombok.AllArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JobResult{
@@ -47,6 +48,28 @@ public class JobResult{
     int hiddenJobs;
     int skippedJobs;
     int numPages;
+
+    public JobResult() {
+        this.acceptedJobs = new ArrayList<>();
+        this.rejectedJobs = new ArrayList<>();
+        this.shallowCachedJobs = new ArrayList<>();
+        this.deepCachedJobs = new ArrayList<>();
+        this.totalJobs = 0;
+        this.hiddenJobs = 0;
+        this.skippedJobs = 0;
+        this.numPages = 0;
+    }
+
+    public void merge(JobResult other) {
+        this.acceptedJobs.addAll(other.acceptedJobs);
+        this.rejectedJobs.addAll(other.rejectedJobs);
+        this.shallowCachedJobs.addAll(other.shallowCachedJobs);
+        this.deepCachedJobs.addAll(other.deepCachedJobs);
+        this.totalJobs += other.totalJobs;
+        this.hiddenJobs  += other.hiddenJobs;
+        this.skippedJobs  += other.skippedJobs;
+        this.numPages  += other.numPages;
+    }
 
     public JobResult(List<Job> acceptedJobs, List<Job> rejectedJobs, List<Job> shallowCachedJobs, List<Job> deepCachedJobs, int totalJobs, int hiddenJobs, int skippedJobs, int numPages) {
         this.acceptedJobs = acceptedJobs;

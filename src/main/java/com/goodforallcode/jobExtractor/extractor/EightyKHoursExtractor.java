@@ -15,7 +15,6 @@ import lombok.Setter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
 
 import java.util.ArrayList;
@@ -51,6 +50,7 @@ public class EightyKHoursExtractor extends Extractor {
         boolean everyJobHiddenCachedOrSkipped = false, justSkipped = false;
         List<WebElement> nextPageButtons = new ArrayList<>();
         List<Integer> pageValues;
+        driver=getDriver(null, null);
         driver.get(url);
         try {
             Thread.sleep(2_000);//time to load the page and not overwhelm the server
@@ -125,12 +125,12 @@ public class EightyKHoursExtractor extends Extractor {
         return result;
     }
 
-    private boolean handleElement(Element element,ShallowJobPopulator shallowPopulator, WebDriver driver, Preferences preferences, Cache cache, MongoClient mongoClient
-                                  ,String url, List<Job> acceptedJobs, List<Job> rejectedJobs, List<Job> shallowCachedJobs,int jobIndex) {
+    private boolean handleElement(Element element, ShallowJobPopulator shallowPopulator, WebDriver driver, Preferences preferences, Cache cache, MongoClient mongoClient
+                                  , String url, List<Job> acceptedJobs, List<Job> rejectedJobs, List<Job> shallowCachedJobs, int jobIndex) {
         Job job;
         boolean continueToNextJob=false;
         try {
-            job = shallowPopulator.populateJob(element, driver, preferences,jobIndex);
+            job = shallowPopulator.populateJob(null,element, driver, preferences,jobIndex);
             if(preferences.isRemoteOnly()) {
                 job.setFullyRemote(true);//We are only searching for remote jobs and it's not worth the effort to check if it is remote
             }

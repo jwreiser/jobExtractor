@@ -17,7 +17,7 @@ public class FullyRemotePopulator implements FieldPopulator {
     List<String> notRemoteDescriptionPhrases =List.of("local to","Local candidates", "located in a commutable distance",
             "will only be considering candidates within","Preferred location is","will be located in","MUST LIVE IN","Must reside in",
             "position will be based in","Residents only","Must reside"," DC Area","a hybrid work",
-            "Primary Location","within commute distance","must be living","seeking an onsite");
+            "Primary Location","within commute distance","must be living","seeking an onsite","MUST BE OPEN TO RELOCATION");
 
     List<String> notRemoteTitlePhrases =List.of("Hybrid","Onsite","On-site","On Site","In-office","In Office","In person","In-Person",
             "Remote/Hybrid","Remote/Onsite","Remote/On-Site","Remote/In-Office","Remote/In Office",
@@ -31,7 +31,7 @@ public class FullyRemotePopulator implements FieldPopulator {
             "(Onsite / Hybrid)", "is not remote,", "is not remote ", "is not remote.", "week onsite", "onsite in",
             "is based in ");
 
-    List<String> remotePhrases =List.of("applications for remote work may be considered",
+    List<String> remotePhrases =List.of("applications for remote work may be considered","fully remote",
             "Remote in United States","Remote in USA","remote within United States","remote from within United States","remote from within USA",
             "reside in United States","reside in the USA","Remote within USA","100% remote", "Open for remote", "remote or hybrid", "WFH", "Work From Home"
             , "remotely within the U.S", "remotely within the US", "remote options", "remote possible"
@@ -59,6 +59,7 @@ public class FullyRemotePopulator implements FieldPopulator {
                 job.setFullyRemote(false);
             }
 
+            //must be after the not remote checks
             if(job.getFullyRemote()==null && remotePhrases.stream().filter(p ->description.contains(p.toLowerCase())).findAny().isPresent()){
                 job.setFullyRemote(true);
             }

@@ -5,16 +5,15 @@ import com.goodforallcode.jobExtractor.cache.Cache;
 import com.goodforallcode.jobExtractor.driver.DriverInitializer;
 import com.goodforallcode.jobExtractor.filters.FilterFactory;
 import com.goodforallcode.jobExtractor.filters.IncludeOrSkipJobFilter;
+import com.goodforallcode.jobExtractor.job.populate.job.shallow.NyStateJobsShallowJobPopulator;
 import com.goodforallcode.jobExtractor.job.populate.job.shallow.ShallowJobPopulator;
-import com.goodforallcode.jobExtractor.job.populate.job.shallow.USAJobsShallowJobPopulator;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.mongodb.client.MongoClient;
 import lombok.Getter;
 import lombok.Setter;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
 
 import java.util.ArrayList;
@@ -26,9 +25,9 @@ import java.util.concurrent.TimeoutException;
 
 @Getter
 @Setter
-public class USAJobsExtractor extends Extractor {
+public class NyStateJobsExtractor extends Extractor {
 
-    private static int RESULTS_PER_PAGE = 25;
+    private static int RESULTS_PER_PAGE = 100;
 
 
 
@@ -53,6 +52,7 @@ public class USAJobsExtractor extends Extractor {
         boolean everyJobHiddenCachedOrSkipped = false, justSkipped = false;
         List<WebElement> nextPageButtons = new ArrayList<>();
         List<Integer> pageValues;
+        driver=getDriver(null, null);
         driver.get(url);
         do {
             currentPageNum++;
@@ -67,6 +67,8 @@ public class USAJobsExtractor extends Extractor {
 
             }
 
+            WebElement itemsDropDown=driver.findElement(By.name("vacancyTable_length"));
+            itemsDropDown.sendKeys(String.valueOf(RESULTS_PER_PAGE));
             nextPageButtons = getNextPageButtons(driver, currentPageNum);
 
 
@@ -79,16 +81,12 @@ public class USAJobsExtractor extends Extractor {
             everyJobHiddenCachedOrSkipped = false;
             numJobs = items.size();
             Job job;
-            Element element = null;
-
             for (WebElement item : items) {
 
                 totalJobs++;
-                Document doc = Jsoup.parse(item.getAttribute("innerHTML"));
-                element = doc.firstElementChild();
 
                 try {
-                    job = shallowPopulator.populateJob(null,element, driver,preferences,null);
+                    job = shallowPopulator.populateJob(item, null,driver,preferences,null);
                 } catch (TimeoutException e) {
                     job = null;
                 }
@@ -104,6 +102,12 @@ public class USAJobsExtractor extends Extractor {
                     continue;
                 }
                 job.setSourceUrl(url);
+                if (cache.containsJob(job, mongoClient)) {
+                    cachedJobs++;
+                    shallowCachedJobs.add(job);
+                    totalCached++;
+                    continue;
+                }
 
                 final Job finalJob = job;
                 Optional<IncludeOrSkipJobFilter> includeOrSkipJobFilter = FilterFactory.getShallowFiltersSkip(preferences).stream().filter(f -> f.include(preferences, finalJob) != null).findFirst();
@@ -151,18 +155,27 @@ public class USAJobsExtractor extends Extractor {
 
 
     protected ShallowJobPopulator getShallowJobPopulator() {
-        return new USAJobsShallowJobPopulator();
+        return new NyStateJobsShallowJobPopulator();
     }
 
 
     private List<WebElement> getJobItems(WebDriver driver) {
+        WebElement div = null;
         List<WebElement> items = new ArrayList<>();
         try {
-            items = driver.findElements(By.className("usajobs-search-result--core"));
+            div = driver.findElement(By.id("vacancyTable"));
         } catch (NoSuchElementException nse) {
             throw nse;
         }
 
+        Element element = null;
+
+        if (div != null) {
+            WebElement tbody = div.findElement(By.tagName("tbody"));
+            if(tbody!=null){
+                items = tbody.findElements(By.tagName("tr"));
+            }
+        }
         return items;
     }
 
@@ -171,7 +184,7 @@ public class USAJobsExtractor extends Extractor {
         List<WebElement> nextPageButtons = new ArrayList<>();
         try {
 
-            WebElement nextPageButton = driver.findElement(By.linkText("Next"));
+            WebElement nextPageButton = driver.findElement(By.xpath("//button[text()='"+(currentPage + 1) + "']"));
             nextPageButtons.add(nextPageButton);
         } catch (NoSuchElementException nse) {
             //this usually  happens when we look for a next page that is not there
@@ -181,12 +194,6 @@ public class USAJobsExtractor extends Extractor {
         return nextPageButtons;
     }
 
-
-    public static void main(String[] args) {
-        USAJobsExtractor e = new USAJobsExtractor();
-
-
-    }
 
 
 }

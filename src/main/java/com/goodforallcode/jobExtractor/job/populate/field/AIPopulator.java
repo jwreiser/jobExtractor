@@ -15,7 +15,7 @@ public class AIPopulator implements FieldPopulator{
                                 , "natural language processing", "NLU", "Natural Language Understanding","Generative AI","GenAI"
                                 , "machine learning", "TTS", "STT", "SSML", "Tensorflow", "Pytorch","AI services","AI concepts"
                                 , "ONNX", "MXNet"), 2)
-                        .badCompanies(List.of("OpenAI"))
+                        .matchingCompanies(List.of("OpenAI"))
                         ;
                 if (filter.exclude(job) != null) {
                     job.setAi(true);

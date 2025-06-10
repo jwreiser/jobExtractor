@@ -1,11 +1,9 @@
 package com.goodforallcode.jobExtractor.job.populate.job.shallow;
 
 import com.goodforallcode.jobExtractor.job.populate.field.FieldPopulator;
-import com.goodforallcode.jobExtractor.job.populate.job.DeepJobPopulator;
+import com.goodforallcode.jobExtractor.job.populate.job.deep.DeepJobPopulator;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.DateUtil;
-import com.goodforallcode.jobExtractor.util.LocationUtil;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
@@ -18,7 +16,7 @@ import java.util.concurrent.TimeoutException;
 
 public class EightyKShallowJobPopulator implements ShallowJobPopulator {
 
-    public Job populateJob(Element item, WebDriver driver, Preferences preferences,Integer jobIndex) throws TimeoutException {
+    public Job populateJob(WebElement webElement,Element item, WebDriver driver, Preferences preferences,Integer jobIndex) throws TimeoutException {
 
         Element companyAndTitleDiv=item.getElementsByClass("items-start").first();
         Elements companySpans=companyAndTitleDiv.getElementsByTag("span");

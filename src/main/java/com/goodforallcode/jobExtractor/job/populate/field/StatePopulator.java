@@ -11,14 +11,14 @@ public class StatePopulator implements FieldPopulator{
         if ((job.getFullyRemote()==null || !job.getFullyRemote()) && (job.getState() == null || job.getState().isEmpty())) {
             List<ExcludeJobFilter> filters=new ArrayList<>();
             filters.add(ExcludeJobFilter.build("CT")
-                    .badCompanies(List.of("Hartford"))
+                    .matchingCompanies(List.of("Hartford"))
                     .titlePhrases(List.of(" CT "))
                     .safeTitlePhrases(List.of("CT Tech", "CT Scan"))
                     .municipality("CT")
                     .titleAndDescriptionPhrases(List.of("Hartford", "Connecticut", "Milford", "Fairfield", "Bridgeport", "Stratford", "Trumbull", "Shelton")));
 
             filters.add(ExcludeJobFilter.build("FL")
-                    .badCompanies(List.of("University of Florida"))
+                    .matchingCompanies(List.of("University of Florida"))
                     .municipality("FL")
                     .titleAndDescriptionPhrases(List.of("Miami", "Tampa", "Orlando", "Jacksonville"))
             );
@@ -34,7 +34,7 @@ public class StatePopulator implements FieldPopulator{
 
 
             filters.add(ExcludeJobFilter.build("PA")
-                        .badCompanies(List.of("Drexel"))
+                        .matchingCompanies(List.of("Drexel"))
                         .titleAndDescriptionPhrases(List.of("Philadelphia", "Havertown", "Norristown", "Schwenksville"))
                         .municipality("PA"));
 

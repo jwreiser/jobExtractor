@@ -17,6 +17,10 @@ public class ExtractorFactory {
             extractor = new EightyKHoursExtractor();
         }else if(url.contains("usajobs.gov")) {
             extractor = new USAJobsExtractor();
+        }else if(url.contains("glassdoor.com")) {
+            extractor = new GlassdoorExtractor();
+        }else if(url.contains("statejobs.ny.gov")) {
+            extractor = new NyStateJobsExtractor();
         }
         return extractor;
     }

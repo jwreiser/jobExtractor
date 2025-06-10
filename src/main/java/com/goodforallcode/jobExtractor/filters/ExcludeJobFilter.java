@@ -17,22 +17,24 @@ public class ExcludeJobFilter {
     List<Boolean> runIfFalse = new ArrayList<>();
     List<String> titlePhrases = new ArrayList<>();
     List<String> titleStartsWithPhrases = new ArrayList<>();
+    List<String> titleEqualsPhrases = new ArrayList<>();
     List<String> safeTitlePhrases = new ArrayList<>();
     List<String> safeDescriptionPhrases = new ArrayList<>();
     List<String> descriptionPhrases = new ArrayList<>();
     List<String> caseSensitiveDescriptionPhrases = new ArrayList<>();
 
-    List<String> badCompanies = new ArrayList<>();
-    List<String> badCompaniesEquals = new ArrayList<>();
-    List<String> badCompaniesStartsWith = new ArrayList<>();
+    List<String> matchingCompanies = new ArrayList<>();
+    List<String> matchingCompaniesEquals = new ArrayList<>();
+    List<String> matchingCompaniesStartsWith = new ArrayList<>();
+    List<String> matchingCompaniesEndsWith = new ArrayList<>();
 
-    List<String> goodCompanies = new ArrayList<>();
+    List<String> exceptionalCompanies = new ArrayList<>();
     String includeAttribute;
     String excludeIfTrueJobAttribute;
     String excludeIfJobAttribute;
     String excludeIfJobAttributeValue;
     String excludeIfFalseJobAttribute;
-    List<String> excludeAttributes = new ArrayList<>();
+    List<String> excludeCompanyAttributes = new ArrayList<>();
     List<DescriptionPhrasesAndCount> descriptionPhrasesAndCounts = new ArrayList<>();
     boolean testForCompanyInDescription = false;
     boolean runOnlyIfNotFullyRemote = false;
@@ -62,7 +64,7 @@ public class ExcludeJobFilter {
     public ExcludeJobFilter titleCompanyNameAndDescriptionPhrases(List<String> phrases) {
         this.titlePhrases.addAll(new ArrayList<>(phrases));
         this.descriptionPhrases.addAll(new ArrayList<>(phrases));
-        this.badCompanies.addAll(phrases);
+        this.matchingCompanies.addAll(phrases);
         return this;
     }
 
@@ -131,8 +133,8 @@ public class ExcludeJobFilter {
         return this;
     }
 
-    public ExcludeJobFilter excludeAttributes(List<String> excludeAttributes) {
-        this.excludeAttributes.addAll(excludeAttributes);
+    public ExcludeJobFilter excludeCompanyAttributes(List<String> excludeAttributes) {
+        this.excludeCompanyAttributes.addAll(excludeAttributes);
         return this;
     }
 
@@ -140,24 +142,33 @@ public class ExcludeJobFilter {
         this.titlePhrases.addAll(new ArrayList<>(titlePhrases));
         return this;
     }
-
-    public ExcludeJobFilter badCompanies(List<String> badCompanies) {
-        this.badCompanies.addAll(badCompanies);
+    public ExcludeJobFilter titleEqualsPhrases(List<String> titlePhrases) {
+        this.titleEqualsPhrases.addAll(new ArrayList<>(titlePhrases));
         return this;
     }
 
-    public ExcludeJobFilter badCompaniesEquals(List<String> badCompanies) {
-        this.badCompaniesEquals.addAll(badCompanies);
+    public ExcludeJobFilter matchingCompanies(List<String> badCompanies) {
+        this.matchingCompanies.addAll(badCompanies);
         return this;
     }
 
-    public ExcludeJobFilter badCompaniesStartsWith(List<String> badCompanies) {
-        this.badCompaniesStartsWith.addAll(badCompanies);
+    public ExcludeJobFilter matchingCompaniesEquals(List<String> badCompanies) {
+        this.matchingCompaniesEquals.addAll(badCompanies);
         return this;
     }
 
-    public ExcludeJobFilter goodCompanies(List<String> goodCompanies) {
-        this.goodCompanies.addAll(goodCompanies);
+    public ExcludeJobFilter matchingCompaniesStartsWith(List<String> badCompanies) {
+        this.matchingCompaniesStartsWith.addAll(badCompanies);
+        return this;
+    }
+
+    public ExcludeJobFilter matchingCompaniesEndsWith(List<String> badCompanies) {
+        this.matchingCompaniesEndsWith.addAll(badCompanies);
+        return this;
+    }
+
+    public ExcludeJobFilter exceptionalCompanies(List<String> goodCompanies) {
+        this.exceptionalCompanies.addAll(goodCompanies);
         return this;
     }
 
@@ -205,14 +216,14 @@ public class ExcludeJobFilter {
         Optional<String> match = null;
         if (job.getCompanyName() != null) {
             String companyName = job.getCompanyName();
-            match = goodCompanies.stream().filter(c -> companyName.contains(c.toLowerCase())).findFirst();
+            match = exceptionalCompanies.stream().filter(c -> companyName.contains(c.toLowerCase())).findFirst();
             if (match.isPresent()) {
                 return null;
             }
         }
-        if (job.getDescription() != null && goodCompanies != null && testForCompanyInDescription) {
+        if (job.getDescription() != null && exceptionalCompanies != null && testForCompanyInDescription) {
             String description = job.getDescription();
-            match = goodCompanies.stream().filter(c -> description.contains(c.toLowerCase())).findFirst();
+            match = exceptionalCompanies.stream().filter(c -> description.contains(c.toLowerCase())).findFirst();
             if (match.isPresent()) {
                 return null;
             }
@@ -221,26 +232,33 @@ public class ExcludeJobFilter {
         if (StringUtil.valuePopulated(job.getCompanyName())) {
             String companyName = job.getCompanyName().toLowerCase();
 
-            if (badCompanies != null) {
-                match = badCompanies.stream().filter(c -> companyName.contains(c.toLowerCase())).findFirst();
+            if (matchingCompanies != null) {
+                match = matchingCompanies.stream().filter(c -> companyName.contains(c.toLowerCase())).findFirst();
                 if (match.isPresent()) {
                     return getName() + " - company name -> " + match.get();
                 }
             }
-            if (badCompaniesEquals != null) {
-                match = badCompaniesEquals.stream().filter(c -> companyName.equalsIgnoreCase(c)).findFirst();
+            if (matchingCompaniesEquals != null) {
+                match = matchingCompaniesEquals.stream().filter(c -> companyName.equalsIgnoreCase(c)).findFirst();
                 if (match.isPresent()) {
                     return getName() + " - company name equals -> " + match.get();
                 }
             }
-            if (badCompaniesStartsWith != null) {
-                match = badCompaniesStartsWith.stream().filter(c -> companyName.startsWith(c.toLowerCase())).findFirst();
+            if (matchingCompaniesStartsWith != null) {
+                match = matchingCompaniesStartsWith.stream().filter(c -> companyName.startsWith(c.toLowerCase())).findFirst();
                 if (match.isPresent()) {
                     return getName() + " - company name starts with -> " + match.get();
                 }
             }
-            if (testForCompanyInDescription && badCompanies != null) {
-                match = badCompanies.stream().filter(c -> CompanyUtil.descriptionContainsCompanyName(c, job.getDescription())).findFirst();
+            if (matchingCompaniesEndsWith != null) {
+                match = matchingCompaniesEndsWith.stream().filter(c -> companyName.endsWith(c.toLowerCase())).findFirst();
+                if (match.isPresent()) {
+                    return getName() + " - company name starts with -> " + match.get();
+                }
+            }
+
+            if (testForCompanyInDescription && matchingCompanies != null) {
+                match = matchingCompanies.stream().filter(c -> CompanyUtil.descriptionContainsCompanyName(c, job.getDescription())).findFirst();
                 if (match.isPresent()) {
                     return getName() + " - based on company description -> " + match.get();
                 }
@@ -271,14 +289,23 @@ public class ExcludeJobFilter {
             }
         }
 
+        if (titleEqualsPhrases != null && !titleEqualsPhrases.isEmpty() && !safeTitle) {
+            match = titleEqualsPhrases.stream().filter(p -> title.equalsIgnoreCase(p)).findFirst();
+
+            if (match.isPresent()) {
+                return getName() + " - title equals -> " + match.get();
+
+            }
+        }
+
         if (job.getCompany() != null && includeAttribute != null) {
             if (!ReflectionUtil.isAttributeTrue(job.getCompany(), includeAttribute)) {
                 return getName() + " - attribute - " + includeAttribute;
             }
         }
 
-        if (job.getCompany() != null && excludeAttributes != null) {
-            match = excludeAttributes.stream().filter(a -> ReflectionUtil.isAttributeTrue(job.getCompany(), a)).findFirst();
+        if (job.getCompany() != null && excludeCompanyAttributes != null) {
+            match = excludeCompanyAttributes.stream().filter(a -> ReflectionUtil.isAttributeTrue(job.getCompany(), a)).findFirst();
             if (match.isPresent()) {
                 return getName() + " - attribute - " + match.get();
             }

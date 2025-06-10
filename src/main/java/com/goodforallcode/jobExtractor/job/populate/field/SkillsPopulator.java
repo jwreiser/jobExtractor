@@ -31,7 +31,7 @@ public class SkillsPopulator implements FieldPopulator{
                 "Microservices",
                 "Machine Learning",
                 "RESTful APIs",  "Ruby",
-                "Swift","OneStream","Hogan","Elixir"
+                "OneStream","Hogan","Elixir"
                 );
         for(String skill : skills) {
             if (job.getDescription()!=null){

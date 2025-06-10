@@ -1,19 +1,19 @@
 package com.goodforallcode.jobExtractor.job.populate.job.shallow;
 
 import com.goodforallcode.jobExtractor.job.populate.field.FieldPopulator;
-import com.goodforallcode.jobExtractor.job.populate.job.DeepJobPopulator;
+import com.goodforallcode.jobExtractor.job.populate.job.deep.DeepJobPopulator;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.goodforallcode.jobExtractor.util.DateUtil;
-import com.goodforallcode.jobExtractor.util.LocationUtil;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import java.util.concurrent.TimeoutException;
 
 public class USAJobsShallowJobPopulator implements ShallowJobPopulator {
 
-    public Job populateJob(Element item, WebDriver driver, Preferences preferences,Integer jobIndex) throws TimeoutException {
+    public Job populateJob(WebElement webElement, Element item, WebDriver driver, Preferences preferences, Integer jobIndex) throws TimeoutException {
         String text;
         String companyName = item.getElementsByClass("usajobs-search-result--core__agency").text();
 
@@ -30,10 +30,8 @@ public class USAJobsShallowJobPopulator implements ShallowJobPopulator {
         String dateString = item.getElementsByClass("usajobs-search-result--core__closing-date").text();
         String editedDateString = dateString.toLowerCase().replaceAll("opening and closing dates open ", "").replaceAll("open ", "").trim();
         String postedDateString = editedDateString.split(" to ")[0].trim();
-        String[] dateParts=postedDateString.split("/");
-        String rearrangedDateString = dateParts[2]+"-"+dateParts[0]+"-"+dateParts[1];
-        job.setJobAgeInDays(DateUtil.getAgeInDays(rearrangedDateString));
-        job.setPostingDate(DateUtil.getLocalDate(rearrangedDateString));
+        job.setJobAgeInDays(DateUtil.getAgeInDays(postedDateString));
+        job.setPostingDate(DateUtil.getLocalDate(postedDateString));
 
         for(FieldPopulator fieldPopulator: DeepJobPopulator.fieldPopulators){
             fieldPopulator.populateField(job,preferences);

@@ -69,10 +69,16 @@ public class Job {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String seniority;
-    boolean aboveSenior=false;
-    boolean senior=false;
-    boolean midCareer=false;
-    boolean noExperience=false;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean aboveSenior;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean architect;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean senior;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean midCareer;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean noExperience;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String state;
@@ -87,7 +93,7 @@ public class Job {
     Integer maxHourlySalary;
     @JsonInclude(value = JsonInclude.Include.NON_NULL)
     Integer level;
-    @JsonIgnore
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     Long jobAgeInDays=null;
     @JsonIgnore
     LocalDate postingDate=null;
@@ -114,6 +120,8 @@ public class Job {
     Boolean willTrain=null;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Boolean onCall=null;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean outsources=null;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Boolean ai =null;
 

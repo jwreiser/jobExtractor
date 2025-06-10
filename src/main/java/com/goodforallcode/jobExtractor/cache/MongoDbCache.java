@@ -277,9 +277,12 @@ public class MongoDbCache implements Cache {
                 MongoCollection<Document> collection = database.getCollection(JOBS_COLLECTION_NAME);
                 InsertManyOptions options = new InsertManyOptions();
                 options.ordered(false);
-                collection.insertMany(currentJobCache, options);
-
-                currentJobCache.clear();
+                try {
+                    collection.insertMany(currentJobCache, options);
+                    currentJobCache.clear();
+                }catch (ConcurrentModificationException e) {
+                    System.err.println("ConcurrentModificationException while inserting jobs, retrying...");
+                }
                 serverUp = true;
             } catch (MongoTimeoutException mte) {
                 serverUp = false;

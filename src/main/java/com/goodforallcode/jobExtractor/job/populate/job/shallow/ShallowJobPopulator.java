@@ -4,9 +4,10 @@ import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import org.jsoup.nodes.Element;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import java.util.concurrent.TimeoutException;
 
 public interface ShallowJobPopulator {
-    Job populateJob(Element item, WebDriver driver, Preferences preferences,Integer jobIndex) throws TimeoutException;
+    Job populateJob(WebElement webElement,Element element, WebDriver driver, Preferences preferences, Integer jobIndex) throws TimeoutException;
 }

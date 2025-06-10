@@ -1,7 +1,7 @@
 package com.goodforallcode.jobExtractor.job.populate;
 
-import com.goodforallcode.jobExtractor.job.populate.job.DeepJobPopulator;
-import com.goodforallcode.jobExtractor.job.populate.job.LinkedInDeepJobPopulator;
+import com.goodforallcode.jobExtractor.job.populate.job.deep.DeepJobPopulator;
+import com.goodforallcode.jobExtractor.job.populate.job.deep.LinkedInDeepJobPopulator;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;

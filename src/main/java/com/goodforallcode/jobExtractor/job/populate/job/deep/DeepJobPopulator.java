@@ -1,4 +1,4 @@
-package com.goodforallcode.jobExtractor.job.populate.job;
+package com.goodforallcode.jobExtractor.job.populate.job.deep;
 
 import com.goodforallcode.jobExtractor.job.populate.field.*;
 import com.goodforallcode.jobExtractor.model.Job;
@@ -15,7 +15,7 @@ public interface DeepJobPopulator {
 
     public static List<FieldPopulator> fieldPopulators = List.of(new AIPopulator(),new ConsultantPopulator(),new ContractPopulator(),
             new CredentialedPopulator(),new FullyRemotePopulator(),new LowEducationFieldPopulator()
-            ,new MunicipalityPopulator(),new OnCallPopulator(),
+            ,new MunicipalityPopulator(),new OnCallPopulator(),new OutsourcingPopulator(),
             new PositionCategoryPopulator(),new SeniorityPopulator(),new ShiftFieldPopulator(),new SkillsPopulator(), new StartupPopulator(),new StatePopulator()
             ,new TimeZonePopulator(),new WillTrainPopulator());
 

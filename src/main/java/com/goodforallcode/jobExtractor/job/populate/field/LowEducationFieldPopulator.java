@@ -12,13 +12,13 @@ public class LowEducationFieldPopulator implements FieldPopulator {
 
         ExcludeJobFilter filter = ExcludeJobFilter.build("LowEducationField")
                 .titlePhrases(List.of(
-                        "Mailroom"," Camp ","Packer", "Packager", "Picker",
+                        "Mailroom","Packer", "Packager", "Picker",
                         "Clerk", "Laborer", "Attendant","Scheduler","Scheduling","Clerical",
                         "Groomer",  "Valet","Dispatcher",
                         "Manufacturing", "Assembler"
                         ,  "Lifeguard", "Installer", "Installation"
                         , "Operator", "Dock Worker", "Data Entry"))
-                .badCompanies(List.of("The Container Store","Barnes & Noble", "Hobby Lobby","7-Eleven", "Dollar Tree", "Dollar General", "Family Dollar",
+                .matchingCompanies(List.of("The Container Store","Barnes & Noble", "Hobby Lobby","7-Eleven", "Dollar Tree", "Dollar General", "Family Dollar",
                         "Federal Express", "FedEx", "Fed Ex", "Fedex", "Fed Ex"))
                 .descriptionPhrases(List.of("plus tips"));
 

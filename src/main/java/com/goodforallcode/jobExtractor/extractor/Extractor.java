@@ -23,6 +23,13 @@ import static com.goodforallcode.jobExtractor.cache.MongoDbCache.uri;
 
 public abstract class Extractor {
 
+    /**
+     * If this is true we will use a shared input driver for all jobs to avoid logging in multiple times.
+     * @return
+     */
+    public boolean needsSharedInputDriver() {
+        return false;
+    }
 
     public List<String> getSharedSkillPhrases() {
         return sharedSkillPhrases;

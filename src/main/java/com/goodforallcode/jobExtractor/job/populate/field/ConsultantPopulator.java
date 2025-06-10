@@ -4,7 +4,6 @@ import com.goodforallcode.jobExtractor.filters.ExcludeJobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ConsultantPopulator implements FieldPopulator {
@@ -16,7 +15,7 @@ public class ConsultantPopulator implements FieldPopulator {
 
         ExcludeJobFilter filter = ExcludeJobFilter.build("Consultant")
                 .titlePhrases(List.of("consulting", "consultant"))
-                .badCompanies(List.of("Curate Partners", "Modis", "Akkodis","Open Systems Technologies"
+                .matchingCompanies(List.of("Curate Partners", "Modis", "Akkodis","Open Systems Technologies"
                         , "Ricardo plc", "FullStack Labs", "Sierra7",  "Vaco", "QuantumBricks",
                         "Lorven Technologies Inc.", "ZETTALOGIX INC", "Sierra Solutions", "CGI",
                         "Daugherty Business Solutions", "World Wide Technology", "Qualitest", "Cognizant",
@@ -28,7 +27,7 @@ public class ConsultantPopulator implements FieldPopulator {
                 .safeDescriptionPhrases(List.of("consulting with"))
                 .titleCompanyNameAndDescriptionPhrases(List.of("consultancy"))
                 .testForCompanyInDescription(true)
-                .excludeAttributes(List.of("consulting")
+                .excludeCompanyAttributes(List.of("consulting")
                 );
         if (filter.exclude(job) != null) {
             job.setConsultant(true);

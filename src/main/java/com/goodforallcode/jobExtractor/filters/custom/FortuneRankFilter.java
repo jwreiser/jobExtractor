@@ -27,7 +27,7 @@ public class FortuneRankFilter implements JobFilter {
         ranks.put("Oracle",91);
     }
 
-    public List<String> companiesThatCanBeInDescription=List.of("Autodesk","Oracle");
+    private List<String> companiesThatCanBeInDescription=List.of("Autodesk","Oracle");
     @Override
     public boolean include(Preferences preferences, Job job) {
         boolean include=true;

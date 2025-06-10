@@ -20,14 +20,14 @@ public class ContractPopulator implements FieldPopulator {
             }
             if (contractNotSetToTrue(job)) {
                 ExcludeJobFilter filter = ExcludeJobFilter.build("Contract")
-                        .badCompanies(List.of("Accenture", "Guidehouse", "Piper Companies"
+                        .matchingCompanies(List.of("Accenture", "Guidehouse", "Piper Companies"
                                 , "Wise Skulls", "Brooksource", "Harnham", "Cypress HCM", "Belcan", "Mindex", "Altimetrik",
                                 "Kforce Inc", "Kforce Com", "Oktobor Animation", "Groundswell", "Raft",
                                 "NTT DATA Services", "Spatial Front, Inc", "Tential Solutions",
                                 "IT Crowd", "Koniag Government Services", "SCIGON", "Latitude Inc", "IT Labs",
                                 "AgileEngine", "Bitsoft International, Inc.", "Revature", "Gridiron IT", "mphasis",
                                 "Brillio", "SBS Creatix", "Compunnel Inc."))
-                        .badCompaniesStartsWith(List.of("GE "))
+                        .matchingCompaniesStartsWith(List.of("GE "))
                         .titlePhrases(List.of("contract"))
                         .descriptionPhrases(List.of("Federal clients", "supporting a DoD", "contract position", "government contractor", "+ Month Contract"
                                 , "+ Months Contract","This is a contract", "contractor position", "contract role", "contractor role", "contract opportunity"));
