@@ -1,0 +1,122 @@
+{
+	"info": {
+		"_postman_id": "eb395ef8-6d36-42c2-a3f4-2695a83b7948",
+		"name": "Priority Extracts Anonymous",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14078062"
+	},
+	"item": [
+		{
+			"name": "non software Remote (entry level, cornell)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"urls\": [\r\n        \"https://jobsearchplatform.ilr.cornell.edu/vacancies/?csrfmiddlewaretoken=11pEVPAUqW6QLzfkRIB2WejcY9F1eflewsWRVIykih08Dqo2lsl2ZHlBUXlOKvs1&search=remote&setlocation=&radius=25&remote_flag=True&sortby=relevance\"\r\n      \r\n    ],\r\n   \"preferences\": {\r\n        \"minFortuneRank\": 760,\r\n        \"desiredClearancePhrases\": [\r\n            \"mbi\",\r\n            \"public trust\",\r\n            \"citizen\"\r\n        ],\r\n        \"maxYearsOfExperience\": 6,\r\n        \"maxYearsOfExperienceForUnlistedSkill\": 2,\r\n        \"skills\": [\r\n            \"Java\",\r\n            \"Git\",\r\n            \"Maven\",\r\n            \"Hibernate\",\r\n            \"Microservices\",            \r\n            \"REST APIs\",\r\n            \"Representational State Transfer (REST)\",\r\n            \"RESTful APIs\"\r\n            ,\"NoSQL\",\"SQL\",\"MySQL\",\"PostgreSQL\",\"MongoDB\"\r\n            ,\"Spring Framework\",\"Spring Boot\",\"Spring MVC\",\"Spring Batch\"\r\n            ,\"pl/sql\"\r\n        ],\r\n        \"minContractRate\": 20,\r\n        \"maxContractRate\": 80,\r\n        \"minYearlySalary\": 40000,\r\n        \"maxYearlySalary\": 170000,\r\n        \"maxTravelPercentage\": 10,\r\n        \"maxEmployees\": 9000,\r\n        \"maxApplicants\": 300,\r\n        \"desiredTenure\": 2.6,\r\n        \"maxJobAgeInDays\": 28,\r\n        \"minJobAgeInDays\": 0,\r\n        \"excludeAggressiveTimelines\":false,\r\n        \"skipTooManyApplicants\": false,\r\n        \"skipUnknownNumberOfApplicants\": false,\r\n        \"skipJobsSourcedFromExternalJobBoard\": false,\r\n        \"amountOfTotalExperience\": 6,\r\n        \"maxLevel\": 2,\r\n        \"skipFirstPages\": null,\r\n        \"excludeStartups\": true,\r\n        \"excludePromoted\": false\r\n        ,\"remoteOnly\": false\r\n        ,\"state\":\"NY\"\r\n        ,\"seniority\":\"Entry Level\"\r\n        ,\"badLocationPhrases\": [\r\n            \"Bronx\"\r\n            ,\"Brooklyn\"            \r\n            ,\"Staten Island\"\r\n            ,\"Queens\"\r\n            ,\"Yonkers\"\r\n            ,\"Nassau\"\r\n        ]\r\n        ,\"programmingFrameworks\": [\r\n            \"Spring\"\r\n        ]\r\n        ,\"acceptablePositionCategories\":[\r\n            \"EnvironmentBenefiting\",\"SupportFocusedJob\"\r\n        ]\r\n        ,\"timezones\":[\r\n            \"Eastern\",\"Central\"\r\n        ]\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/extract",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"extract"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "software remote (senior, no cache due to techjobsforgood having poor descriptions; glassdoor, 800k,nystate, climatebase,techjobsforgood,idealist)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"urls\": [\r\n        \"https://www.glassdoor.com/Job/remote-java-jobs-SRCH_IL.0,6_IS11047_KO7,11.htm?minSalary=80000&maxSalary=150000&minRating=4.1&sortBy=date_desc&fromAge=3\"\r\n        ,\"https://jobs.80000hours.org/\"\r\n        ,\"https://statejobs.ny.gov/public/vacancyTable.cfm?searchResults=Yes&Keywords=&title=&JurisClassID=&AgID=&isnyhelp=&minDate=&maxDate=&telecommuting=Yes&employmentType=&gradeCompareType=GT&grade=&SalMin=\"\r\n        ,\"https://climatebase.org/jobs?q=Java&l=eyJ2YWx1ZSI6IkNoSUpDell5NUlTMTZsUVJRcmZlUTVLNU94dyIsImxhYmVsIjoiVW5pdGVkIFN0YXRlcyIsInBheWxvYWQiOnsiYWRkcmVzc19jb21wb25lbnRzIjpbeyJsb25nX25hbWUiOiJVbml0ZWQgU3RhdGVzIiwic2hvcnRfbmFtZSI6IlVTIiwidHlwZXMiOlsiY291bnRyeSIsInBvbGl0aWNhbCJdfV0sImZvcm1hdHRlZF9hZGRyZXNzIjoiVW5pdGVkIFN0YXRlcyIsImdlb21ldHJ5Ijp7ImJvdW5kcyI6eyJub3J0aGVhc3QiOnsibGF0Ijo3NC4wNzEwMzgsImxuZyI6LTY2Ljg4NTQxN30sInNvdXRod2VzdCI6eyJsYXQiOjE4Ljc3NjMsImxuZyI6MTY2Ljk5OTk5OTl9fSwibG9jYXRpb24iOnsibGF0IjozOC43OTQ1OTUyLCJsbmciOi0xMDYuNTM0ODM3OX0sImxvY2F0aW9uX3R5cGUiOiJBUFBST1hJTUFURSIsInZpZXdwb3J0Ijp7Im5vcnRoZWFzdCI6eyJsYXQiOjcyLjcwODcxNTgsImxuZyI6LTY2LjMxOTM3NTR9LCJzb3V0aHdlc3QiOnsibGF0IjoxNS43NzYwMTM5LCJsbmciOi0xNzMuMjk5MjI5Nn19fSwicGxhY2VfaWQiOiJDaElKQ3pZeTVJUzE2bFFSUXJmZVE1SzVPeHciLCJ0eXBlcyI6WyJjb3VudHJ5IiwicG9saXRpY2FsIl19fQ%3D%3D&remote=true&remote_preferences=Remote&date=last7\"\r\n        , \"https://techjobsforgood.com/jobs/?locations=remote&q=java&sort_by=date#q\"\r\n        , \"https://www.idealist.org/en/jobs?locationType=REMOTE&radius=country&recency=PAST_WEEK&q=java\"\r\n    ],\r\n   \"preferences\": {\r\n        \"minFortuneRank\": 760,\r\n        \"desiredClearancePhrases\": [\r\n            \"mbi\",\r\n            \"public trust\",\r\n            \"citizen\"\r\n        ],\r\n        \"maxYearsOfExperience\": 6,\r\n        \"maxYearsOfExperienceForUnlistedSkill\": 2,\r\n        \"skills\": [\r\n            \"Java\",\r\n            \"Git\",\r\n            \"Maven\",\r\n            \"Hibernate\",\r\n            \"Microservices\",            \r\n            \"REST APIs\",\r\n            \"Representational State Transfer (REST)\",\r\n            \"RESTful APIs\"\r\n            ,\"NoSQL\",\"SQL\",\"MySQL\",\"PostgreSQL\",\"MongoDB\"\r\n            ,\"Spring Framework\",\"Spring Boot\",\"Spring MVC\",\"Spring Batch\"\r\n            ,\"pl/sql\"\r\n        ],\r\n        \"minContractRate\": 20,\r\n        \"maxContractRate\": 80,\r\n        \"minYearlySalary\": 40000,\r\n        \"maxYearlySalary\": 170000,\r\n        \"maxTravelPercentage\": 10,\r\n        \"maxEmployees\": 9000,\r\n        \"maxApplicants\": 300,\r\n        \"desiredTenure\": 2.6,\r\n        \"maxJobAgeInDays\": 28,\r\n        \"minJobAgeInDays\": 0,\r\n        \"excludeAggressiveTimelines\":false,\r\n        \"skipTooManyApplicants\": false,\r\n        \"skipUnknownNumberOfApplicants\": false,\r\n        \"skipJobsSourcedFromExternalJobBoard\": false,\r\n        \"amountOfTotalExperience\": 6,\r\n        \"maxLevel\": 2,\r\n        \"skipFirstPages\": null,\r\n        \"excludeStartups\": true,\r\n        \"excludePromoted\": false\r\n        ,\"remoteOnly\": true\r\n        ,\"state\":\"NY\"\r\n        ,\"seniority\":\"Senior\"\r\n        ,\"programmingFrameworks\": [\r\n            \"Spring\"\r\n        ]\r\n        ,\"acceptablePositionCategories\":[\r\n            \"EnvironmentBenefiting\"\r\n        ]\r\n        ,\"timezones\":[\r\n            \"Eastern\",\"Central\"\r\n        ]\r\n        ,\"usingCache\": false\r\n \r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/extract",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"extract"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "local non software(entry level, cornell, usajobs)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"urls\": [\r\n        \"https://jobsearchplatform.ilr.cornell.edu/vacancies/?csrfmiddlewaretoken=gxcSdBUsybJEIceLHYtZqJk5zk66fNXBLYJ5duSSqwDWA3ntbIdZtcmuv8MTL34o&search=&setlocation=selden%2Cny&radius=25\"\r\n        ,  \"https://www.usajobs.gov/SEARCH/RESULTS?l=11784&sc=0&sc=8&hp=public&p=1&s=startdate&sd=desc&k=\"\r\n        , \"https://statejobs.ny.gov/public/vacancyTable.cfm?searchResults=Yes&Keywords=&title=&JurisClassID=&AgID=&isnyhelp=&minDate=&maxDate=&region8=8&employmentType=&gradeCompareType=GT&grade=&SalMin=\"\r\n    ],\r\n   \"preferences\": {\r\n        \"minFortuneRank\": 760,\r\n        \"desiredClearancePhrases\": [\r\n            \"mbi\",\r\n            \"public trust\",\r\n            \"citizen\"\r\n        ],\r\n        \"maxYearsOfExperience\": 6,\r\n        \"maxYearsOfExperienceForUnlistedSkill\": 2,\r\n        \"skills\": [\r\n            \"Java\",\r\n            \"Git\",\r\n            \"Maven\",\r\n            \"Hibernate\",\r\n            \"Microservices\",            \r\n            \"REST APIs\",\r\n            \"Representational State Transfer (REST)\",\r\n            \"RESTful APIs\"\r\n            ,\"NoSQL\",\"SQL\",\"MySQL\",\"PostgreSQL\",\"MongoDB\"\r\n            ,\"Spring Framework\",\"Spring Boot\",\"Spring MVC\",\"Spring Batch\"\r\n            ,\"pl/sql\"\r\n        ],\r\n        \"minContractRate\": 20,\r\n        \"maxContractRate\": 80,\r\n        \"minYearlySalary\": 40000,\r\n        \"maxYearlySalary\": 170000,\r\n        \"maxTravelPercentage\": 10,\r\n        \"maxEmployees\": 9000,\r\n        \"maxApplicants\": 300,\r\n        \"desiredTenure\": 2.6,\r\n        \"maxJobAgeInDays\": 28,\r\n        \"minJobAgeInDays\": 0,\r\n        \"excludeAggressiveTimelines\":false,\r\n        \"skipTooManyApplicants\": false,\r\n        \"skipUnknownNumberOfApplicants\": false,\r\n        \"skipJobsSourcedFromExternalJobBoard\": false,\r\n        \"amountOfTotalExperience\": 6,\r\n        \"maxLevel\": 2,\r\n        \"skipFirstPages\": null,\r\n        \"excludeStartups\": true,\r\n        \"excludePromoted\": false\r\n        ,\"remoteOnly\": false\r\n        ,\"state\":\"NY\"\r\n        ,\"seniority\":\"Entry Level\"\r\n        ,\"badLocationPhrases\": [\r\n            \"Bronx\"\r\n            ,\"Brooklyn\"            \r\n            ,\"Staten Island\"\r\n            ,\"Queens\"\r\n            ,\"Yonkers\"\r\n            ,\"Nassau\"\r\n        ]\r\n        ,\"programmingFrameworks\": [\r\n            \"Spring\"\r\n        ]\r\n        ,\"acceptablePositionCategories\":[\r\n            \"EnvironmentBenefiting\",\"SupportFocusedJob\"\r\n        ]\r\n        ,\"timezones\":[\r\n            \"Eastern\",\"Central\"\r\n        ]\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/extract",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"extract"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "local software(glassdoor)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"urls\": [\r\n        \"https://www.glassdoor.com/Job/selden-java-jobs-SRCH_IL.0,6_IC1132409_KO7,11.htm?fromAge=7\"\r\n    ],\r\n   \"preferences\": {\r\n        \"minFortuneRank\": 760,\r\n        \"desiredClearancePhrases\": [\r\n            \"mbi\",\r\n            \"public trust\",\r\n            \"citizen\"\r\n        ],\r\n        \"maxYearsOfExperience\": 6,\r\n        \"maxYearsOfExperienceForUnlistedSkill\": 2,\r\n        \"skills\": [\r\n            \"Java\",\r\n            \"Git\",\r\n            \"Maven\",\r\n            \"Hibernate\",\r\n            \"Microservices\",            \r\n            \"REST APIs\",\r\n            \"Representational State Transfer (REST)\",\r\n            \"RESTful APIs\"\r\n            ,\"NoSQL\",\"SQL\",\"MySQL\",\"PostgreSQL\",\"MongoDB\"\r\n            ,\"Spring Framework\",\"Spring Boot\",\"Spring MVC\",\"Spring Batch\"\r\n            ,\"pl/sql\"\r\n        ],\r\n        \"minContractRate\": 20,\r\n        \"maxContractRate\": 80,\r\n        \"minYearlySalary\": 40000,\r\n        \"maxYearlySalary\": 170000,\r\n        \"maxTravelPercentage\": 10,\r\n        \"maxEmployees\": 9000,\r\n        \"maxApplicants\": 300,\r\n        \"desiredTenure\": 2.6,\r\n        \"maxJobAgeInDays\": 28,\r\n        \"minJobAgeInDays\": 0,\r\n        \"excludeAggressiveTimelines\":false,\r\n        \"skipTooManyApplicants\": false,\r\n        \"skipUnknownNumberOfApplicants\": false,\r\n        \"skipJobsSourcedFromExternalJobBoard\": false,\r\n        \"amountOfTotalExperience\": 6,\r\n        \"maxLevel\": 2,\r\n        \"skipFirstPages\": null,\r\n        \"excludeStartups\": true,\r\n        \"excludePromoted\": false\r\n        ,\"remoteOnly\": false\r\n        ,\"state\":\"NY\"\r\n        ,\"seniority\":\"Senior\"\r\n        ,\"programmingFrameworks\": [\r\n            \"Spring\"\r\n        ]\r\n        ,\"acceptablePositionCategories\":[\r\n            \"EnvironmentBenefiting\"\r\n        ]\r\n        ,\"timezones\":[\r\n            \"Eastern\",\"Central\"\r\n        ]\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/extract",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"extract"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
