@@ -5,6 +5,7 @@ import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.util.StringUtil;
 import com.mongodb.MongoBulkWriteException;
 import com.mongodb.MongoTimeoutException;
+import com.mongodb.MongoWriteException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;

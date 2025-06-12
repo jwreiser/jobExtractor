@@ -119,8 +119,10 @@ public abstract class Extractor {
                     break;
                 }
             }
-            cache.addRemainingJobs(mongoClient);
-            cache.addRemainingCompanySummaries(mongoClient);
+            if(preferences.isUsingCache()) {
+                cache.addRemainingJobs(mongoClient);
+                cache.addRemainingCompanySummaries(mongoClient);
+            }
         }
 
         executorService.shutdown();
@@ -195,7 +197,9 @@ public abstract class Extractor {
         if (excludeJobFilter.isPresent()) {
             job.setExcludeFilter(excludeJobFilter.get());
             job.setReason(excludeJobFilter.get().exclude(job));
-            cache.addJob(job, false, mongoClient);
+            if(preferences.isUsingCache()) {
+                cache.addJob(job, false, mongoClient);
+            }
             rejectedJobs.add(job);
             return true;
         }
@@ -203,7 +207,9 @@ public abstract class Extractor {
         Optional<JobFilter> jobFilter = FilterFactory.getAlwaysExcludeCustomFilters(preferences).stream().filter(f -> !f.include(preferences, finalJob)).findFirst();
         if (jobFilter.isPresent()) {
             job.setCustomExcludeFilter(jobFilter.get());
-            cache.addJob(job, false, mongoClient);
+            if(preferences.isUsingCache()) {
+                cache.addJob(job, false, mongoClient);
+            }
             rejectedJobs.add(job);
             return true;
         }
@@ -213,7 +219,9 @@ public abstract class Extractor {
         if (includeJobResults != null && includeJobResults.includeFilter() != null) {
             job.setIncludeFilter(includeJobResults.includeFilter());
             job.setReason(includeJobResults.includeFilter().include(preferences, job));
-            cache.addJob(job, true, mongoClient);
+            if(preferences.isUsingCache()) {
+                cache.addJob(job, true, mongoClient);
+            }
             includeJob(driver, acceptedJobs, job);
             return true;
         }
@@ -272,11 +280,15 @@ public abstract class Extractor {
     protected void handleNonSkipJobResults(Cache cache, MongoClient mongoClient, List<Job> acceptedJobs, List<Job> rejectedJobs, WebDriver newDriver, Job job, IncludeOrExcludeJobResults includeOrExcludeJobResults
             , Preferences preferences) {
         if(includeOrExcludeJobResults==null){//if we don't know what to do with the job include it by default
-            cache.addJob(job, true, mongoClient);
+            if(preferences.isUsingCache()) {
+                cache.addJob(job, true, mongoClient);
+            }
             includeJob(newDriver, acceptedJobs, job);
         }else if (includeOrExcludeJobResults.excludeJob()) {
             job.setExcludeFilter(includeOrExcludeJobResults.excludeFilter());
-            cache.addJob(job, false, mongoClient);
+            if(preferences.isUsingCache()) {
+                cache.addJob(job, false, mongoClient);
+            }
             rejectedJobs.add(job);
         } else if (includeOrExcludeJobResults.includeJob()) {
             job.setIncludeFilter(includeOrExcludeJobResults.includeFilter());
@@ -284,7 +296,9 @@ public abstract class Extractor {
                 job.setReason(includeOrExcludeJobResults.includeFilter().include(preferences, job));
             }
 
-            cache.addJob(job, true, mongoClient);
+            if(preferences.isUsingCache()) {
+                cache.addJob(job, true, mongoClient);
+            }
             includeJob(newDriver, acceptedJobs, job);
         }
     }

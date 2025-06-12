@@ -26,6 +26,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.MoveTargetOutOfBoundsException;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -141,7 +142,19 @@ public class LinkedInExtractor extends Extractor {
                 continue;
             }
 
-            scroller.scrollResultsIntoView(url, driver);
+            numAttempts = 1;
+            boolean scrollerSuccess = false;
+            do {
+                try {
+                    scroller.scrollResultsIntoView(url, driver);
+                    scrollerSuccess = true;
+                }catch (ElementClickInterceptedException | MoveTargetOutOfBoundsException e){
+
+                }
+            }while (!scrollerSuccess && numAttempts<=3);
+            if (!scrollerSuccess) {
+                System.err.println("Could not scroll results into view for LinkedIn extractor");
+            }
 
             Elements items = getJobItems(driver);
 
@@ -173,7 +186,7 @@ public class LinkedInExtractor extends Extractor {
                     continue;
                 }
                 job.setSourceUrl(url);
-                if (cache.containsJobNoDescription(job, mongoClient)) {
+                if (preferences.isUsingCache()&&cache.containsJobNoDescription(job, mongoClient)) {
                     cachedJobs++;
                     shallowCachedJobs.add(job);
                     totalCached++;

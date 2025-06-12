@@ -50,7 +50,7 @@ public class USAJobsShallowJobPopulator implements ShallowJobPopulator {
                     job.setMinHourlySalary((int)Double.parseDouble(salaryParts[0].trim()));
                     job.setMaxHourlySalary((int)Double.parseDouble(salaryParts[1].trim()));
                 }
-            } else if (!salaryString.isEmpty() && salaryString.endsWith("per hour")) {
+            } else if (!salaryString.isEmpty() && salaryString.endsWith("per year")) {
                 String[] salaryParts = salaryString.replaceAll("per year", "").trim().split("-");
                 if (salaryParts.length > 1) {
                     job.setMinYearlySalary((int)Double.parseDouble(salaryParts[0].trim()));

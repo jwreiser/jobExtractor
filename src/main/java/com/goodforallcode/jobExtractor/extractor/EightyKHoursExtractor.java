@@ -58,24 +58,7 @@ public class EightyKHoursExtractor extends Extractor {
 
         }
 
-        if(preferences.isRemoteOnly()) {
-            List<WebElement> locationDivs = driver.findElements(By.id("tags_location_80k-container"));
-            WebElement cityDiv = locationDivs.get(1);
-            List<WebElement> cityOptions = cityDiv.findElements(By.cssSelector("input[type='checkbox']"));
-            WebElement remoteUsa=cityOptions.get(4);
-            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", remoteUsa);
-        }
-        if(preferences.isSoftwareSearch()) {
-            try {
-                Thread.sleep(2_000);//time to load the changes
-            } catch (InterruptedException ex) {
-
-            }
-            WebElement skillDiv = driver.findElement(By.id("tags_skill-container"));
-            List<WebElement> skillOptions = skillDiv.findElements(By.cssSelector("input[type='checkbox']"));
-            WebElement software=skillOptions.get(1);
-            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", software);
-        }
+        setupSearch(preferences, driver);
 
         boolean staleElement = false;
         ShallowJobPopulator shallowPopulator = getShallowJobPopulator();
@@ -123,6 +106,27 @@ public class EightyKHoursExtractor extends Extractor {
 
         }
         return result;
+    }
+
+    private static void setupSearch(Preferences preferences, WebDriver driver) {
+        if(preferences.isRemoteOnly()) {
+            List<WebElement> locationDivs = driver.findElements(By.id("tags_location_80k-container"));
+            WebElement cityDiv = locationDivs.get(1);
+            List<WebElement> cityOptions = cityDiv.findElements(By.cssSelector("input[type='checkbox']"));
+            WebElement remoteUsa=cityOptions.get(4);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", remoteUsa);
+        }
+        if(preferences.isSoftwareSearch()) {
+            try {
+                Thread.sleep(2_000);//time to load the changes
+            } catch (InterruptedException ex) {
+
+            }
+            WebElement skillDiv = driver.findElement(By.id("tags_skill-container"));
+            List<WebElement> skillOptions = skillDiv.findElements(By.cssSelector("input[type='checkbox']"));
+            WebElement software=skillOptions.get(1);
+            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", software);
+        }
     }
 
     private boolean handleElement(Element element, ShallowJobPopulator shallowPopulator, WebDriver driver, Preferences preferences, Cache cache, MongoClient mongoClient

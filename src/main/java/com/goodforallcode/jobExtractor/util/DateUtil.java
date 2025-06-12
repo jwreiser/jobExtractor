@@ -1,5 +1,8 @@
 package com.goodforallcode.jobExtractor.util;
 
+import com.goodforallcode.jobExtractor.model.Job;
+import org.openqa.selenium.WebElement;
+
 import java.time.LocalDate;
 import java.time.Period;
 
@@ -36,4 +39,25 @@ public class DateUtil {
         LocalDate date = LocalDate.parse(rearrangedDateString);
         return date;
     }
+
+    public static void setDateInformation(String dateString , Job job) {
+        dateString = dateString.replace("Posted ", "").replace("Published ", "");
+        Long daysAgo=null;
+        if(dateString.contains("days ago") || dateString.contains("day ago")) {
+            daysAgo=Long.parseLong(dateString.split(" ")[0]);
+        }else if(dateString.contains("hours ago") || dateString.contains("hour ago")) {
+            daysAgo=0L;
+        }else if(dateString.contains("week ago")) {
+            daysAgo=7L;
+        }else if(dateString.contains("weeks ago")) {
+            long weeksAgo = Long.parseLong(dateString.split(" ")[0]);
+            daysAgo=weeksAgo*7L;
+        }
+
+        if (daysAgo!=null) {
+            job.setJobAgeInDays(daysAgo);
+        }
+    }
+
+
 }

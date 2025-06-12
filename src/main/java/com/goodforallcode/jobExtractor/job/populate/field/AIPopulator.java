@@ -10,7 +10,7 @@ public class AIPopulator implements FieldPopulator{
 
                 ExcludeJobFilter filter = ExcludeJobFilter.build("AI")
                         .titlePhrases(List.of("Machine Learning", " ML ", "NLP", " AI ", "AI Programmer",
-                                "Artificial Intelligence", "AI/ML", "ML/AI"))
+                                "Artificial Intelligence", "AI/ML", "ML/AI","GenAI"))
                         .descriptionPhrasesAndCount(List.of("chatbot", "chatbots", "Conversational AI", "ML", "NLP"
                                 , "natural language processing", "NLU", "Natural Language Understanding","Generative AI","GenAI"
                                 , "machine learning", "TTS", "STT", "SSML", "Tensorflow", "Pytorch","AI services","AI concepts"

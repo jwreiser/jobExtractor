@@ -180,7 +180,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
         filters.add(ExcludeJobFilter.build("Credentialed")
                 .titleAndDescriptionPhrases(List.of("Credentialed", "Licensed", "Registered"))
                 .titlePhrases(List.of("Certified"))
-                .safeTitleAndDescriptionPhrases(List.of("non-licensed", "registered and turned out", "for licensed "))
+                .safeTitleAndDescriptionPhrases(List.of("non-licensed", "registered and turned out", "for licensed ","working with a Registered","working with a Licensed"))
         );
 
         filters.add(ExcludeJobFilter.build("CustomerService")
@@ -274,7 +274,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
                 .descriptionPhrasesAndCount(List.of("network", "security", "install", "Delivery",
                         "VMware", "Servers", "Sccm", "administration", "administer",
                         "configuration management", " configure", " deploy", "maintain", "setup"), 3)
-                .safeDescriptionPhrases(List.of("Security Act"))
+                .safeDescriptionPhrases(List.of("Security Act","Social Security","Homeland Security"))
                 .titleAndDescriptionPhrases(List.of("Tibco"))
 
         );
@@ -285,7 +285,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
 
         filters.add(ExcludeJobFilter.build("Doctor")
                 .titlePhrases(List.of("Physician", "Doctor", "Orthopedic", "Pediatrician", "Neurolog", "Endocrin",
-                        "Primary Care", "Urologist"))
+                        "Primary Care", "Urologist","Pulmonolog"))
                 .safeTitlePhrases(List.of("Physician Assistant", "doctoral"))
         );
 
@@ -463,7 +463,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
         filters.add(ExcludeJobFilter.build("HumanAndCustomerManagementSoftware")
                 .titlePhrases(List.of("Genesys", "CRM", "Salesforce", "Dynamics"
                         , "d365", "Exstream", "Power Platform", "HRMS", "Peoplesoft",
-                        "HRIS", "Kitewheel", " HCM ", "Vlocity", "Medallia", "SFCC", " HR ", "Human Resources"))
+                        "HRIS", "Kitewheel", " HCM ", "Vlocity", "Medallia", "SFCC", " HR ", "Human Resource"))
                 .titleStartsWithPhrases(List.of("HR "))
                 .matchingCompanies(List.of("Ceridian"))
         );
@@ -748,7 +748,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
         );
 
         filters.add(ExcludeJobFilter.build("ScienceAndLaboratory")
-                .titlePhrases(List.of("Geologist", "Lab Aide", "Laboratory Scientist", "Laboratory Tech",
+                .titlePhrases(List.of("Geologist", "Lab Aide", "Laboratory",
                         "Lab Tech", "Physicist"))
                 .matchingCompanies(List.of("Labcorp", "Quest Diagnostics"))
         );
@@ -811,6 +811,7 @@ public class PositionCategoryPopulator implements FieldPopulator {
                 .descriptionPhrases(List.of("Telecom", "OSS and BSS", "OSS/BSS"))
                 .matchingCompanies(List.of("Crown Castle"))
                 .industries(List.of("Telecommunications"))
+                .safeDescriptionPhrases(List.of("telecommute"))
         );
 
 

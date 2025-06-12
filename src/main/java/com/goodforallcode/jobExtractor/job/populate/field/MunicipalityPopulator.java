@@ -22,7 +22,7 @@ public class MunicipalityPopulator implements FieldPopulator {
             "Cedar Falls", "Cedar Rapids", "Charles City", "Cherokee", "Clinton", "Council Bluffs",
             "Chickasaw", "Clanton", "Cullman", "Casa Grande", "Chandler", "Clifton",
             "Chautauqua", "Cheektowaga", "Clinton", "Cohoes", "Coney Island", "Cooperstown", "Corning", "Cortland", "Crown Point",
-            "Carbondale", "Carlisle", "Chambersburg", "Chester", "Columbia", "Cordova",
+            "Carbondale", "Carlisle", "Chambersburg", "Columbia", "Cordova",
 
             "Douglas", "Decatur", "Demopolis", "Dothan", "Dunkirk",
 

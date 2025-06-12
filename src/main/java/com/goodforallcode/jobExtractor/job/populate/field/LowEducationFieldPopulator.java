@@ -14,7 +14,7 @@ public class LowEducationFieldPopulator implements FieldPopulator {
                 .titlePhrases(List.of(
                         "Mailroom","Packer", "Packager", "Picker",
                         "Clerk", "Laborer", "Attendant","Scheduler","Scheduling","Clerical",
-                        "Groomer",  "Valet","Dispatcher",
+                        "Groomer",  "Valet","Dispatcher","Order Entry",
                         "Manufacturing", "Assembler"
                         ,  "Lifeguard", "Installer", "Installation"
                         , "Operator", "Dock Worker", "Data Entry"))
