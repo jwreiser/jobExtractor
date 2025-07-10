@@ -11,6 +11,9 @@ import static java.time.temporal.ChronoUnit.MONTHS;
 
 public class DateUtil {
     public static long getAgeInDays(String dateString) {
+        if(dateString.contains("/")) {
+            return getAgeInDaysSlashes(dateString);
+        }
         LocalDate date = getLocalDate(dateString);
         Period period = date.until(LocalDate.now());
         long ageInDays = period.get(DAYS)+(period.get(MONTHS)*30);
@@ -18,18 +21,21 @@ public class DateUtil {
     }
 
     public static LocalDate getLocalDate(String dateString) {
+        if(dateString.contains("/")) {
+            return getLocalDateSlashes(dateString);
+        }
         LocalDate date = LocalDate.parse(dateString);
         return date;
     }
 
-    public static long getAgeInDaysSlashes(String dateString) {
+    private static long getAgeInDaysSlashes(String dateString) {
         LocalDate date = getLocalDateSlashes(dateString);
         Period period = date.until(LocalDate.now());
         long ageInDays = period.get(DAYS)+(period.get(MONTHS)*30);
         return ageInDays;
     }
 
-    public static LocalDate getLocalDateSlashes(String dateString) {
+    private static LocalDate getLocalDateSlashes(String dateString) {
         String[] dateParts = dateString.split("/");
         String year= dateParts[2];
         if(year.length()==2){

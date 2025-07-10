@@ -13,11 +13,11 @@ import java.util.concurrent.TimeoutException;
 public interface DeepJobPopulator {
     boolean populateJob(Job job, WebDriver driver, Preferences preferences) throws TimeoutException;
 
-    public static List<FieldPopulator> fieldPopulators = List.of(new AIPopulator(),new ConsultantPopulator(),new ContractPopulator(),
+    public static List<FieldPopulator> fieldPopulators = List.of(new AggressiveTimeLinesPopulator(),new AIPopulator(),new ConsultantPopulator(),new ContractPopulator(),
             new CredentialedPopulator(),new FullyRemotePopulator(),new LowEducationFieldPopulator()
-            ,new MunicipalityPopulator(),new OnCallPopulator(),new OutsourcingPopulator(),
+            ,new MunicipalityPopulator(),new OnCallPopulator(),new OutsourcingPopulator(),new PartTimePopulator(),
             new PositionCategoryPopulator(),new SeniorityPopulator(),new ShiftFieldPopulator(),new SkillsPopulator(), new StartupPopulator(),new StatePopulator()
-            ,new TimeZonePopulator(),new WillTrainPopulator());
+            ,new TimeZonePopulator(),new WillTrainPopulator(),new WorklifeBalancePopulator());
 
     default public Optional<Integer> getMaxExperienceNeeded(String description) {
         int start;

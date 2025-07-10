@@ -53,6 +53,7 @@ public class USAJobsExtractor extends Extractor {
         boolean everyJobHiddenCachedOrSkipped = false, justSkipped = false;
         List<WebElement> nextPageButtons = new ArrayList<>();
         List<Integer> pageValues;
+        driver= getDriver(null, null);
         driver.get(url);
         do {
             currentPageNum++;

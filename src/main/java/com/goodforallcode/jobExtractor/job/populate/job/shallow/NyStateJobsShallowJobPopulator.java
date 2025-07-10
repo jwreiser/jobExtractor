@@ -37,8 +37,8 @@ public class NyStateJobsShallowJobPopulator implements ShallowJobPopulator {
         String dateString = tds.get(3).getText();
 
         if (!dateString.isEmpty()) {
-            job.setJobAgeInDays(DateUtil.getAgeInDaysSlashes(dateString));
-            job.setPostingDate(DateUtil.getLocalDateSlashes(dateString));
+            job.setJobAgeInDays(DateUtil.getAgeInDays(dateString));
+            job.setPostingDate(DateUtil.getLocalDate(dateString));
         }
 
         String locationString = tds.get(6).getText();

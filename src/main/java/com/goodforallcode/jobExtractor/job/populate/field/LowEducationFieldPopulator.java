@@ -15,8 +15,8 @@ public class LowEducationFieldPopulator implements FieldPopulator {
                         "Mailroom","Packer", "Packager", "Picker",
                         "Clerk", "Laborer", "Attendant","Scheduler","Scheduling","Clerical",
                         "Groomer",  "Valet","Dispatcher","Order Entry",
-                        "Manufacturing", "Assembler"
-                        ,  "Lifeguard", "Installer", "Installation"
+                        "Manufacturing", "Assembler","Parts Counterperson","Parts Associate"
+                        ,  "Lifeguard", "Installer", "Installation","Barber"
                         , "Operator", "Dock Worker", "Data Entry"))
                 .matchingCompanies(List.of("The Container Store","Barnes & Noble", "Hobby Lobby","7-Eleven", "Dollar Tree", "Dollar General", "Family Dollar",
                         "Federal Express", "FedEx", "Fed Ex", "Fedex", "Fed Ex"))

@@ -79,6 +79,10 @@ public class Job {
     Boolean midCareer;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     Boolean noExperience;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean workLifeBalance;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    Boolean aggressiveTimelines;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String state;
@@ -138,9 +142,13 @@ public class Job {
     @JsonIgnore
     boolean reposted=false;
     @JsonIgnore
+    boolean partTime=false;
+    @JsonIgnore
     private boolean applied=false;
     @JsonIgnore
     boolean topApplicant=false;
+    @JsonIgnore
+    Double employerRating=null;
     @JsonIgnore
     Integer contractMonths=null;
     @JsonIgnore

@@ -56,11 +56,13 @@ public class ContractPopulator implements FieldPopulator {
         }
         if (end > 0) {
             start = description.indexOf(" ", end - 5);
-            String base = description.substring(start, end + 1);
+            if (start > 0 && end>start) {
+                String base = description.substring(start, end + 1);
 
-            String experience = removeNonNumericText(base);
-            if (NumberUtils.isCreatable(experience)) {
-                result = Optional.of(Integer.parseInt(experience));
+                String experience = removeNonNumericText(base);
+                if (NumberUtils.isCreatable(experience)) {
+                    result = Optional.of(Integer.parseInt(experience));
+                }
             }
         }
         return result;

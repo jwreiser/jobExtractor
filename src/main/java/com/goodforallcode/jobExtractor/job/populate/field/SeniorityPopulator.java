@@ -13,7 +13,7 @@ public class SeniorityPopulator implements FieldPopulator {
 
         List<String> titleAboveSeniorSeniorityLevels = List.of("stf ", "director", "VP ", "lead", "manager", "Supervisor"
                 , "architect", "administrator", "chief", "principal", "Systems Development", "Systems Developer", "staff ", " staff"
-                , "Foreperson", "Dean ", "Mgr ", "President");
+                , "Foreperson", "Dean ", "Mgr ", "President","Commissioner","Postdoctoral","Advanced ");
 
         List<String> titleArchitectSeniorityLevels = List.of(
                 "architect", "Systems Engineer", "System Engineer");
@@ -29,7 +29,7 @@ public class SeniorityPopulator implements FieldPopulator {
 
         List<String> titleMidCareerSeniorityLevels = List.of("junior", "jr.", "jr ");
 
-        List<String> titleRequiresExperience = List.of("specialist");
+        List<String> titleRequiresExperience = List.of("specialist","Experienced");
 
 
         /**

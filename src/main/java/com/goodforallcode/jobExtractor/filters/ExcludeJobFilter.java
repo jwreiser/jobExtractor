@@ -17,6 +17,7 @@ public class ExcludeJobFilter {
     List<Boolean> runIfFalse = new ArrayList<>();
     List<String> titlePhrases = new ArrayList<>();
     List<String> titleStartsWithPhrases = new ArrayList<>();
+    List<String> titleEndsWithPhrases = new ArrayList<>();
     List<String> titleEqualsPhrases = new ArrayList<>();
     List<String> safeTitlePhrases = new ArrayList<>();
     List<String> safeDescriptionPhrases = new ArrayList<>();
@@ -70,6 +71,11 @@ public class ExcludeJobFilter {
 
     public ExcludeJobFilter titleStartsWithPhrases(List<String> phrases) {
         this.titleStartsWithPhrases.addAll(new ArrayList<>(phrases));
+        return this;
+    }
+
+    public ExcludeJobFilter titleEndsWithPhrases(List<String> phrases) {
+        this.titleEndsWithPhrases.addAll(new ArrayList<>(phrases));
         return this;
     }
 
@@ -256,12 +262,12 @@ public class ExcludeJobFilter {
                     return getName() + " - company name starts with -> " + match.get();
                 }
             }
+        }
 
-            if (testForCompanyInDescription && matchingCompanies != null) {
-                match = matchingCompanies.stream().filter(c -> CompanyUtil.descriptionContainsCompanyName(c, job.getDescription())).findFirst();
-                if (match.isPresent()) {
-                    return getName() + " - based on company description -> " + match.get();
-                }
+        if (testForCompanyInDescription && matchingCompanies != null) {
+            match = matchingCompanies.stream().filter(c -> CompanyUtil.descriptionContainsCompanyName(c, job.getDescription())).findFirst();
+            if (match.isPresent()) {
+                return getName() + " - based on company description -> " + match.get();
             }
         }
 
@@ -282,6 +288,15 @@ public class ExcludeJobFilter {
 
         if (titleStartsWithPhrases != null && !titleStartsWithPhrases.isEmpty() && !safeTitle) {
             match = titleStartsWithPhrases.stream().filter(p -> title.startsWith(p.toLowerCase())).findFirst();
+
+            if (match.isPresent()) {
+                return getName() + " - title -> " + match.get();
+
+            }
+        }
+
+        if (titleEndsWithPhrases != null && !titleEndsWithPhrases.isEmpty() && !safeTitle) {
+            match = titleEndsWithPhrases.stream().filter(p -> title.endsWith(p.toLowerCase())).findFirst();
 
             if (match.isPresent()) {
                 return getName() + " - title -> " + match.get();

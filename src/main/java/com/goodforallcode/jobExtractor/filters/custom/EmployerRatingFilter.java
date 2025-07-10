@@ -3,20 +3,15 @@ package com.goodforallcode.jobExtractor.filters.custom;
 import com.goodforallcode.jobExtractor.filters.JobFilter;
 import com.goodforallcode.jobExtractor.model.Job;
 import com.goodforallcode.jobExtractor.model.preferences.Preferences;
-import com.goodforallcode.jobExtractor.util.StringUtil;
 
-public class TimeZoneFilter implements JobFilter {
+
+public class EmployerRatingFilter implements JobFilter {
     @Override
     public boolean include(Preferences preferences, Job job) {
-        if(job.getTimeZone()!=null&&preferences.getTimezones()!=null) {
-            if(!preferences.getTimezones().contains(job.getTimeZone())){
-                return false;
-            }
-
+        boolean include=true;
+        if (job.getEmployerRating() != null&& preferences.getMinEmployerRating() != null && job.getEmployerRating()< preferences.getMinEmployerRating()) {
+                include = false;
         }
-
-        return true;
-
+        return include;
     }
-
 }

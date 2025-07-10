@@ -9,8 +9,8 @@ public class OutsourcingPopulator implements FieldPopulator{
     public void populateField(Job job, Preferences preferences) {
         ExcludeJobFilter filter = ExcludeJobFilter.build("OutsourcingAndOffshore")
                 .matchingCompanies(List.of("Rockwell Automation", "Equinix", "Banner Health", "Ritchie Bros",
-                        "Blue Cross NC", "Ascension", "Transamerica", "Conduent", "Zinnia", "LiveRamp",
-                        "Intelerad Medical Systems","emids"))
+                        "Blue Cross NC", "Ascension", "Transamerica", "Conduent", "Zinnia", "LiveRamp","Trimble",
+                        "Intelerad Medical Systems","emids","Centene"))
                 .testForCompanyInDescription(true)
                 .excludeCompanyAttributes(List.of("offshores"))
                 .titleAndDescriptionPhrases(List.of("Hyderabad", "India"))

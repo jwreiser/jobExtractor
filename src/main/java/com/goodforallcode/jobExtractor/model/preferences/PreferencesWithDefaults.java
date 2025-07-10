@@ -39,10 +39,9 @@ public class PreferencesWithDefaults implements Preferences {
     Float desiredTenure=2.6F;
     Integer maxJobAgeInDays=34;
     Integer minJobAgeInDays=0;
-
+    Double minEmployerRating=4.0;
     boolean excludeWeekends=true;
     boolean excludeOnCall=true;
-    boolean excludeAggressiveTimelines=true;
     boolean skipTooManyApplicants=false;
     boolean skipUnknownNumberOfApplicants=false;
     Integer amountOfTotalExperience =6;

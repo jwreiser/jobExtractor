@@ -40,23 +40,11 @@ public class USAJobsShallowJobPopulator implements ShallowJobPopulator {
 
     }
 
-    private static void populateSalaryInformation(Element item, Job job) {
+    private  void populateSalaryInformation(Element item, Job job) {
         Element salaryDiv = item.getElementsByClass("field-salary").first();
         if(salaryDiv!=null) {
             String salaryString = salaryDiv.text().replaceAll("Pay range: ", "").replaceAll("\\$", "").replaceAll("\\.00", "");
-            if (!salaryString.isEmpty() && salaryString.endsWith("per hour")) {
-                String[] salaryParts = salaryString.replaceAll("per hour", "").trim().split("-");
-                if (salaryParts.length > 1) {
-                    job.setMinHourlySalary((int)Double.parseDouble(salaryParts[0].trim()));
-                    job.setMaxHourlySalary((int)Double.parseDouble(salaryParts[1].trim()));
-                }
-            } else if (!salaryString.isEmpty() && salaryString.endsWith("per year")) {
-                String[] salaryParts = salaryString.replaceAll("per year", "").trim().split("-");
-                if (salaryParts.length > 1) {
-                    job.setMinYearlySalary((int)Double.parseDouble(salaryParts[0].trim()));
-                    job.setMaxYearlySalary((int)Double.parseDouble(salaryParts[1].trim()));
-                }
-            }
+            populateSalaryInformation(job, salaryString);
         }
     }
 

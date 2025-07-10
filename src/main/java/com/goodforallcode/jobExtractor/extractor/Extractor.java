@@ -269,7 +269,6 @@ public abstract class Extractor {
     }
 
     protected void moveToNextPage(List<WebElement> nextPageButtons, WebDriver driver, int currentPageNum) {
-        System.err.println("Moving to page: " + (currentPageNum + 1));
         for (WebElement nextPageButton : nextPageButtons) {
             if (doubleClickOnElement(driver, nextPageButton)) {
                 break;

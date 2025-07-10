@@ -47,22 +47,7 @@ public class TechJobsForGoodShallowJobPopulator implements ShallowJobPopulator {
         WebElement salarySpan = jobLink.findElement(By.className("salary"));
         if(salarySpan!=null) {
             String salaryString = salarySpan.getText();
-            if (!salaryString.isEmpty()) {
-                if(salaryString.toLowerCase().contains("per hour")) {
-                    salaryString = salaryString.toLowerCase().replaceAll("per hour", "").replace("$", "").trim();
-                    job.setMinHourlySalary(Integer.parseInt(salaryString));
-                } else {
-
-                    String[] salaryParts = salaryString.replace("$", "").replace("K", "000").trim().split("-");
-                    if (salaryParts.length > 1) {
-                        job.setMinYearlySalary(Integer.parseInt(salaryParts[0].trim()));
-                        job.setMaxYearlySalary(Integer.parseInt(salaryParts[1].trim()));
-                    } else if (salaryParts.length == 1) {
-                        job.setMinYearlySalary(Integer.parseInt(salaryParts[0].trim()));
-                    }
-                }
-
-            }
+            populateSalaryInformation(job, salaryString);
         }
 
 

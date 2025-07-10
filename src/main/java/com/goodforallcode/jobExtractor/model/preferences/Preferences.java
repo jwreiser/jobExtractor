@@ -12,8 +12,6 @@ public interface Preferences {
      void setExcludeWeekends(boolean exclude);
      boolean isExcludeOnCall();
      void setExcludeOnCall(boolean exclude);
-     boolean isExcludeAggressiveTimelines();
-     void setExcludeAggressiveTimelines(boolean exclude);
 
      boolean isExcludePromoted();
      void setExcludePromoted(boolean exclude);
@@ -67,8 +65,13 @@ public interface Preferences {
      void setMinYearlySalary(Integer value);
      Integer getMaxJobAgeInDays();
      void setMaxJobAgeInDays(Integer maxJobAgeInDays);
+
+
      Integer getMinJobAgeInDays();
      void setMinJobAgeInDays(Integer minJobAgeInDays);
+
+     Double getMinEmployerRating();
+     void setMinEmployerRating(Double value);
 
      List<String> getSkills();
      void setSkills(List<String> skills);

@@ -36,7 +36,12 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
                     mainDiv = driver.findElement(By.className("scaffold-layout__main"));
                     break;
                 } catch (org.openqa.selenium.NoSuchElementException nse2) {
-                    return false;//nothing to handle; proceed with no deep details
+                    try {
+                        mainDiv = driver.findElement(By.className("jobs-details__main-content"));
+                        break;
+                    } catch (org.openqa.selenium.NoSuchElementException nse3) {
+                        return false;//nothing to handle; proceed with no deep details
+                    }
                 }
             } catch (Exception te) {
                 try {
@@ -86,6 +91,18 @@ public class LinkedInDeepJobPopulator implements DeepJobPopulator {
                 job.setSaveButton(elements.get(1));
             }
             addRecruitingClient(job);
+
+            Elements fitPreferences= detailsDoc.getElementsByClass("job-details-fit-level-preferences");
+            if(fitPreferences.size()>1){
+                System.err.println("Nswtdh");
+            }else  if(fitPreferences.size()==1){
+                Element fitPreferencesElement=fitPreferences.first();
+                if(fitPreferencesElement.text().contains("Part-time")){
+                    job.setPartTime(true);
+                }else if(fitPreferencesElement.text().contains("Full-time")){
+                    job.setPartTime(false);
+                }
+            }
         } catch (Exception ex) {
             throw ex;//catching as a way to allow for inserting a breakpoint
         }

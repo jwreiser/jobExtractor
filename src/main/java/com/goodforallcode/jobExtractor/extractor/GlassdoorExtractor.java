@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.goodforallcode.jobExtractor.cache.Cache;
 import com.goodforallcode.jobExtractor.driver.DriverInitializer;
 import com.goodforallcode.jobExtractor.driver.Scroller;
-import com.goodforallcode.jobExtractor.filters.ExcludeJobFilter;
 import com.goodforallcode.jobExtractor.filters.FilterFactory;
 import com.goodforallcode.jobExtractor.filters.IncludeOrSkipJobFilter;
 import com.goodforallcode.jobExtractor.job.populate.job.deep.DeepJobPopulator;
@@ -16,10 +15,6 @@ import com.goodforallcode.jobExtractor.model.preferences.Preferences;
 import com.mongodb.client.MongoClient;
 import lombok.Getter;
 import lombok.Setter;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.openqa.selenium.*;
 
 import java.util.ArrayList;
@@ -61,7 +56,7 @@ public class GlassdoorExtractor extends Extractor {
         boolean everyJobHiddenCachedOrSkipped = false, justSkipped = false;
 
         List<Integer> pageValues;
-        driver=getDriver(null, null);
+        driver = getDriver(null, null);
         driver.get(url);
         try {
             Thread.sleep(5_000);
@@ -70,7 +65,7 @@ public class GlassdoorExtractor extends Extractor {
         }
 
 
-        Elements items = getJobItems(driver);
+        List<WebElement> items = getJobItems(driver);
 
         ShallowJobPopulator shallowPopulator = getShallowJobPopulator();
         hiddenJobs = 0;
@@ -79,22 +74,44 @@ public class GlassdoorExtractor extends Extractor {
         everyJobHiddenCachedOrSkipped = false;
         numJobs = items.size();
         Job job;
-        for (Element item : items) {
+        WebElement detailsElement;
+        for (WebElement item : items) {
 
             totalJobs++;
-
             try {
-                job = shallowPopulator.populateJob(null,item, driver, preferences, null);
+                item.click();//expand the job to get more details
+            } catch (ElementClickInterceptedException e) {
+                try {
+                    WebElement interruptedElement = driver.findElement(By.id("qual_close_open"));
+                    if (interruptedElement != null) {
+                        interruptedElement.click();
+                    }
+                } catch (NoSuchElementException ex) {
+                    System.err.println("Element interrupted but no close button found, continuing with next url.");
+                    break;
+                }
+            } catch (StaleElementReferenceException e) {
+                break;
+            }
+            detailsElement = driver.findElement(By.className("JobDetails_jobDetailsContainer__y9P3L"));
+            try {
+                job = shallowPopulator.populateJob(detailsElement, null, driver, preferences, null);
             } catch (TimeoutException e) {
                 job = null;
             }
 
             if (job == null) {
                 break;
+            } else if (job.isHidden() && preferences.isExcludeHiddenJobs()) {
+                hiddenJobs++;
+                totalHidden++;
+                if (hiddenJobs + skippedJobs == numJobs) {
+                    everyJobHiddenCachedOrSkipped = true;
+                }
+                continue;
             }
-
             job.setSourceUrl(url);
-            if (preferences.isUsingCache() && cache.containsJobNoDescription(job, mongoClient)) {
+            if (cache.containsJob(job, mongoClient)) {
                 cachedJobs++;
                 shallowCachedJobs.add(job);
                 totalCached++;
@@ -115,38 +132,12 @@ public class GlassdoorExtractor extends Extractor {
                 continue;
             }
 
-            if (runFiltersThatMakeSenseForShallowPopulatedJobs(preferences, cache, mongoClient, finalJob, job, driver, rejectedJobs, acceptedJobs)) {
-                continue;
+            if (!runFiltersThatMakeSenseForShallowPopulatedJobs(preferences, cache, mongoClient, finalJob, job, driver, rejectedJobs, acceptedJobs)) {
+                IncludeOrExcludeJobResults includeOrExcludeJobResults = runFinalFilters(job, preferences, driver, new ArrayList<>());
+                handleNonSkipJobResults(cache, mongoClient, acceptedJobs, rejectedJobs, driver, job, includeOrExcludeJobResults, preferences);
             }
-            Optional<ExcludeJobFilter> excludeJobFilter;
-
-            boolean cached = deepLoadJob(job, driver, cache, mongoClient, deepCachedJobs, preferences);
-            if (cached) {
-                cachedJobs++;
-                totalCached++;
-                continue;
-            }
-
-            if (runFiltersThatMakeSenseForShallowPopulatedJobs(preferences, cache, mongoClient, finalJob, job, driver, rejectedJobs, acceptedJobs)) {
-                continue;
-            }
-
-
-            IncludeOrExcludeJobResults includeOrExcludeJobResults = runDeepPopulatedFilters(job, preferences,
-                    driver, cache, mongoClient);
-            handleNonSkipJobResults(cache, mongoClient, acceptedJobs, rejectedJobs, driver, job, includeOrExcludeJobResults, preferences);
-
-            if (includeOrExcludeJobResults.skipRemainingJobs()) {
-                        /*
-                        this should be true when there is an indication that the rest of the acceptedJobs on this page
-                         will have issues
-                         */
-                break;
-            }
-
 
         }
-
 
         if (driver != null) {
             try {
@@ -163,9 +154,10 @@ public class GlassdoorExtractor extends Extractor {
         } catch (Exception e) {
 
         }
+
+
         return result;
     }
-
 
 
     /**
@@ -206,6 +198,11 @@ public class GlassdoorExtractor extends Extractor {
         int numAttempts = 0, maxAttempts = 10;
         if (job.getJobDetailsLink() != null) {
             doubleClickOnElement(driver, job.getJobDetailsLink());
+            try {
+                Thread.sleep(5_000);
+            } catch (InterruptedException e) {
+                //ignore
+            }
         }
         /*
         we need a way to test load pages.
@@ -243,19 +240,9 @@ public class GlassdoorExtractor extends Extractor {
     }
 
 
-    private Elements getJobItems(WebDriver driver) {
+    private List<WebElement> getJobItems(WebDriver driver) {
         WebElement ul = null;
-        Elements items = new Elements();
-        try {
-            ul = driver.findElement(By.className("JobsList_jobsList__lqjTr"));
-        } catch (NoSuchElementException nse) {
-            throw nse;
-        }
-
-        if (ul != null) {
-            Document doc = Jsoup.parse(ul.getAttribute("innerHTML"));
-            items = doc.select("li.JobsList_jobListItem__wjTHv");
-        }
+        List<WebElement> items = driver.findElements(By.className("JobsList_jobListItem__wjTHv"));
         return items;
     }
 

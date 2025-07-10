@@ -26,12 +26,14 @@ public class SkillsPopulator implements FieldPopulator{
                 "Data Science",
                 "Java",
                 "Golang",
-                "GraphQL",
-                "Kotlin","Laravel",
+                "GraphQL","gRPC",
+                "Kotlin","Laravel","Scala",
                 "Microservices",
                 "Machine Learning",
                 "RESTful APIs",  "Ruby",
-                "OneStream","Hogan","Elixir"
+                "OneStream","Hogan","Elixir","Blazor"
+                ,"OAuth","SSO","Okta","SAML","OpenID Connect","OIDC","JWT"
+                ,"Drupal","Actimize"
                 );
         for(String skill : skills) {
             if (job.getDescription()!=null){
@@ -57,6 +59,12 @@ public class SkillsPopulator implements FieldPopulator{
         if (value.contains(","+ skill.toLowerCase()+" ")) {
             return true;
         }else if (value.contains(","+ skill.toLowerCase()+",")) {
+            return true;
+        }else if (value.contains(","+ skill.toLowerCase()+")")) {
+            return true;
+        }else if (value.contains(", "+ skill.toLowerCase()+")")) {
+            return true;
+        }else if (value.contains(" "+ skill.toLowerCase()+")")) {
             return true;
         }else if (value.contains(", "+ skill.toLowerCase()+",")) {
             return true;
